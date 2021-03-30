@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Misfortunate.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{98ADBAAE-8600-4346-8E9A-BD6B52695687}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Misfortunate.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\MisfortunateEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{63BE7BFB-D142-4A67-8B64-BA3F3205F8E2}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\Misfortunate">
+      <UniqueIdentifier>{407F6FA7-151F-4F84-993B-BCEB0D3F136A}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Misfortunate\Misfortunate.Build.cs">
+      <Filter>Source\Misfortunate</Filter>
+    </None>
+    <Filter Include="Source\Misfortunate\Private">
+      <UniqueIdentifier>{85536185-1F34-455C-BF11-D497F3A649DD}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\CustomAnimInstance.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\EventZone.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Glowstick.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Misfortunate.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateCharacter.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateGameInstance.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateGameMode.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateHUD.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateProjectile.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\PlayerCharacter.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\ScareEventManager.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
+    <Filter Include="Source\Misfortunate\Public">
+      <UniqueIdentifier>{FBDDDEED-9067-4BC2-B6E3-BF56F823A398}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\CustomAnimInstance.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\EventZone.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Glowstick.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Misfortunate.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateCharacter.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateGameInstance.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateGameMode.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateHUD.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateProjectile.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\PlayerCharacter.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\ScareEventManager.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

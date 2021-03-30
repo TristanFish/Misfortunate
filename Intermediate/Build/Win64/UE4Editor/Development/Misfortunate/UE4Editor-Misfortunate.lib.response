@@ -1,0 +1,36 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-Misfortunate.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\CustomAnimInstance.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\EventZone.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Glowstick.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\HeadLamp.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Misfortunate.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateCharacter.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateGameInstance.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateGameMode.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateHUD.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateProjectile.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\PlayerCharacter.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\ScareEventManager.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\CustomAnimInstance.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\EventZone.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Glowstick.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\HeadLamp.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Misfortunate.init.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateCharacter.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateGameInstance.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateGameMode.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateHUD.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\MisfortunateProjectile.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\PlayerCharacter.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\ScareEventManager.gen.cpp.obj"
+"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Default.rc2.res"
+/OUT:"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\UE4Editor-Misfortunate.lib"
+/INCLUDE:IMPLEMENT_MODULE_Misfortunate

@@ -1,0 +1,2 @@
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Misfortunate.h
