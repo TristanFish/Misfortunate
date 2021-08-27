@@ -2,11 +2,13 @@
 
 #include "MisfortunateGameMode.h"
 #include "MisfortunateHUD.h"
-#include "MisfortunateCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
-#include "MisfortunateGameInstance.h"
+#include "MPlayerController.h"
 #include "PlayerCharacter.h"
+#include "ScareEventManager.h"
+#include "LoreManager.h"
+#include "Actors/EventZone.h"
 
 AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -18,7 +20,10 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 	// use our custom HUD class
 	HUDClass = AMisfortunateHUD::StaticClass();
 
-	DistanceThreshold = 100.0f;
+
+
+	PlayerControllerClass = AMPlayerController::StaticClass();
+
 	DistanceBetweenPlayers = 0.0f;
 
 	EventChance = 95;
@@ -33,7 +38,13 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 void AMisfortunateGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, 10.5f, true);
+
+	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
+	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
+
+	GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+
+	
 }
 
 void AMisfortunateGameMode::Tick(float DeltaSeconds)
@@ -54,21 +65,26 @@ void AMisfortunateGameMode::CheckPlayersDistance()
 		PlayerPos_2 = ConnectedPlayers[i]->GetPawn()->GetActorLocation();
 
 		DistanceBetweenPlayers = (PlayerPos_1 - PlayerPos_2).Size();
-			
 	}
 
 
 }
 
+
+
+
+
+
 void AMisfortunateGameMode::CheckEventTrigger()
 {
 	CheckPlayersDistance();
-	if (DistanceBetweenPlayers > DistanceThreshold) {
+	if (DistanceBetweenPlayers > scareManager->GetScareDistanceThreshold()) {
 		if(FMath::RandRange(0, 100) < EventChance){
 				
-			selectedCharacter = ConnectedPlayers[FMath::RandRange(0, 1) ];
+			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
+			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Client_SetMisfortune(0.0f);
 		}
 
 		else {
@@ -82,15 +98,76 @@ void AMisfortunateGameMode::CheckEventTrigger()
 
 
 
+void AMisfortunateGameMode::SelectCharacter()
+{
+	float HighestMisfortune;
+	APlayerCharacter* tempCharacter_1;
+	APlayerCharacter* tempCharacter_2;
+	for (int i = 0; i < ConnectedPlayers.Num(); i++)
+	{
+		tempCharacter_1 = Cast<APlayerCharacter>(ConnectedPlayers[i]->GetCharacter());
+		if (i != ConnectedPlayers.Num() - 1)
+		{
+			tempCharacter_2 = Cast<APlayerCharacter>(ConnectedPlayers[i +1]->GetCharacter());
+			HighestMisfortune = FMath::Max(tempCharacter_1->GetMisfortune(), tempCharacter_2->GetMisfortune());
+		}
+	}
+
+	for (auto chars : ConnectedPlayers)
+	{
+
+		if (Cast<APlayerCharacter>(chars->GetCharacter())->GetMisfortune() == HighestMisfortune)
+		{
+			selectedCharacter = chars;
+		}
+	}
+}
+
 void AMisfortunateGameMode::TriggerScareEvent()
 {
-	UMisfortunateGameInstance* gameInstance = Cast<UMisfortunateGameInstance>(GetGameInstance());
 
 	APlayerCharacter* selectedChar = Cast<APlayerCharacter>(selectedCharacter->GetCharacter());
 
 	if (selectedChar->GetCurrentZone() != nullptr)
 	{
-		gameInstance->GetScareEventManager()->TriggerScareEvent(selectedChar);
+		scareManager->TriggerScareEvent(selectedChar);
 
 	}
+}
+
+
+
+AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const
+{
+	return scareManager;
+}
+
+ALoreManager* AMisfortunateGameMode::GetLoreManager() const
+{
+	return loreManager;
+}
+
+
+
+void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class ALoreTablet* tablet)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(tablet);
+	}
+}
+
+void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* enteredChar)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		if (enteredChar == character)
+		{
+			character->SetCurrentZone(zone);
+
+		}
+	}
+
 }

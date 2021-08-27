@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\Misfortunate.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{98ADBAAE-8600-4346-8E9A-BD6B52695687}</UniqueIdentifier>
+      <UniqueIdentifier>{6502AED6-0B09-4B99-804F-C68284074ED9}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\Misfortunate.Target.cs">
       <Filter>Source</Filter>
@@ -11,8 +11,10 @@
     <None Include="..\..\Source\MisfortunateEditor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.gitattributes" />
+    <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{63BE7BFB-D142-4A67-8B64-BA3F3205F8E2}</UniqueIdentifier>
+      <UniqueIdentifier>{231AEBE1-3DB5-4478-A275-B2E92B507CB3}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -30,21 +32,24 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\Misfortunate">
-      <UniqueIdentifier>{407F6FA7-151F-4F84-993B-BCEB0D3F136A}</UniqueIdentifier>
+      <UniqueIdentifier>{28709680-1E0F-41BB-92DA-A0938F0A892F}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\Misfortunate\Misfortunate.Build.cs">
       <Filter>Source\Misfortunate</Filter>
     </None>
     <Filter Include="Source\Misfortunate\Private">
-      <UniqueIdentifier>{85536185-1F34-455C-BF11-D497F3A649DD}</UniqueIdentifier>
+      <UniqueIdentifier>{CAC18AA0-6637-4B7C-9F52-B4255D2CADEB}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\CrawlableArea.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Misfortunate\Private\CustomAnimInstance.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Misfortunate\Private\EventZone.cpp">
+    <ClCompile Include="..\..\Source\Misfortunate\Private\HeadLamp.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Misfortunate\Private\Glowstick.cpp">
+    <ClCompile Include="..\..\Source\Misfortunate\Private\LoreManager.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Misfortunate\Private\Misfortunate.cpp">
@@ -65,22 +70,61 @@
     <ClCompile Include="..\..\Source\Misfortunate\Private\MisfortunateProjectile.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\MPlayerController.cpp">
+      <Filter>Source\Misfortunate\Private</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Misfortunate\Private\PlayerCharacter.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\Misfortunate\Private\ScareEventManager.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
-    <Filter Include="Source\Misfortunate\Public">
-      <UniqueIdentifier>{FBDDDEED-9067-4BC2-B6E3-BF56F823A398}</UniqueIdentifier>
+    <Filter Include="Source\Misfortunate\Private\Actors">
+      <UniqueIdentifier>{67D22B7E-6D28-48AC-95E8-48970FE38342}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Actors\EventZone.cpp">
+      <Filter>Source\Misfortunate\Private\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Actors\Glowstick.cpp">
+      <Filter>Source\Misfortunate\Private\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Actors\LoreTablet.cpp">
+      <Filter>Source\Misfortunate\Private\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Actors\ScarePoint.cpp">
+      <Filter>Source\Misfortunate\Private\Actors</Filter>
+    </ClCompile>
+    <Filter Include="Source\Misfortunate\Private\Widgets">
+      <UniqueIdentifier>{0692FF90-7436-401E-81F2-4D71ABAEDB58}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\WInteraction.cpp">
+      <Filter>Source\Misfortunate\Private\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\WJournal.cpp">
+      <Filter>Source\Misfortunate\Private\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\WLore.cpp">
+      <Filter>Source\Misfortunate\Private\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\WMisfortune.cpp">
+      <Filter>Source\Misfortunate\Private\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\W_Battery.cpp">
+      <Filter>Source\Misfortunate\Private\Widgets</Filter>
+    </ClCompile>
+    <Filter Include="Source\Misfortunate\Public">
+      <UniqueIdentifier>{D5B72892-C451-4478-87EB-055D061B83D1}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\CrawlableArea.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Misfortunate\Public\CustomAnimInstance.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Misfortunate\Public\EventZone.h">
+    <ClInclude Include="..\..\Source\Misfortunate\Public\HeadLamp.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\Misfortunate\Public\Glowstick.h">
+    <ClInclude Include="..\..\Source\Misfortunate\Public\LoreManager.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Misfortunate\Public\Misfortunate.h">
@@ -101,11 +145,62 @@
     <ClInclude Include="..\..\Source\Misfortunate\Public\MisfortunateProjectile.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\MPlayerController.h">
+      <Filter>Source\Misfortunate\Public</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Misfortunate\Public\PlayerCharacter.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Misfortunate\Public\ScareEventManager.h">
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
+    <Filter Include="Source\Misfortunate\Public\Actors">
+      <UniqueIdentifier>{727CC2FD-CF07-4678-A203-84DA6C98E250}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Actors\EventZone.h">
+      <Filter>Source\Misfortunate\Public\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Actors\Glowstick.h">
+      <Filter>Source\Misfortunate\Public\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Actors\LoreTablet.h">
+      <Filter>Source\Misfortunate\Public\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Actors\ScarePoint.h">
+      <Filter>Source\Misfortunate\Public\Actors</Filter>
+    </ClInclude>
+    <Filter Include="Source\Misfortunate\Public\Widgets">
+      <UniqueIdentifier>{035A5D46-272B-4CB0-825C-3E4D19498D55}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\WInteraction.h">
+      <Filter>Source\Misfortunate\Public\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\WJournal.h">
+      <Filter>Source\Misfortunate\Public\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\WLore.h">
+      <Filter>Source\Misfortunate\Public\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\WMisfortune.h">
+      <Filter>Source\Misfortunate\Public\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\W_Battery.h">
+      <Filter>Source\Misfortunate\Public\Widgets</Filter>
+    </ClInclude>
+    <Filter Include="Plugins">
+      <UniqueIdentifier>{7075E95B-DA5D-4502-9BE3-96BA2EBB1A55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plugins\SimplePhysicsMovement">
+      <UniqueIdentifier>{8A37C5FF-4D27-4B95-AEEB-612855E302DD}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Plugins\SimplePhysicsMovement\SimplePhysicsMovement.uplugin">
+      <Filter>Plugins\SimplePhysicsMovement</Filter>
+    </None>
+    <Filter Include="Plugins\SimplePhysicsMovement\Resources">
+      <UniqueIdentifier>{F5B54B96-66CA-4AB8-8402-D77A71ECAABD}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Plugins\SimplePhysicsMovement\Resources\Icon128.png">
+      <Filter>Plugins\SimplePhysicsMovement\Resources</Filter>
+    </None>
   </ItemGroup>
 </Project>

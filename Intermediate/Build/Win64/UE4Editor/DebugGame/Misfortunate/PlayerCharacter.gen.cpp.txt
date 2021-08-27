@@ -8,6 +8,4 @@ G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Characte
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/RootMotionSource.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\RootMotionSource.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Character.generated.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\HeadLamp.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\HeadLamp.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\PlayerCharacter.generated.h

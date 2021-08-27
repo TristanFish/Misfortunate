@@ -13,82 +13,78 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #endif
 #define MISFORTUNATE_HeadLamp_generated_h
 
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_SPARSE_DATA
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_RPC_WRAPPERS
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_RPC_WRAPPERS_NO_PURE_DECLS
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_INCLASS_NO_PURE_DECLS \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_SPARSE_DATA
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_RPC_WRAPPERS
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_RPC_WRAPPERS_NO_PURE_DECLS
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_INCLASS_NO_PURE_DECLS \
 private: \
-	static void StaticRegisterNativesAHeadLampInfo(); \
-	friend struct Z_Construct_UClass_AHeadLampInfo_Statics; \
+	static void StaticRegisterNativesAHeadLamp(); \
+	friend struct Z_Construct_UClass_AHeadLamp_Statics; \
 public: \
-	DECLARE_CLASS(AHeadLampInfo, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/Misfortunate"), NO_API) \
-	DECLARE_SERIALIZER(AHeadLampInfo) \
-	static const TCHAR* StaticConfigName() {return TEXT("ConfigName");} \
+	DECLARE_CLASS(AHeadLamp, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/Misfortunate"), NO_API) \
+	DECLARE_SERIALIZER(AHeadLamp)
 
 
-
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_INCLASS \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_INCLASS \
 private: \
-	static void StaticRegisterNativesAHeadLampInfo(); \
-	friend struct Z_Construct_UClass_AHeadLampInfo_Statics; \
+	static void StaticRegisterNativesAHeadLamp(); \
+	friend struct Z_Construct_UClass_AHeadLamp_Statics; \
 public: \
-	DECLARE_CLASS(AHeadLampInfo, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/Misfortunate"), NO_API) \
-	DECLARE_SERIALIZER(AHeadLampInfo) \
-	static const TCHAR* StaticConfigName() {return TEXT("ConfigName");} \
+	DECLARE_CLASS(AHeadLamp, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/Misfortunate"), NO_API) \
+	DECLARE_SERIALIZER(AHeadLamp)
 
 
-
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_STANDARD_CONSTRUCTORS \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
-	NO_API AHeadLampInfo(const FObjectInitializer& ObjectInitializer); \
-	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AHeadLampInfo) \
-	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, AHeadLampInfo); \
-DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AHeadLampInfo); \
+	NO_API AHeadLamp(const FObjectInitializer& ObjectInitializer); \
+	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AHeadLamp) \
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, AHeadLamp); \
+DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AHeadLamp); \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
-	NO_API AHeadLampInfo(AHeadLampInfo&&); \
-	NO_API AHeadLampInfo(const AHeadLampInfo&); \
+	NO_API AHeadLamp(AHeadLamp&&); \
+	NO_API AHeadLamp(const AHeadLamp&); \
 public:
 
 
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_ENHANCED_CONSTRUCTORS \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
-	NO_API AHeadLampInfo(AHeadLampInfo&&); \
-	NO_API AHeadLampInfo(const AHeadLampInfo&); \
+	NO_API AHeadLamp(AHeadLamp&&); \
+	NO_API AHeadLamp(const AHeadLamp&); \
 public: \
-	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, AHeadLampInfo); \
-DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AHeadLampInfo); \
-	DEFINE_DEFAULT_CONSTRUCTOR_CALL(AHeadLampInfo)
+	DECLARE_VTABLE_PTR_HELPER_CTOR(NO_API, AHeadLamp); \
+DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AHeadLamp); \
+	DEFINE_DEFAULT_CONSTRUCTOR_CALL(AHeadLamp)
 
 
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_PRIVATE_PROPERTY_OFFSET
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_12_PROLOG
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_GENERATED_BODY_LEGACY \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_PRIVATE_PROPERTY_OFFSET
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_10_PROLOG
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_PRIVATE_PROPERTY_OFFSET \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_SPARSE_DATA \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_RPC_WRAPPERS \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_INCLASS \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_STANDARD_CONSTRUCTORS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_PRIVATE_PROPERTY_OFFSET \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_SPARSE_DATA \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_RPC_WRAPPERS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_INCLASS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_GENERATED_BODY \
+#define Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_PRIVATE_PROPERTY_OFFSET \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_SPARSE_DATA \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_RPC_WRAPPERS_NO_PURE_DECLS \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_INCLASS_NO_PURE_DECLS \
-	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_15_ENHANCED_CONSTRUCTORS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_PRIVATE_PROPERTY_OFFSET \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_SPARSE_DATA \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_RPC_WRAPPERS_NO_PURE_DECLS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_INCLASS_NO_PURE_DECLS \
+	Misfortunate_Source_Misfortunate_Public_HeadLamp_h_13_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-template<> MISFORTUNATE_API UClass* StaticClass<class AHeadLampInfo>();
+template<> MISFORTUNATE_API UClass* StaticClass<class AHeadLamp>();
 
 #undef CURRENT_FILE_ID
 #define CURRENT_FILE_ID Misfortunate_Source_Misfortunate_Public_HeadLamp_h

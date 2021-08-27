@@ -32,10 +32,6 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameMode() {}
 		static const UE4CodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
 #if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_DistanceThreshold_MetaData[];
-#endif
-		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_DistanceThreshold;
-#if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_EventChance_MetaData[];
 #endif
 		static const UE4CodeGen_Private::FUnsizedIntPropertyParams NewProp_EventChance;
@@ -57,15 +53,6 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameMode() {}
 	};
 #endif
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_DistanceThreshold_MetaData[] = {
-		{ "Category", "MisfortunateGameMode" },
-		{ "Comment", "// Hold's the distance the players need to go away from each other until scare event's have the possibility of happening\n" },
-		{ "ModuleRelativePath", "Public/MisfortunateGameMode.h" },
-		{ "ToolTip", "Hold's the distance the players need to go away from each other until scare event's have the possibility of happening" },
-	};
-#endif
-	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_DistanceThreshold = { "DistanceThreshold", nullptr, (EPropertyFlags)0x0010000000020001, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AMisfortunateGameMode, DistanceThreshold), METADATA_PARAMS(Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_DistanceThreshold_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_DistanceThreshold_MetaData)) };
-#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_EventChance_MetaData[] = {
 		{ "Category", "MisfortunateGameMode" },
 		{ "Comment", "// The percent chance that a player will be scared by a event\n" },
@@ -75,7 +62,6 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameMode() {}
 #endif
 	const UE4CodeGen_Private::FUnsizedIntPropertyParams Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_EventChance = { "EventChance", nullptr, (EPropertyFlags)0x0010000000020001, UE4CodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AMisfortunateGameMode, EventChance), METADATA_PARAMS(Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_EventChance_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_EventChance_MetaData)) };
 	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AMisfortunateGameMode_Statics::PropPointers[] = {
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_DistanceThreshold,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AMisfortunateGameMode_Statics::NewProp_EventChance,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_AMisfortunateGameMode_Statics::StaticCppClassTypeInfo = {
@@ -105,7 +91,7 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameMode() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AMisfortunateGameMode, 1480284101);
+	IMPLEMENT_CLASS(AMisfortunateGameMode, 3385446464);
 	template<> MISFORTUNATE_API UClass* StaticClass<AMisfortunateGameMode>()
 	{
 		return AMisfortunateGameMode::StaticClass();

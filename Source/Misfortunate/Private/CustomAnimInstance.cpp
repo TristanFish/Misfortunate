@@ -17,20 +17,35 @@ void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 
-	AActor* OwningActor = GetOwningActor();
 
-	if (OwningActor != nullptr) {
-		speed = OwningActor->GetVelocity().Size();
-		direction = CalculateDirection(OwningActor->GetVelocity(), OwningActor->GetActorRotation());
-
+	if (CharPlayer != nullptr) {
+		speed = CharPlayer->GetVelocity().Size();
+		direction = CalculateDirection(CharPlayer->GetVelocity(), CharPlayer->GetActorRotation());
 
 
-		APlayerCharacter* OwningCharacter = Cast<APlayerCharacter>(OwningActor);
 
-		if (OwningCharacter != nullptr)
+		if (CharPlayer != nullptr)
 		{
-			IsInAir = OwningCharacter->GetCharacterMovement()->IsFalling();
+			IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
+
+			IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
+			IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
+
 		}
 	}
+
+}
+
+void UCustomAnimInstance::NativeBeginPlay()
+{
+	AActor* OwningActor = GetOwningActor();
+
+	if (OwningActor != nullptr)
+	{
+		APlayerCharacter* OwningCharacter = Cast<APlayerCharacter>(OwningActor);
+
+		CharPlayer = OwningCharacter;
+	}
+
 
 }

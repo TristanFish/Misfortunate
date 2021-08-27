@@ -267,7 +267,7 @@
 /FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h"
 /Yu"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h"
 /Fp"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.pch"
-"D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private\Glowstick.cpp"
+"D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private\Actors\Glowstick.cpp"
 /FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h"
 /Fo"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Glowstick.cpp.obj"
 /TP

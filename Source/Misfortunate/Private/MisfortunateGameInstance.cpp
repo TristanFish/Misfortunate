@@ -6,15 +6,11 @@
 
 UMisfortunateGameInstance::UMisfortunateGameInstance()
 {
-	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 }
 
 void UMisfortunateGameInstance::Init()
 {
-	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
+	
 }
 
-AScareEventManager* UMisfortunateGameInstance::GetScareEventManager() const{
 
-	return scareManager;
-}

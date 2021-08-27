@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "ScareEventManager.h"
+
 #include "MisfortunateGameInstance.generated.h"
 
 /**
@@ -16,9 +16,6 @@ class MISFORTUNATE_API UMisfortunateGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-	//!GetScareEventManager Getter
-	/*!Returns a pointer to the games scareManager*/
-	AScareEventManager* GetScareEventManager() const;
 	
 
 	UMisfortunateGameInstance();
@@ -29,9 +26,5 @@ public:
 
 protected:
 
-	//!ScareManager AScareEventManager
-	/*!Pointer to the games scare manager singleton*/
-	 AScareEventManager* scareManager;
-
-
+	
 };
