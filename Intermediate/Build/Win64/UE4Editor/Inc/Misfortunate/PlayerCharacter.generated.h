@@ -8,6 +8,7 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+struct FVector;
 struct FRotator;
 #ifdef MISFORTUNATE_PlayerCharacter_generated_h
 #error "PlayerCharacter.generated.h already included, missing '#pragma once' in PlayerCharacter.h"
@@ -18,34 +19,46 @@ struct FRotator;
 #define Misfortunate_Source_Misfortunate_Public_PlayerCharacter_h_30_RPC_WRAPPERS \
 	virtual bool Client_SetMisfortune_Validate(const float ); \
 	virtual void Client_SetMisfortune_Implementation(const float Misfortune_); \
-	virtual bool Server_ThrowGlowstick_Validate(); \
-	virtual void Server_ThrowGlowstick_Implementation(); \
-	virtual bool Multi_UpdateLookRotation_Validate(FRotator ); \
-	virtual void Multi_UpdateLookRotation_Implementation(FRotator rot); \
+	virtual bool Server_UpdateMovementState_Validate(CrawlStates , float , float , FVector ); \
+	virtual void Server_UpdateMovementState_Implementation(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc); \
 	virtual bool Server_TriggerHeadLamp_Validate(); \
 	virtual void Server_TriggerHeadLamp_Implementation(); \
+	virtual bool Server_ThrowGlowstick_Validate(); \
+	virtual void Server_ThrowGlowstick_Implementation(); \
+	virtual bool Multi_UpdateMovementState_Validate(CrawlStates , float , float , FVector ); \
+	virtual void Multi_UpdateMovementState_Implementation(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc); \
+	virtual bool Multi_UpdateLookRotation_Validate(FRotator ); \
+	virtual void Multi_UpdateLookRotation_Implementation(FRotator rot); \
  \
 	DECLARE_FUNCTION(execClient_SetMisfortune); \
-	DECLARE_FUNCTION(execServer_ThrowGlowstick); \
-	DECLARE_FUNCTION(execMulti_UpdateLookRotation); \
+	DECLARE_FUNCTION(execServer_UpdateMovementState); \
 	DECLARE_FUNCTION(execServer_TriggerHeadLamp); \
+	DECLARE_FUNCTION(execServer_ThrowGlowstick); \
+	DECLARE_FUNCTION(execMulti_UpdateMovementState); \
+	DECLARE_FUNCTION(execMulti_UpdateLookRotation); \
 	DECLARE_FUNCTION(execTickStamina);
 
 
 #define Misfortunate_Source_Misfortunate_Public_PlayerCharacter_h_30_RPC_WRAPPERS_NO_PURE_DECLS \
 	virtual bool Client_SetMisfortune_Validate(const float ); \
 	virtual void Client_SetMisfortune_Implementation(const float Misfortune_); \
-	virtual bool Server_ThrowGlowstick_Validate(); \
-	virtual void Server_ThrowGlowstick_Implementation(); \
-	virtual bool Multi_UpdateLookRotation_Validate(FRotator ); \
-	virtual void Multi_UpdateLookRotation_Implementation(FRotator rot); \
+	virtual bool Server_UpdateMovementState_Validate(CrawlStates , float , float , FVector ); \
+	virtual void Server_UpdateMovementState_Implementation(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc); \
 	virtual bool Server_TriggerHeadLamp_Validate(); \
 	virtual void Server_TriggerHeadLamp_Implementation(); \
+	virtual bool Server_ThrowGlowstick_Validate(); \
+	virtual void Server_ThrowGlowstick_Implementation(); \
+	virtual bool Multi_UpdateMovementState_Validate(CrawlStates , float , float , FVector ); \
+	virtual void Multi_UpdateMovementState_Implementation(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc); \
+	virtual bool Multi_UpdateLookRotation_Validate(FRotator ); \
+	virtual void Multi_UpdateLookRotation_Implementation(FRotator rot); \
  \
 	DECLARE_FUNCTION(execClient_SetMisfortune); \
-	DECLARE_FUNCTION(execServer_ThrowGlowstick); \
-	DECLARE_FUNCTION(execMulti_UpdateLookRotation); \
+	DECLARE_FUNCTION(execServer_UpdateMovementState); \
 	DECLARE_FUNCTION(execServer_TriggerHeadLamp); \
+	DECLARE_FUNCTION(execServer_ThrowGlowstick); \
+	DECLARE_FUNCTION(execMulti_UpdateMovementState); \
+	DECLARE_FUNCTION(execMulti_UpdateLookRotation); \
 	DECLARE_FUNCTION(execTickStamina);
 
 
@@ -57,6 +70,20 @@ struct FRotator;
 	struct PlayerCharacter_eventMulti_UpdateLookRotation_Parms \
 	{ \
 		FRotator rot; \
+	}; \
+	struct PlayerCharacter_eventMulti_UpdateMovementState_Parms \
+	{ \
+		TEnumAsByte<CrawlStates> CrawlState_; \
+		float TargetRad; \
+		float TargetHalfHeight; \
+		FVector TargetLoc; \
+	}; \
+	struct PlayerCharacter_eventServer_UpdateMovementState_Parms \
+	{ \
+		TEnumAsByte<CrawlStates> CrawlState_; \
+		float TargetRad; \
+		float TargetHalfHeight; \
+		FVector TargetLoc; \
 	};
 
 

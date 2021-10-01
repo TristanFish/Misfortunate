@@ -4,21 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "AdvancedFriendsGameInstance.h"
 
 #include "MisfortunateGameInstance.generated.h"
+
 
 /**
  * 
  */
 UCLASS()
-class MISFORTUNATE_API UMisfortunateGameInstance : public UGameInstance
+class MISFORTUNATE_API UMisfortunateGameInstance : public UAdvancedFriendsGameInstance
 {
 	GENERATED_BODY()
 	
 public:
 	
 
-	UMisfortunateGameInstance();
+	
 
 	//!Init Function
 	/*!Initializes any needed variables when the game is started*/

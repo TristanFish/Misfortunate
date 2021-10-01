@@ -18,11 +18,17 @@ AMPlayerController::AMPlayerController()
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> InteractionClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Interaction"));
 	InteractionWidgetClass = InteractionClass.Class;
+
+
+	
 }
 
 void AMPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerCameraManager->ViewPitchMin = -70.0f;
+	PlayerCameraManager->ViewPitchMax = 65.0f;
 }
 
 void AMPlayerController::Tick(float DeltaTime)
@@ -118,6 +124,7 @@ void AMPlayerController::HideInteraction()
 		InteractionWidget->RemoveFromViewport();
 		Cast<UWInteraction>(InteractionWidget)->UnBindDelegate();
 	}
+
 }
 
 void AMPlayerController::AddToTabletsCollected(ALoreTablet* tablet)
@@ -177,6 +184,21 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet
 bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tablet)
 {
 	return true;
+}
+
+void AMPlayerController::SetViewYawExtents(float minYaw, float maxYaw)
+{
+
+	FRotator rot = GetControlRotation();
+	
+	PlayerCameraManager->ViewYawMin = rot.Yaw - FMath::Abs(minYaw);
+	PlayerCameraManager->ViewYawMax = rot.Yaw + maxYaw;
+}
+
+void AMPlayerController::SetViewPitchExtents(float minPitch, float maxPitch)
+{
+	PlayerCameraManager->ViewPitchMin = minPitch;
+	PlayerCameraManager->ViewPitchMax =  maxPitch;
 }
 
 TArray<ALoreTablet*> AMPlayerController::GetCollectedTablets()

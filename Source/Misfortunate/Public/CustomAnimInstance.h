@@ -30,6 +30,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		float direction;
 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
+		float oldMovementDir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
+		float BackwardDir;
+
 	//!IsInAir Bool 
 	/*!Updated when player is/isnt in air (Used for jumping)*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
@@ -44,6 +51,8 @@ public:
 	/*!Updated when player is/isnt crawling*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		bool IsCrouched;
+
+
 
 	//!NativeUpdateAnimation Function 
 	/*!Updates the current animations variables while the animation runs*/

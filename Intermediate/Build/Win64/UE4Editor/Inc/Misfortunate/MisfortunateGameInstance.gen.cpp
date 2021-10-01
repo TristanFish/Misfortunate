@@ -15,7 +15,7 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameInstance() {}
 // Cross Module References
 	MISFORTUNATE_API UClass* Z_Construct_UClass_UMisfortunateGameInstance_NoRegister();
 	MISFORTUNATE_API UClass* Z_Construct_UClass_UMisfortunateGameInstance();
-	ENGINE_API UClass* Z_Construct_UClass_UGameInstance();
+	ADVANCEDSESSIONS_API UClass* Z_Construct_UClass_UAdvancedFriendsGameInstance();
 	UPackage* Z_Construct_UPackage__Script_Misfortunate();
 // End Cross Module References
 	void UMisfortunateGameInstance::StaticRegisterNativesUMisfortunateGameInstance()
@@ -35,7 +35,7 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameInstance() {}
 		static const UE4CodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_UMisfortunateGameInstance_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_UGameInstance,
+		(UObject* (*)())Z_Construct_UClass_UAdvancedFriendsGameInstance,
 		(UObject* (*)())Z_Construct_UPackage__Script_Misfortunate,
 	};
 #if WITH_METADATA
@@ -72,7 +72,7 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateGameInstance() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UMisfortunateGameInstance, 338357976);
+	IMPLEMENT_CLASS(UMisfortunateGameInstance, 777908103);
 	template<> MISFORTUNATE_API UClass* StaticClass<UMisfortunateGameInstance>()
 	{
 		return UMisfortunateGameInstance::StaticClass();

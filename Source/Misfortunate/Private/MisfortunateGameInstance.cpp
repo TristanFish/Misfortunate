@@ -4,9 +4,7 @@
 #include "MisfortunateGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-UMisfortunateGameInstance::UMisfortunateGameInstance()
-{
-}
+
 
 void UMisfortunateGameInstance::Init()
 {

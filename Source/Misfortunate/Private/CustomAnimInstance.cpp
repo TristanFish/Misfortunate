@@ -9,7 +9,9 @@ UCustomAnimInstance::UCustomAnimInstance()
 {
 	speed = 0.0f;
 	direction = 0.0f;
+	BackwardDir = 180.0f;
 	IsInAir = false;
+
 }
 
 void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -20,18 +22,35 @@ void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (CharPlayer != nullptr) {
 		speed = CharPlayer->GetVelocity().Size();
-		direction = CalculateDirection(CharPlayer->GetVelocity(), CharPlayer->GetActorRotation());
+
+		float CalcDirLocal;
+
+		CalcDirLocal = CalculateDirection(CharPlayer->GetVelocity(), CharPlayer->GetActorRotation());
 
 
-
-		if (CharPlayer != nullptr)
+		if (FMath::IsNearlyEqual(FMath::Abs(CalcDirLocal), BackwardDir, 1.0f))
 		{
-			IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
-
-			IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
-			IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
-
+			if (oldMovementDir < 0.0f)
+			{
+				direction = BackwardDir * -1.0f;
+			}
+			else
+			{
+				direction = BackwardDir;
+			}
 		}
+		else
+		{
+			direction = CalcDirLocal;
+		}
+
+		oldMovementDir = direction;
+
+
+		IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
+
+		IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
+		IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
 	}
 
 }

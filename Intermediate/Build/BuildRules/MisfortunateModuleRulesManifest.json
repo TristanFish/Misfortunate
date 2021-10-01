@@ -1,6 +1,8 @@
 {
 	"SourceFiles": [
 		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate\\Misfortunate.Build.cs",
+		"D:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSessions\\Source\\AdvancedSessions\\AdvancedSessions.Build.cs",
+		"D:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSteamSessions\\Source\\AdvancedSteamSessions\\AdvancedSteamSessions.Build.cs",
 		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
 		"D:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs"
 	],

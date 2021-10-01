@@ -73,14 +73,9 @@ public:
 	void ToggleJournal();
 	// Delegate Functions
 
-
-	
 	void DisplayTabletInteraction(ALoreTablet* tablet);
 
 	void HideInteraction();
-
-
-
 	void AddToTabletsCollected(ALoreTablet* tablet);
 
 	void AddTabletsToAllPlayers(ALoreTablet* tablet);
@@ -91,6 +86,11 @@ public:
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_AddToTabletsCollected(ALoreTablet* tablet);
 
+
+	
+	void SetViewYawExtents(float minYaw, float maxYaw);
+
+	void SetViewPitchExtents(float minPitch, float maxPitch);
 
 
 public:

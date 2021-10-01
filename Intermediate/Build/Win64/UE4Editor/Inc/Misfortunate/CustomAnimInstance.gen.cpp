@@ -46,6 +46,14 @@ void EmptyLinkFunctionForGeneratedCodeCustomAnimInstance() {}
 #endif
 		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_direction;
 #if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_oldMovementDir_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_oldMovementDir;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_BackwardDir_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_BackwardDir;
+#if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_IsInAir_MetaData[];
 #endif
 		static void NewProp_IsInAir_SetBit(void* Obj);
@@ -104,6 +112,20 @@ void EmptyLinkFunctionForGeneratedCodeCustomAnimInstance() {}
 #endif
 	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_direction = { "direction", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomAnimInstance, direction), METADATA_PARAMS(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_direction_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_direction_MetaData)) };
 #if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_oldMovementDir_MetaData[] = {
+		{ "Category", "Generic" },
+		{ "ModuleRelativePath", "Public/CustomAnimInstance.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_oldMovementDir = { "oldMovementDir", nullptr, (EPropertyFlags)0x0010000000020005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomAnimInstance, oldMovementDir), METADATA_PARAMS(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_oldMovementDir_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_oldMovementDir_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_BackwardDir_MetaData[] = {
+		{ "Category", "Generic" },
+		{ "ModuleRelativePath", "Public/CustomAnimInstance.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_BackwardDir = { "BackwardDir", nullptr, (EPropertyFlags)0x0010000000020005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(UCustomAnimInstance, BackwardDir), METADATA_PARAMS(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_BackwardDir_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_BackwardDir_MetaData)) };
+#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_IsInAir_MetaData[] = {
 		{ "Category", "Generic" },
 		{ "Comment", "/*!Updated when player is/isnt in air (Used for jumping)*/" },
@@ -146,6 +168,8 @@ void EmptyLinkFunctionForGeneratedCodeCustomAnimInstance() {}
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_CharPlayer,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_speed,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_direction,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_oldMovementDir,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_BackwardDir,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_IsInAir,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_IsCrawling,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UCustomAnimInstance_Statics::NewProp_IsCrouched,
@@ -177,7 +201,7 @@ void EmptyLinkFunctionForGeneratedCodeCustomAnimInstance() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UCustomAnimInstance, 2014823077);
+	IMPLEMENT_CLASS(UCustomAnimInstance, 2190174969);
 	template<> MISFORTUNATE_API UClass* StaticClass<UCustomAnimInstance>()
 	{
 		return UCustomAnimInstance::StaticClass();

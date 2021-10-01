@@ -18,9 +18,9 @@ class AEventZone;
 UENUM()
 enum CrawlStates
 {
-	Stand,
-	Crouch,
-	Crawl,
+	Stand   UMETA(DisplayName = "Standing"),
+	Crouch UMETA(DisplayName = "Crouching"),
+	Crawl UMETA(DisplayName = "Crawling"),
 };
 
 
@@ -38,7 +38,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* playerCamera;
 
-
 	//!Stamina float
 	/*!The stamina that the player uses for walking & running*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement)
@@ -49,40 +48,49 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 		float SprintMultiplier;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-		TEnumAsByte<CrawlStates> CrawlState;
+	
 
 	// Crawl Variables
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
 		float StandRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-		float CrouchRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-		float CrawlRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
 		float StandHalfHeight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
+		FVector StandMeshPos;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		float CrouchRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
 		float CrouchHalfHeight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-		float CrawlHalfHeight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		FVector CrouchMeshPos;
 
-
-	FVector StartMeshPos;
-
-	FVector ProneMeshPos;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
 		bool IsCrouching;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
 		bool IsCrouchBlocked;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		TEnumAsByte<CrawlStates> CrawlState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		float CrawlRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		float CrawlHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		FVector CrawlMeshPos;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		bool IsCrawlBlocked;
 
 	// Crawl Variables
@@ -146,8 +154,8 @@ protected:
 
 	FVector VSelectInterpTarget(FVector Stand, FVector Crouch, FVector Crawl);
 
-	void HandleCrouchCrawl();
 
+	void HandleCrouchCrawl();
 
 	void ToggleCrawl();
 
@@ -155,9 +163,7 @@ protected:
 
 	FTimerHandle TickTraceCheckTimerHandle;
 
-
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_TriggerHeadLamp();
+		void UpdateMovementState(CrawlStates CrawlState_);
 	
 	//!ThrowGlowstick Function
 	/*!throws a glow stick in front of the player*/
@@ -166,12 +172,26 @@ protected:
 	UFUNCTION(NetMulticast,Unreliable, WithValidation)
 		void Multi_UpdateLookRotation(FRotator rot);
 
+
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multi_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
+
+
 	UFUNCTION(Server,Reliable,WithValidation)
 		void Server_ThrowGlowstick();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_TriggerHeadLamp();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
+
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_SetMisfortune(const float Misfortune_);
 
 	//!GetCurrentZone Getter
 	/*!Returns the current zone the players is in*/
@@ -185,8 +205,7 @@ public:
 
 	float GetMisfortune() const;
 
-	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_SetMisfortune(const float Misfortune_);
+	
 
 
 	void SetMisfortune(const float Misfortune_);

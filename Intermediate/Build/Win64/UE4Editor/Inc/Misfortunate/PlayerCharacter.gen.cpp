@@ -19,6 +19,7 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 	MISFORTUNATE_API UClass* Z_Construct_UClass_APlayerCharacter();
 	ENGINE_API UClass* Z_Construct_UClass_ACharacter();
 	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FRotator();
+	COREUOBJECT_API UScriptStruct* Z_Construct_UScriptStruct_FVector();
 	ENGINE_API UClass* Z_Construct_UClass_UCameraComponent_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_UStaticMeshComponent_NoRegister();
 	MISFORTUNATE_API UClass* Z_Construct_UClass_AHeadLamp_NoRegister();
@@ -37,7 +38,7 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		return CrawlStates_StaticEnum();
 	}
 	static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_CrawlStates(CrawlStates_StaticEnum, TEXT("/Script/Misfortunate"), TEXT("CrawlStates"), false, nullptr, nullptr);
-	uint32 Get_Z_Construct_UEnum_Misfortunate_CrawlStates_Hash() { return 3157278310U; }
+	uint32 Get_Z_Construct_UEnum_Misfortunate_CrawlStates_Hash() { return 1117158683U; }
 	UEnum* Z_Construct_UEnum_Misfortunate_CrawlStates()
 	{
 #if WITH_HOT_RELOAD
@@ -55,9 +56,12 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 			};
 #if WITH_METADATA
 			const UE4CodeGen_Private::FMetaDataPairParam Enum_MetaDataParams[] = {
+				{ "Crawl.DisplayName", "Crawling" },
 				{ "Crawl.Name", "Crawl" },
+				{ "Crouch.DisplayName", "Crouching" },
 				{ "Crouch.Name", "Crouch" },
 				{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+				{ "Stand.DisplayName", "Standing" },
 				{ "Stand.Name", "Stand" },
 			};
 #endif
@@ -91,6 +95,34 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		P_THIS->Client_SetMisfortune_Implementation(Z_Param_Misfortune_);
 		P_NATIVE_END;
 	}
+	DEFINE_FUNCTION(APlayerCharacter::execServer_UpdateMovementState)
+	{
+		P_GET_PROPERTY(FByteProperty,Z_Param_CrawlState_);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_TargetRad);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_TargetHalfHeight);
+		P_GET_STRUCT(FVector,Z_Param_TargetLoc);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		if (!P_THIS->Server_UpdateMovementState_Validate(CrawlStates(Z_Param_CrawlState_),Z_Param_TargetRad,Z_Param_TargetHalfHeight,Z_Param_TargetLoc))
+		{
+			RPC_ValidateFailed(TEXT("Server_UpdateMovementState_Validate"));
+			return;
+		}
+		P_THIS->Server_UpdateMovementState_Implementation(CrawlStates(Z_Param_CrawlState_),Z_Param_TargetRad,Z_Param_TargetHalfHeight,Z_Param_TargetLoc);
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(APlayerCharacter::execServer_TriggerHeadLamp)
+	{
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		if (!P_THIS->Server_TriggerHeadLamp_Validate())
+		{
+			RPC_ValidateFailed(TEXT("Server_TriggerHeadLamp_Validate"));
+			return;
+		}
+		P_THIS->Server_TriggerHeadLamp_Implementation();
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(APlayerCharacter::execServer_ThrowGlowstick)
 	{
 		P_FINISH;
@@ -101,6 +133,22 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 			return;
 		}
 		P_THIS->Server_ThrowGlowstick_Implementation();
+		P_NATIVE_END;
+	}
+	DEFINE_FUNCTION(APlayerCharacter::execMulti_UpdateMovementState)
+	{
+		P_GET_PROPERTY(FByteProperty,Z_Param_CrawlState_);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_TargetRad);
+		P_GET_PROPERTY(FFloatProperty,Z_Param_TargetHalfHeight);
+		P_GET_STRUCT(FVector,Z_Param_TargetLoc);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		if (!P_THIS->Multi_UpdateMovementState_Validate(CrawlStates(Z_Param_CrawlState_),Z_Param_TargetRad,Z_Param_TargetHalfHeight,Z_Param_TargetLoc))
+		{
+			RPC_ValidateFailed(TEXT("Multi_UpdateMovementState_Validate"));
+			return;
+		}
+		P_THIS->Multi_UpdateMovementState_Implementation(CrawlStates(Z_Param_CrawlState_),Z_Param_TargetRad,Z_Param_TargetHalfHeight,Z_Param_TargetLoc);
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(APlayerCharacter::execMulti_UpdateLookRotation)
@@ -114,18 +162,6 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 			return;
 		}
 		P_THIS->Multi_UpdateLookRotation_Implementation(Z_Param_rot);
-		P_NATIVE_END;
-	}
-	DEFINE_FUNCTION(APlayerCharacter::execServer_TriggerHeadLamp)
-	{
-		P_FINISH;
-		P_NATIVE_BEGIN;
-		if (!P_THIS->Server_TriggerHeadLamp_Validate())
-		{
-			RPC_ValidateFailed(TEXT("Server_TriggerHeadLamp_Validate"));
-			return;
-		}
-		P_THIS->Server_TriggerHeadLamp_Implementation();
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(APlayerCharacter::execTickStamina)
@@ -149,6 +185,16 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		Parms.rot=rot;
 		ProcessEvent(FindFunctionChecked(NAME_APlayerCharacter_Multi_UpdateLookRotation),&Parms);
 	}
+	static FName NAME_APlayerCharacter_Multi_UpdateMovementState = FName(TEXT("Multi_UpdateMovementState"));
+	void APlayerCharacter::Multi_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc)
+	{
+		PlayerCharacter_eventMulti_UpdateMovementState_Parms Parms;
+		Parms.CrawlState_=CrawlState_;
+		Parms.TargetRad=TargetRad;
+		Parms.TargetHalfHeight=TargetHalfHeight;
+		Parms.TargetLoc=TargetLoc;
+		ProcessEvent(FindFunctionChecked(NAME_APlayerCharacter_Multi_UpdateMovementState),&Parms);
+	}
 	static FName NAME_APlayerCharacter_Server_ThrowGlowstick = FName(TEXT("Server_ThrowGlowstick"));
 	void APlayerCharacter::Server_ThrowGlowstick()
 	{
@@ -159,14 +205,26 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 	{
 		ProcessEvent(FindFunctionChecked(NAME_APlayerCharacter_Server_TriggerHeadLamp),NULL);
 	}
+	static FName NAME_APlayerCharacter_Server_UpdateMovementState = FName(TEXT("Server_UpdateMovementState"));
+	void APlayerCharacter::Server_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc)
+	{
+		PlayerCharacter_eventServer_UpdateMovementState_Parms Parms;
+		Parms.CrawlState_=CrawlState_;
+		Parms.TargetRad=TargetRad;
+		Parms.TargetHalfHeight=TargetHalfHeight;
+		Parms.TargetLoc=TargetLoc;
+		ProcessEvent(FindFunctionChecked(NAME_APlayerCharacter_Server_UpdateMovementState),&Parms);
+	}
 	void APlayerCharacter::StaticRegisterNativesAPlayerCharacter()
 	{
 		UClass* Class = APlayerCharacter::StaticClass();
 		static const FNameNativePtrPair Funcs[] = {
 			{ "Client_SetMisfortune", &APlayerCharacter::execClient_SetMisfortune },
 			{ "Multi_UpdateLookRotation", &APlayerCharacter::execMulti_UpdateLookRotation },
+			{ "Multi_UpdateMovementState", &APlayerCharacter::execMulti_UpdateMovementState },
 			{ "Server_ThrowGlowstick", &APlayerCharacter::execServer_ThrowGlowstick },
 			{ "Server_TriggerHeadLamp", &APlayerCharacter::execServer_TriggerHeadLamp },
+			{ "Server_UpdateMovementState", &APlayerCharacter::execServer_UpdateMovementState },
 			{ "TickStamina", &APlayerCharacter::execTickStamina },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
@@ -235,6 +293,43 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics
+	{
+		static const UE4CodeGen_Private::FBytePropertyParams NewProp_CrawlState_;
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_TargetRad;
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_TargetHalfHeight;
+		static const UE4CodeGen_Private::FStructPropertyParams NewProp_TargetLoc;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_CrawlState_ = { "CrawlState_", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventMulti_UpdateMovementState_Parms, CrawlState_), Z_Construct_UEnum_Misfortunate_CrawlStates, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetRad = { "TargetRad", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventMulti_UpdateMovementState_Parms, TargetRad), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetHalfHeight = { "TargetHalfHeight", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventMulti_UpdateMovementState_Parms, TargetHalfHeight), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FStructPropertyParams Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetLoc = { "TargetLoc", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventMulti_UpdateMovementState_Parms, TargetLoc), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_CrawlState_,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetRad,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetHalfHeight,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::NewProp_TargetLoc,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APlayerCharacter, nullptr, "Multi_UpdateMovementState", nullptr, nullptr, sizeof(PlayerCharacter_eventMulti_UpdateMovementState_Parms), Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x80884CC0, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_APlayerCharacter_Server_ThrowGlowstick_Statics
 	{
 #if WITH_METADATA
@@ -276,6 +371,43 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		if (!ReturnFunction)
 		{
 			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_APlayerCharacter_Server_TriggerHeadLamp_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics
+	{
+		static const UE4CodeGen_Private::FBytePropertyParams NewProp_CrawlState_;
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_TargetRad;
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_TargetHalfHeight;
+		static const UE4CodeGen_Private::FStructPropertyParams NewProp_TargetLoc;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_CrawlState_ = { "CrawlState_", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventServer_UpdateMovementState_Parms, CrawlState_), Z_Construct_UEnum_Misfortunate_CrawlStates, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetRad = { "TargetRad", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventServer_UpdateMovementState_Parms, TargetRad), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetHalfHeight = { "TargetHalfHeight", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventServer_UpdateMovementState_Parms, TargetHalfHeight), METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FStructPropertyParams Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetLoc = { "TargetLoc", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(PlayerCharacter_eventServer_UpdateMovementState_Parms, TargetLoc), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_CrawlState_,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetRad,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetHalfHeight,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::NewProp_TargetLoc,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_APlayerCharacter, nullptr, "Server_UpdateMovementState", nullptr, nullptr, sizeof(PlayerCharacter_eventServer_UpdateMovementState_Parms), Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x80A80CC0, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -327,33 +459,29 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 #endif
 		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_SprintMultiplier;
 #if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlState_MetaData[];
-#endif
-		static const UE4CodeGen_Private::FBytePropertyParams NewProp_CrawlState;
-#if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_StandRadius_MetaData[];
 #endif
 		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_StandRadius;
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrouchRadius_MetaData[];
-#endif
-		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrouchRadius;
-#if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlRadius_MetaData[];
-#endif
-		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrawlRadius;
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_StandHalfHeight_MetaData[];
 #endif
 		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_StandHalfHeight;
 #if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_StandMeshPos_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FStructPropertyParams NewProp_StandMeshPos;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrouchRadius_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrouchRadius;
+#if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrouchHalfHeight_MetaData[];
 #endif
 		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrouchHalfHeight;
 #if WITH_METADATA
-		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlHalfHeight_MetaData[];
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrouchMeshPos_MetaData[];
 #endif
-		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrawlHalfHeight;
+		static const UE4CodeGen_Private::FStructPropertyParams NewProp_CrouchMeshPos;
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_IsCrouching_MetaData[];
 #endif
@@ -364,6 +492,22 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 #endif
 		static void NewProp_IsCrouchBlocked_SetBit(void* Obj);
 		static const UE4CodeGen_Private::FBoolPropertyParams NewProp_IsCrouchBlocked;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlState_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FBytePropertyParams NewProp_CrawlState;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlRadius_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrawlRadius;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlHalfHeight_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FFloatPropertyParams NewProp_CrawlHalfHeight;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CrawlMeshPos_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FStructPropertyParams NewProp_CrawlMeshPos;
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_IsCrawlBlocked_MetaData[];
 #endif
@@ -396,8 +540,10 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 	const FClassFunctionLinkInfo Z_Construct_UClass_APlayerCharacter_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_APlayerCharacter_Client_SetMisfortune, "Client_SetMisfortune" }, // 3372309244
 		{ &Z_Construct_UFunction_APlayerCharacter_Multi_UpdateLookRotation, "Multi_UpdateLookRotation" }, // 2193867772
+		{ &Z_Construct_UFunction_APlayerCharacter_Multi_UpdateMovementState, "Multi_UpdateMovementState" }, // 892605263
 		{ &Z_Construct_UFunction_APlayerCharacter_Server_ThrowGlowstick, "Server_ThrowGlowstick" }, // 443569999
 		{ &Z_Construct_UFunction_APlayerCharacter_Server_TriggerHeadLamp, "Server_TriggerHeadLamp" }, // 2616802920
+		{ &Z_Construct_UFunction_APlayerCharacter_Server_UpdateMovementState, "Server_UpdateMovementState" }, // 3486357867
 		{ &Z_Construct_UFunction_APlayerCharacter_TickStamina, "TickStamina" }, // 2452598153
 	};
 #if WITH_METADATA
@@ -437,15 +583,8 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 #endif
 	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_SprintMultiplier = { "SprintMultiplier", nullptr, (EPropertyFlags)0x0010000000020015, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, SprintMultiplier), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_SprintMultiplier_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_SprintMultiplier_MetaData)) };
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData[] = {
-		{ "Category", "Movement" },
-		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
-	};
-#endif
-	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState = { "CrawlState", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlState), Z_Construct_UEnum_Misfortunate_CrawlStates, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData)) };
-#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandRadius_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Stand" },
 		{ "Comment", "// Crawl Variables\n" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 		{ "ToolTip", "Crawl Variables" },
@@ -453,43 +592,43 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 #endif
 	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandRadius = { "StandRadius", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, StandRadius), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandRadius_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandRadius_MetaData)) };
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData[] = {
-		{ "Category", "Movement" },
-		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
-	};
-#endif
-	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius = { "CrouchRadius", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrouchRadius), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData)) };
-#if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData[] = {
-		{ "Category", "Movement" },
-		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
-	};
-#endif
-	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius = { "CrawlRadius", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlRadius), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData)) };
-#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandHalfHeight_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Stand" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
 	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandHalfHeight = { "StandHalfHeight", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, StandHalfHeight), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandHalfHeight_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandHalfHeight_MetaData)) };
 #if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandMeshPos_MetaData[] = {
+		{ "Category", "MovementSettings|Stand" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FStructPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandMeshPos = { "StandMeshPos", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, StandMeshPos), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandMeshPos_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandMeshPos_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData[] = {
+		{ "Category", "MovementSettings|Crouch" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius = { "CrouchRadius", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrouchRadius), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius_MetaData)) };
+#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchHalfHeight_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Crouch" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
 	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchHalfHeight = { "CrouchHalfHeight", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrouchHalfHeight), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchHalfHeight_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchHalfHeight_MetaData)) };
 #if WITH_METADATA
-	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData[] = {
-		{ "Category", "Movement" },
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchMeshPos_MetaData[] = {
+		{ "Category", "MovementSettings|Crouch" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
-	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight = { "CrawlHalfHeight", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlHalfHeight), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData)) };
+	const UE4CodeGen_Private::FStructPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchMeshPos = { "CrouchMeshPos", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrouchMeshPos), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchMeshPos_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchMeshPos_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Crouch" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
@@ -500,7 +639,7 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching = { "IsCrouching", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(APlayerCharacter), &Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching_SetBit, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Crouch" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
@@ -510,8 +649,36 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 	}
 	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked = { "IsCrouchBlocked", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(APlayerCharacter), &Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked_SetBit, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked_MetaData)) };
 #if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData[] = {
+		{ "Category", "MovementSettings|Crawl" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState = { "CrawlState", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlState), Z_Construct_UEnum_Misfortunate_CrawlStates, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData[] = {
+		{ "Category", "MovementSettings|Crawl" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius = { "CrawlRadius", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlRadius), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData[] = {
+		{ "Category", "MovementSettings|Crawl" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FFloatPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight = { "CrawlHalfHeight", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlHalfHeight), METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlMeshPos_MetaData[] = {
+		{ "Category", "MovementSettings|Crawl" },
+		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FStructPropertyParams Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlMeshPos = { "CrawlMeshPos", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(APlayerCharacter, CrawlMeshPos), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlMeshPos_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlMeshPos_MetaData)) };
+#if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrawlBlocked_MetaData[] = {
-		{ "Category", "Movement" },
+		{ "Category", "MovementSettings|Crawl" },
 		{ "ModuleRelativePath", "Public/PlayerCharacter.h" },
 	};
 #endif
@@ -557,15 +724,18 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_playerCamera,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_Stamina,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_SprintMultiplier,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandRadius,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandHalfHeight,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_StandMeshPos,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchRadius,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchHalfHeight,
-		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrouchMeshPos,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouching,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrouchBlocked,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlState,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlRadius,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlHalfHeight,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_CrawlMeshPos,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_IsCrawlBlocked,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_Misfortune,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_APlayerCharacter_Statics::NewProp_AvailableGlowsticks,
@@ -599,7 +769,7 @@ void EmptyLinkFunctionForGeneratedCodePlayerCharacter() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(APlayerCharacter, 1748498016);
+	IMPLEMENT_CLASS(APlayerCharacter, 3924980201);
 	template<> MISFORTUNATE_API UClass* StaticClass<APlayerCharacter>()
 	{
 		return APlayerCharacter::StaticClass();

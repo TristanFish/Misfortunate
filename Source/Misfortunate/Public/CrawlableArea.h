@@ -15,6 +15,34 @@ public:
 	// Sets default values for this actor's properties
 	ACrawlableArea();
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = YawExtents)
+		float MinYawView;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = YawExtents)
+		float MaxYawView;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = YawExtents)
+		float PrevMinYawView;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = YawExtents)
+		float PrevMaxYawView;
+
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PitchExtents)
+		float MinPitchView;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PitchExtents)
+		float MaxPitchView;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PitchExtents)
+		float PrevMinPitchView;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = PitchExtents)
+		float PrevMaxPitchView;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -25,11 +53,11 @@ public:
 	
 	// declare overlap begin function
 	UFUNCTION()
-		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		void OnOverlapBegin(class AActor* OverlappedComp, class AActor* OtherActor);
 
 	// declare overlap end function
 	UFUNCTION()
-		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+		void OnOverlapEnd(class AActor* OverlappedComp, class AActor* OtherActor);
 
 
 };
