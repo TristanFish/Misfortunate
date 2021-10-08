@@ -38,4 +38,7 @@ protected:
 		void OnJoinButtonClicked();
 	UFUNCTION()
 		void OnCreateButtonClicked();
+
+	UFUNCTION() 
+		void OnBackFromNewMenu();
 };

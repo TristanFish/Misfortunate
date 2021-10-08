@@ -13,7 +13,7 @@ class UCreateSessionCallbackProxyAdvanced : public UOnlineBlueprintCallProxyBase
 
 	// Called when the session was created successfully
 	UPROPERTY(BlueprintAssignable)
-	FEmptyOnlineDelegate OnSuccess;
+		FEmptyOnlineDelegate OnSuccess;
 
 	// Called when there was an error creating the session
 	UPROPERTY(BlueprintAssignable)

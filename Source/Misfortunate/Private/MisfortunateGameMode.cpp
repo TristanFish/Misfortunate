@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "MPlayerController.h"
 #include "PlayerCharacter.h"
+#include "LobbyPlayerCharacter.h"
+
 #include "ScareEventManager.h"
 #include "LoreManager.h"
 #include "Actors/EventZone.h"
@@ -17,22 +19,40 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Misfortuante/Blueprints/Player_BP"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
-	// use our custom HUD class
-	HUDClass = AMisfortunateHUD::StaticClass();
+	static ConstructorHelpers::FClassFinder<AMPlayerController> PlayerControllerClassFinder(TEXT("/Game/Misfortuante/Blueprints/M_PlayerController"));
 
-
-
-	PlayerControllerClass = AMPlayerController::StaticClass();
+	PlayerControllerClass = PlayerControllerClassFinder.Class;
 
 	DistanceBetweenPlayers = 0.0f;
 
-	EventChance = 95;
+	CurrentState = GameState::Lobby;
+
+	EventChance = 15;
 }
 
 void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	ConnectedPlayers.AddUnique(NewPlayer);
+
+
+
+	for (auto possChar : PossessableCharacters)
+	{
+		ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
+		if (!lobbyChar->HasBeenPossesed)
+		{
+			Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+		}
+	}
+
+	Cast<AMPlayerController>(NewPlayer)->Client_InitalizeLobbyInfo();
+
+}
+
+void AMisfortunateGameMode::Logout(AController* OldPlayer)
+{
+
 }
 
 void AMisfortunateGameMode::BeginPlay()
@@ -42,9 +62,7 @@ void AMisfortunateGameMode::BeginPlay()
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
-	GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
-
-	
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
 }
 
 void AMisfortunateGameMode::Tick(float DeltaSeconds)
@@ -137,6 +155,22 @@ void AMisfortunateGameMode::TriggerScareEvent()
 
 
 
+void AMisfortunateGameMode::EveryoneUpdate()
+{
+	ConnectedPlayerInfos.Empty();
+
+	for (auto player : ConnectedPlayers)
+	{
+		AMPlayerController* controller = Cast<AMPlayerController>(player);
+
+		ConnectedPlayerInfos.Add(controller->PlayerInfo);
+	}
+	for (auto player : ConnectedPlayers)
+	{
+		Cast<AMPlayerController>(player)->Client_AddPlayersToList(ConnectedPlayerInfos);
+	}
+}
+
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const
 {
 	return scareManager;
@@ -170,4 +204,13 @@ void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* en
 		}
 	}
 
+}
+
+void AMisfortunateGameMode::SetGameState(GameState state_)
+{
+	CurrentState = state_;
+	if (CurrentState == GameState::Exploration)
+	{
+		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+	}
 }

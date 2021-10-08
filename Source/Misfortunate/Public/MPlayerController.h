@@ -16,6 +16,24 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNextPageClicked);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPrevPageClicked);
 
 
+USTRUCT(BlueprintType)
+struct FPlayerInfo {
+
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+		FString PlayerName;
+	UPROPERTY(BlueprintReadWrite)
+		UTexture2D* PlayerIcon;
+
+	FPlayerInfo()
+	{
+		PlayerName = "NONE";
+		PlayerIcon = nullptr;
+	}
+
+};
+
 UCLASS()
 class MISFORTUNATE_API AMPlayerController : public APlayerController
 {
@@ -29,15 +47,47 @@ protected:
 	UPROPERTY()
 		TSubclassOf<class UWInteraction> InteractionWidgetClass;
 
-	UPROPERTY()
-		class UUserWidget* InteractionWidget;
 
 	UPROPERTY()
-		class UUserWidget* JournalWidget;
+		TSubclassOf<class UWInteraction> HUDWidgetClass;
+
+	UPROPERTY()
+		class UWInteraction* InteractionWidget;
+
+	UPROPERTY()
+		class UWJournal* JournalWidget;
+
+	//UPROPERTY()
+		//class UUserWidget* HUDWidget;
+
+	
+	/*Lobby Variables*/
+
+	UPROPERTY()
+		TSubclassOf<class UWLobbyMenu> LobbyWidgetClass;
+
+	UPROPERTY()
+		TSubclassOf<class UWPlayerStatus> PlayerStatusWidgetClass;
+
+	UPROPERTY(BlueprintReadOnly)
+		class UWLobbyMenu* LobbyWidget;
+
+	
+	UPROPERTY(BlueprintReadWrite)
+		bool IsReady;
+
+	/*Lobby Variables*/
+
 
 	TArray<ALoreTablet*> CollectedTablets;
 
 public:
+
+	UPROPERTY(BlueprintReadWrite,Replicated)
+		FPlayerInfo PlayerInfo;
+
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		TArray<FPlayerInfo> AllPlayersInfo;
 
 	AMPlayerController();
 
@@ -63,6 +113,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
 
+	virtual void PawnLeavingGame() override;
+
 	// Delegate Functions
 	void InteractionOccurred();
 
@@ -76,6 +128,7 @@ public:
 	void DisplayTabletInteraction(ALoreTablet* tablet);
 
 	void HideInteraction();
+
 	void AddToTabletsCollected(ALoreTablet* tablet);
 
 	void AddTabletsToAllPlayers(ALoreTablet* tablet);
@@ -83,15 +136,41 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_AddTabletsToAllPlayers(ALoreTablet* tablet);
 
+	UFUNCTION(Server, Reliable, WithValidation,BlueprintCallable)
+		void Server_CallUpdate(FPlayerInfo playerInfo_);
+
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_AddToTabletsCollected(ALoreTablet* tablet);
 
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
+
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_InitalizeLobbyInfo();
+
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_UpdateReadyState(AMPlayerController* playerController);
+	
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_PossesNewCharacter(ACharacter* playerCharacter);
+
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	
+
+	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
+		void UpdatePlayerInfo();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void AddPlayerStatusWidget(const TArray<FPlayerInfo>& playerInfoList);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateReadyState(AMPlayerController* playerController);
+
 	void SetViewYawExtents(float minYaw, float maxYaw);
 
 	void SetViewPitchExtents(float minPitch, float maxPitch);
-
 
 public:
 	TArray<ALoreTablet*> GetCollectedTablets();

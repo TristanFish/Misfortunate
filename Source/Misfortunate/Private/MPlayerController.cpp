@@ -3,11 +3,19 @@
 
 #include "MPlayerController.h"
 #include "Blueprint/UserWidget.h"
+
 #include "Widgets/WJournal.h"
-#include "Actors/LoreTablet.h"
 #include "Widgets/WInteraction.h"
+#include "Widgets/WLobbyMenu.h"
+#include "Widgets/WPlayerStatus.h"
+
+#include "GameFramework/Character.h"
+#include "GameFramework/GameState.h"
+
+#include "Actors/LoreTablet.h"
 #include "MisfortunateGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 
 
@@ -19,16 +27,35 @@ AMPlayerController::AMPlayerController()
 	static ConstructorHelpers::FClassFinder<UUserWidget> InteractionClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Interaction"));
 	InteractionWidgetClass = InteractionClass.Class;
 
+	static ConstructorHelpers::FClassFinder<UUserWidget> LobbyClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_LobbyMenu"));
+	LobbyWidgetClass = LobbyClass.Class;
 
+	//static ConstructorHelpers::FClassFinder<UUserWidget> HUDClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_PlayerHUD"));
+	//HUDWidgetClass = HUDClass.Class;
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerStatusClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_PlayerStatus"));
+	PlayerStatusWidgetClass = PlayerStatusClass.Class;
 	
 }
 
 void AMPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	PlayerCameraManager->ViewPitchMin = -70.0f;
 	PlayerCameraManager->ViewPitchMax = 65.0f;
+
+
+	JournalWidget = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
+	InteractionWidget = CreateWidget<UWInteraction>(GetWorld(), InteractionWidgetClass);
+	//HUDWidgetClass = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
+
+	if(!LobbyWidget)
+		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+
+
+	LobbyWidget->AddToViewport();
+
 }
 
 void AMPlayerController::Tick(float DeltaTime)
@@ -55,6 +82,11 @@ void AMPlayerController::SetupInputComponent()
 
 }
 
+void AMPlayerController::PawnLeavingGame()
+{
+	UnPossess();
+}
+
 void AMPlayerController::InteractionOccurred() 
 {
 	InteractClicked.Broadcast();
@@ -74,16 +106,11 @@ void AMPlayerController::ToggleJournal()
 {
 	if (JournalWidgetClass != nullptr)
 	{
-		if (!JournalWidget)
-		{
-			JournalWidget = CreateWidget<UUserWidget>(GetWorld(), JournalWidgetClass);
-		}
-
 		if (JournalWidget->IsInViewport())
 		{
 			JournalWidget->RemoveFromViewport();
 			SetInputMode(FInputModeGameOnly());
-			Cast<UWJournal>(JournalWidget)->UnBindPageDelegates();
+			JournalWidget->UnBindPageDelegates();
 			bShowMouseCursor = false;
 
 		}
@@ -91,7 +118,7 @@ void AMPlayerController::ToggleJournal()
 		{
 			JournalWidget->AddToViewport();
 			SetInputMode(FInputModeGameAndUI());
-			Cast<UWJournal>(JournalWidget)->BindPageDelegates();
+			JournalWidget->BindPageDelegates();
 			bShowMouseCursor = true;
 		}
 	}
@@ -102,13 +129,13 @@ void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
 	if (InteractionWidgetClass != nullptr)
 	{
 
-		InteractionWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InteractionWidgetClass);
+		InteractionWidget = CreateWidget<UWInteraction>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InteractionWidgetClass);
 
 		if (InteractionWidget)
 		{
 			InteractionWidget->AddToViewport();
-			Cast<UWInteraction>(InteractionWidget)->SetLatestTablet(tablet);
-			Cast<UWInteraction>(InteractionWidget)->BindDelegate();
+			InteractionWidget->SetLatestTablet(tablet);
+			InteractionWidget->BindDelegate();
 		}
 		
 
@@ -117,12 +144,11 @@ void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
 
 void AMPlayerController::HideInteraction()
 {
-	UWInteraction* InteractWidget = Cast<UWInteraction>(InteractionWidget);
 
-	if (InteractWidget->InteractText->IsVisible())
+	if (InteractionWidget->InteractText->IsVisible())
 	{
 		InteractionWidget->RemoveFromViewport();
-		Cast<UWInteraction>(InteractionWidget)->UnBindDelegate();
+		InteractionWidget->UnBindDelegate();
 	}
 
 }
@@ -158,6 +184,20 @@ bool AMPlayerController::Server_AddTabletsToAllPlayers_Validate(ALoreTablet* tab
 	return true;
 }
 
+void AMPlayerController::Server_CallUpdate_Implementation(FPlayerInfo playerInfo_)
+{
+	PlayerInfo = playerInfo_;
+
+	AMisfortunateGameMode* gameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	gameMode->EveryoneUpdate();
+}
+
+bool AMPlayerController::Server_CallUpdate_Validate(FPlayerInfo playerInfo_)
+{
+	return true;
+}
+
 void AMPlayerController::AddTabletsToAllPlayers(ALoreTablet* tablet)
 {
 	Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->AddLoreTabletToAllPlayers(tablet);
@@ -168,22 +208,80 @@ void AMPlayerController::AddTabletsToAllPlayers(ALoreTablet* tablet)
 void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet* tablet)
 {
 
-	if (InteractionWidget == nullptr)
-	{
-		InteractionWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InteractionWidgetClass);
-	}
+	
 	if (!InteractionWidget->IsInViewport())
 	{
 		InteractionWidget->AddToViewport();
 	}
 
-	Cast<UWInteraction>(InteractionWidget)->PlayInteractionAnim();
+	InteractionWidget->PlayInteractionAnim();
 	CollectedTablets.Add(tablet);
 }
 
 bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tablet)
 {
 	return true;
+}
+
+
+void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FPlayerInfo>& playersInfo)
+{
+	if (!LobbyWidget)
+		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+
+	AllPlayersInfo = playersInfo;
+
+
+	AddPlayerStatusWidget(AllPlayersInfo);
+}
+
+bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerInfo>& playersInfo)
+{
+	return true;
+}
+
+
+void AMPlayerController::Client_InitalizeLobbyInfo_Implementation()
+{
+	UpdatePlayerInfo();
+	Server_CallUpdate(PlayerInfo);
+}
+
+bool AMPlayerController::Client_InitalizeLobbyInfo_Validate()
+{
+	return true;
+}
+
+void AMPlayerController::Client_UpdateReadyState_Implementation(AMPlayerController* playerController)
+{
+	UpdateReadyState(playerController);
+}
+
+bool AMPlayerController::Client_UpdateReadyState_Validate(AMPlayerController* playerController)
+{
+	return true;
+}
+
+
+
+void AMPlayerController::Client_PossesNewCharacter_Implementation(ACharacter* playerCharacter)
+{
+	this->UnPossess();
+	this->Possess(playerCharacter);
+}
+
+bool AMPlayerController::Client_PossesNewCharacter_Validate(ACharacter* playerCharacter)
+{
+	return true;
+}
+
+void AMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMPlayerController, PlayerInfo);
+	DOREPLIFETIME(AMPlayerController, AllPlayersInfo);
+
 }
 
 void AMPlayerController::SetViewYawExtents(float minYaw, float maxYaw)
@@ -200,6 +298,8 @@ void AMPlayerController::SetViewPitchExtents(float minPitch, float maxPitch)
 	PlayerCameraManager->ViewPitchMin = minPitch;
 	PlayerCameraManager->ViewPitchMax =  maxPitch;
 }
+
+
 
 TArray<ALoreTablet*> AMPlayerController::GetCollectedTablets()
 {

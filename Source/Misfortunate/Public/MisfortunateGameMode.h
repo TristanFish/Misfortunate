@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Engine/EngineTypes.h"
+#include "MPlayerController.h"
 #include "MisfortunateGameMode.generated.h"
 
 UCLASS()
@@ -19,18 +20,25 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	virtual void Logout(AController* OldPlayer) override;
+
+
 	virtual void BeginPlay() override;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	void CheckPlayersDistance();
+	
 
 	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
 
 
 public:
 
+	enum GameState { Lobby, Exploration };
 
 
+	GameState CurrentState;
 
 	// The percent chance that a player will be scared by a event
 	UPROPERTY(VisibleAnywhere)
@@ -48,8 +56,12 @@ public:
 
 	void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
 
+	void SetGameState(GameState state_);
 
-private:
+
+	void EveryoneUpdate();
+
+protected:
 	// The Character that was selected to have a scare event triggered on
 	APlayerController* selectedCharacter;
 
@@ -57,7 +69,12 @@ private:
 	// The distance the players are away from each other In the game
 	float DistanceBetweenPlayers;
 
+	// List of connected players
 	TArray<APlayerController*> ConnectedPlayers;
+
+	TArray<AActor*> PossessableCharacters;
+
+	TArray<FPlayerInfo> ConnectedPlayerInfos;
 
 	FTimerHandle CheckDistTimerHandle;
 	FTimerHandle TriggerEventTimerHandle;
@@ -70,10 +87,14 @@ private:
 	// Triggers a random scare event
 	void TriggerScareEvent();
 
+
+
 	//!GetScareEventManager Getter
 	/*!Returns a pointer to the games scareManager*/
 	AScareEventManager* GetScareEventManager() const;
 
+
+	// Returns a pointer to the lore manager
 	ALoreManager* GetLoreManager() const;
 
 

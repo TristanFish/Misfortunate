@@ -54,7 +54,7 @@ AScarePoint::AScarePoint(const FObjectInitializer& ObjectInitializer) : Super(Ob
 #endif // WITH_EDITORONLY_DATA
 
 	
-	ScareIconComponent->SetEditorScale(0.5);
+	//ScareIconComponent->SetEditorScale(0.5);
 
 }
 

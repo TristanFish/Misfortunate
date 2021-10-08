@@ -14,6 +14,8 @@ void UWPlayOptions::NativeConstruct()
 	JoinButton->OnClicked.AddDynamic(this, &UWPlayOptions::OnJoinButtonClicked);
 	CreateButton->OnClicked.AddDynamic(this, &UWPlayOptions::OnCreateButtonClicked);
 
+	W_ActiveGames->BackButton->OnClicked.AddDynamic(this, &UWPlayOptions::OnBackFromNewMenu);
+	//W_CreateGame->BackButton->OnClicked.AddDynamic(this, &UWPlayOptions::OnBackFromNewMenu);
 
 	W_ActiveGames->SetVisibility(ESlateVisibility::Hidden);
 	W_CreateGame->SetVisibility(ESlateVisibility::Hidden);
@@ -42,4 +44,22 @@ void UWPlayOptions::OnCreateButtonClicked()
 	}
 
 	W_CreateGame->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UWPlayOptions::OnBackFromNewMenu()
+{
+
+	if (W_CreateGame->IsVisible())
+	{
+		W_CreateGame->SetVisibility(ESlateVisibility::Hidden);
+
+	}
+
+	else if (W_ActiveGames->IsVisible())
+	{
+		W_ActiveGames->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	JoinButton->SetVisibility(ESlateVisibility::Visible);
+	CreateButton->SetVisibility(ESlateVisibility::Visible);
 }

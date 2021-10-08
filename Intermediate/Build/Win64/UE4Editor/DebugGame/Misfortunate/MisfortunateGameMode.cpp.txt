@@ -4,6 +4,8 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/GameModeBa
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/ServerStatReplicator.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\ServerStatReplicator.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameModeBase.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MPlayerController.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MPlayerController.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MisfortunateGameMode.generated.h
 D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MisfortunateHUD.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/HUD.h
@@ -23,8 +25,6 @@ G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Dialogue
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Kismet\GameplayStaticsTypes.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameplayStaticsTypes.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameplayStatics.generated.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MPlayerController.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MPlayerController.generated.h
 D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\PlayerCharacter.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/Character.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/CharacterMovementReplication.h
@@ -33,6 +33,8 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/RootMotion
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\RootMotionSource.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Character.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\PlayerCharacter.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\LobbyPlayerCharacter.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\LobbyPlayerCharacter.generated.h
 D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\ScareEventManager.h
 D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Actors/EventZone.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/TriggerVolume.h

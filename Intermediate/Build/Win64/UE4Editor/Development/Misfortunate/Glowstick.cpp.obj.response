@@ -238,6 +238,27 @@
 /I Runtime\AugmentedReality\Public
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\MRMesh
 /I Runtime\MRMesh\Public
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes"
+/I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystem
+/I ..\Plugins\Online\OnlineSubsystem
+/I ..\Plugins\Online\OnlineSubsystem\Source
+/I ..\Plugins\Online\OnlineSubsystem\Source\Public
+/I ..\Plugins\Online\OnlineSubsystemUtils\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemUtils
+/I ..\Plugins\Online\OnlineSubsystemUtils\Source
+/I ..\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Classes
+/I ..\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Public
+/I Runtime\Networking\Public
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source"
+/I ..\Plugins\Online\OnlineSubsystemSteam\Source\Private
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes"
+/I ThirdParty\Steamworks\Steamv147\sdk\public
+/I ..\Plugins\Online\OnlineSubsystemSteam\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemSteam
+/I ..\Plugins\Online\OnlineSubsystemSteam
+/I ..\Plugins\Online\OnlineSubsystemSteam\Source\Classes
+/I ..\Plugins\Online\OnlineSubsystemSteam\Source\Public
 /I ThirdParty\PhysX3\PxShared\include
 /I ThirdParty\PhysX3\PxShared\include\cudamanager
 /I ThirdParty\PhysX3\PxShared\include\filebuf
@@ -270,7 +291,7 @@
 /FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
 /Yu"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
 /Fp"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-"D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private\Glowstick.cpp"
+"D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private\Actors\Glowstick.cpp"
 /FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h"
 /Fo"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Glowstick.cpp.obj"
 /TP

@@ -29,4 +29,13 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UEditableTextBox* ServerNameTextBox = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UButton* ContinueButton = nullptr;
+
+
+protected:
+
+	UFUNCTION()
+		void OnContinueButtonClicked();
 };

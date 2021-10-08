@@ -12,14 +12,6 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/DebugTextI
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\DebugTextInfo.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\HUD.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MisfortunateHUD.generated.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MisfortunateCharacter.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/Character.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/CharacterMovementReplication.h
-G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\CharacterMovementReplication.generated.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/RootMotionSource.h
-G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\RootMotionSource.generated.h
-G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Character.generated.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MisfortunateCharacter.generated.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Kismet/GameplayStatics.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Kismet/KismetSystemLibrary.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/PropertyAccessUtil.h
@@ -31,19 +23,32 @@ G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Dialogue
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Kismet\GameplayStaticsTypes.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameplayStaticsTypes.generated.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\GameplayStatics.generated.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MisfortunateGameInstance.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\MPlayerController.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MPlayerController.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\PlayerCharacter.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/Character.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/CharacterMovementReplication.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\CharacterMovementReplication.generated.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/RootMotionSource.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\RootMotionSource.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\Character.generated.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\PlayerCharacter.generated.h
 D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\ScareEventManager.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\EventZone.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Actors/EventZone.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/TriggerVolume.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\TriggerVolume.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\EventZone.generated.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Sound/SoundCue.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Sound/SoundNode.h
-G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SoundNode.generated.h
-G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SoundCue.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Actors/ScarePoint.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\ScarePoint.generated.h
 D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\ScareEventManager.generated.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\MisfortunateGameInstance.generated.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\PlayerCharacter.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\HeadLamp.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\HeadLamp.generated.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\PlayerCharacter.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\LoreManager.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/DataTable.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Public\DataTableUtils.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\DataTable.generated.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Actors/LoreTablet.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/TriggerBox.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Engine/TriggerBase.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\TriggerBase.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\TriggerBox.generated.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\LoreTablet.generated.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\LoreManager.generated.h

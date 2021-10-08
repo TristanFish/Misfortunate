@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
+#include "BlueprintDataDefinitions.h"	
 #include "WPlayerStatus.generated.h"
 
 /**
@@ -24,5 +26,23 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UImage* IconTexture = nullptr;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetUserImage(const struct FBPUniqueNetId& unqiueNetID);
+
+
+	UFUNCTION(BlueprintCallable)
+		void InitPlayerStatus(FString PlayerName_, UTexture2D* IconImage);
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateReadyState(bool ReadyState_);
+
+
+	FString GetPlayerName() const;
+protected:
+
+	bool ReadyState;
+	
+
 
 };
