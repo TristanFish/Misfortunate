@@ -31,7 +31,7 @@
 /wd4244
 /wd4838
 /I .
-/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private"
+/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private
 /I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem\Source
@@ -240,9 +240,9 @@
 /I Editor\Kismet\Public
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeInterface
 /I Runtime\ClothingSystemRuntimeInterface\Public
-/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions"
-/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source"
-/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes"
+/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions
+/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source
+/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
 /I ThirdParty\PhysX3\PxShared\include
 /I ThirdParty\PhysX3\PxShared\include\cudamanager
 /I ThirdParty\PhysX3\PxShared\include\filebuf
@@ -266,18 +266,18 @@
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\RenderDebug\public
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\PairFilter\include
 /I ThirdParty\PhysX3\APEX_1.4\shared\internal\include
-/I G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE
+/I "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE"
 /I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
-/FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Yu"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Fp"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-"D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_2.cpp"
-/FI"D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
-/Fo"D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_2.cpp.obj"
+/FI"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Yu"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Fp"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_2.cpp"
+/FI"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
+/Fo"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_2.cpp.obj"
 /TP
 /GR-
 /W4
