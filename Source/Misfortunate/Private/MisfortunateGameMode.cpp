@@ -153,8 +153,6 @@ void AMisfortunateGameMode::TriggerScareEvent()
 	}
 }
 
-
-
 void AMisfortunateGameMode::EveryoneUpdate()
 {
 	ConnectedPlayerInfos.Empty();
@@ -180,8 +178,6 @@ ALoreManager* AMisfortunateGameMode::GetLoreManager() const
 {
 	return loreManager;
 }
-
-
 
 void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class ALoreTablet* tablet)
 {

@@ -10,23 +10,23 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\GenericPlatform/GenericPlat
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\GenericPlatform/GenericPlatform.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformCodeAnalysis.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatform.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\sal.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\concurrencysal.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\sal.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\concurrencysal.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\MSVC/MSVCPlatform.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformCompilerSetup.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\ProfilingDebugging/UMemoryDefines.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/CoreMiscDefines.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/CoreDefines.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Traits/IsContiguousContainer.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\initializer_list
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\yvals_core.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vadefs.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xkeycheck.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\cstddef
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\initializer_list
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals_core.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vadefs.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xkeycheck.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\cstddef
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\stddef.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xtr1common
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xtr1common
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/Exec.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/AssertionMacros.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\HAL/PlatformMisc.h
@@ -34,34 +34,34 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\GenericPlatform/GenericPlat
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\CoreFwd.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\UObject/UObjectHierarchyFwd.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\HAL/PlatformCrt.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\new
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\exception
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\yvals.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\new
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\exception
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\yvals.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\crtdbg.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime_new_debug.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime_new.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\crtdefs.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\use_ansi.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\type_traits
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\cstdint
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\stdint.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xstddef
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\cstdlib
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_new_debug.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_new.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\crtdefs.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\use_ansi.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\type_traits
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\cstdint
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\stdint.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xstddef
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\cstdlib
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\math.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_math.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\stdlib.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_malloc.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_search.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_wstdlib.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\limits.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\limits.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\malloc.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime_exception.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\eh.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_exception.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\eh.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_terminate.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\wchar.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_memcpy_s.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\errno.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime_string.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_string.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_wconio.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_stdio_config.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_wctype.h
@@ -75,7 +75,7 @@ C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\corecrt_wtime.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\sys/stat.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\sys/types.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\stdio.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\stdarg.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\stdarg.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\math.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\float.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\string.h
@@ -87,20 +87,20 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\GenericPlatform/GenericPlat
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformMemory.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/WindowsSystemIncludes.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Windows/MinimalWindowsApi.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\intrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\intrin0.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\setjmp.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\immintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\wmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\nmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\smmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\tmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\pmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\emmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\mmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\zmmintrin.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\ammintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\intrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\intrin0.inl.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\setjmp.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\immintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\wmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\nmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\smmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\tmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\pmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\emmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\mmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\zmmintrin.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\ammintrin.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\tchar.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared\intsafe.h
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared\winapifamily.h
@@ -422,8 +422,8 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/BufferedOutputDevice.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Containers/ResourceArray.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Containers/DynamicRHIResourceArray.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Serialization/MemoryImage.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\typeinfo
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\vcruntime_typeinfo.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\typeinfo
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\vcruntime_typeinfo.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Serialization/CustomVersion.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/CommandLine.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\Misc/OutputDeviceError.h
@@ -595,13 +595,14 @@ G:\Engines\UE_4.26\Engine\Source\Runtime\SlateCore\Public\Debugging/SlateDebuggi
 G:\Engines\UE_4.26\Engine\Source\Runtime\SlateCore\Public\FastUpdate/WidgetUpdateFlags.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\ProfilingDebugging/CsvProfiler.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\Core\Public\ProfilingDebugging/CsvProfilerTrace.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\atomic
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\cstring
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xatomic.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xthreads.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\climits
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\xtimec.h
-G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE\ctime
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\atomic
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\cstring
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xatomic.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\intrin0.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xthreads.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\climits
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\xtimec.h
+G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE\ctime
 C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt\time.h
 G:\Engines\UE_4.26\Engine\Source\Runtime\SlateCore\Public\Widgets/InvalidateWidgetReason.h
 G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\SlateCore\SlateDebugging.generated.h
