@@ -31,7 +31,7 @@
 /wd4244
 /wd4838
 /I .
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Private
+/I "D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private"
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\Engine
 /I Runtime
 /I Runtime\Engine\Classes
@@ -231,16 +231,16 @@
 /I Editor\Kismet\Public
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\ClothingSystemRuntimeInterface
 /I Runtime\ClothingSystemRuntimeInterface\Public
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Public
+/I "D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate"
+/I "D:\Unreal Projects\Misfortunate\Source"
+/I "D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public"
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\AugmentedReality
 /I Runtime\AugmentedReality\Public
 /I ..\Intermediate\Build\Win64\UE4Editor\Inc\MRMesh
 /I Runtime\MRMesh\Public
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSessions"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes"
 /I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem\Source
@@ -250,10 +250,10 @@
 /I ..\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Classes
 /I ..\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Public
 /I Runtime\Networking\Public
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\Inc\AdvancedSteamSessions"
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source"
 /I ..\Plugins\Online\OnlineSubsystemSteam\Source\Private
-/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes
+/I "D:\Unreal Projects\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes"
 /I ThirdParty\Steamworks\Steamv147\sdk\public
 /I ..\Plugins\Online\OnlineSubsystemSteam\Intermediate\Build\Win64\UE4Editor\Inc\OnlineSubsystemSteam
 /I ..\Plugins\Online\OnlineSubsystemSteam
@@ -282,18 +282,18 @@
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\RenderDebug\public
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\PairFilter\include
 /I ThirdParty\PhysX3\APEX_1.4\shared\internal\include
-/I "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE"
+/I G:\VisualStudio\VC\Tools\MSVC\14.28.29910\INCLUDE
 /I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
-/FI"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Yu"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Fp"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Private\Misfortunate.cpp"
-/FI"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h"
-/Fo"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Misfortunate.cpp.obj"
+/FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Yu"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Fp"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
+"D:\Unreal Projects\Misfortunate\Source\Misfortunate\Private\Misfortunate.cpp"
+/FI"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h"
+/Fo"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Misfortunate.cpp.obj"
 /TP
 /GR-
 /W4

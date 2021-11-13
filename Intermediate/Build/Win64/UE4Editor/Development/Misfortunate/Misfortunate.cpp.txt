@@ -1,2 +1,2 @@
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Public\Misfortunate.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\Misfortunate.h
