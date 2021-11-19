@@ -8,7 +8,8 @@
 
 #include "Widgets/WPlayerStatus.h"
 
-
+#include "Kismet/GameplayStatics.h"
+#include "MPlayerController.h"
 
 void UWLobbyMenu::NativeConstruct()
 {
@@ -46,6 +47,14 @@ void UWLobbyMenu::AddToPlayerList(UWPlayerStatus* playerStatus)
 	}
 }
 
+void UWLobbyMenu::ClearStatusList()
+{
+	PlayerStatusList.Empty();
+
+	Client_Box->ClearChildren();
+	Host_Box->ClearChildren();
+}
+
 void UWLobbyMenu::OnQuitButtonClicked()
 {
 
@@ -53,7 +62,12 @@ void UWLobbyMenu::OnQuitButtonClicked()
 
 void UWLobbyMenu::OnReadyButtonClicked()
 {
+	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Ready Button Clicked"));
+
+	player->Server_UpdateReadyState(player);
 }
 
 void UWLobbyMenu::OnOptionsButtonClicked()

@@ -36,6 +36,9 @@ AMPlayerController::AMPlayerController()
 	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerStatusClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_PlayerStatus"));
 	PlayerStatusWidgetClass = PlayerStatusClass.Class;
 	
+
+	bAlwaysRelevant = true;
+
 }
 
 void AMPlayerController::BeginPlay()
@@ -86,6 +89,8 @@ void AMPlayerController::PawnLeavingGame()
 {
 	UnPossess();
 }
+
+#pragma region Journal & Interaction Functions
 
 void AMPlayerController::InteractionOccurred() 
 {
@@ -184,19 +189,35 @@ bool AMPlayerController::Server_AddTabletsToAllPlayers_Validate(ALoreTablet* tab
 	return true;
 }
 
-void AMPlayerController::Server_CallUpdate_Implementation(FPlayerInfo playerInfo_)
+void AMPlayerController::Server_UpdateReadyState_Implementation(AMPlayerController* playerController)
 {
-	PlayerInfo = playerInfo_;
+	if (playerController->IsReady)
+	{
+		playerController->IsReady = false;
+	}
+	else
+	{
+		playerController->IsReady = true;
+	}
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,FString("Player To Change: ") + playerController->PlayerInfo.PlayerName);
 
 	AMisfortunateGameMode* gameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	gameMode->EveryoneUpdate();
+	gameMode->UpdateReadyState(playerController);
 }
 
-bool AMPlayerController::Server_CallUpdate_Validate(FPlayerInfo playerInfo_)
+bool AMPlayerController::Server_UpdateReadyState_Validate(AMPlayerController* playerController)
 {
 	return true;
 }
+
+#pragma endregion
+
+
+
+
 
 void AMPlayerController::AddTabletsToAllPlayers(ALoreTablet* tablet)
 {
@@ -229,10 +250,11 @@ void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FPl
 	if (!LobbyWidget)
 		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Size of players Info: %i"), playersInfo.Num()));
+
 	AllPlayersInfo = playersInfo;
 
-
-	AddPlayerStatusWidget(AllPlayersInfo);
+	AddPlayerStatusWidget(playersInfo);
 }
 
 bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerInfo>& playersInfo)
@@ -241,27 +263,33 @@ bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerIn
 }
 
 
-void AMPlayerController::Client_InitalizeLobbyInfo_Implementation()
+
+
+void AMPlayerController::Client_UpdateReadyState_Implementation(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus_)
 {
-	UpdatePlayerInfo();
-	Server_CallUpdate(PlayerInfo);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Client_UpdateReadyState"));
+
+	//UpdateReadyState(playerController);
+
+		for (auto PlayerStatus : playerStatus_)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Controller Name: ") + playerName);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Player Status Name: ") + PlayerStatus->CurrentPlayerName);
+
+			if (playerName == PlayerStatus->CurrentPlayerName)
+			{
+				PlayerStatus->UpdateReadyState(IsPlayerReady);
+			}
+		}
+
+	
+
 }
 
-bool AMPlayerController::Client_InitalizeLobbyInfo_Validate()
+bool AMPlayerController::Client_UpdateReadyState_Validate(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus)
 {
 	return true;
 }
-
-void AMPlayerController::Client_UpdateReadyState_Implementation(AMPlayerController* playerController)
-{
-	UpdateReadyState(playerController);
-}
-
-bool AMPlayerController::Client_UpdateReadyState_Validate(AMPlayerController* playerController)
-{
-	return true;
-}
-
 
 
 void AMPlayerController::Client_PossesNewCharacter_Implementation(ACharacter* playerCharacter)
@@ -280,8 +308,6 @@ void AMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMPlayerController, PlayerInfo);
-	DOREPLIFETIME(AMPlayerController, AllPlayersInfo);
-
 }
 
 void AMPlayerController::SetViewYawExtents(float minYaw, float maxYaw)
@@ -306,7 +332,15 @@ TArray<ALoreTablet*> AMPlayerController::GetCollectedTablets()
 	return CollectedTablets;
 }
 
+UWLobbyMenu* AMPlayerController::GetLobbyWidget() const
+{
+	return LobbyWidget;
+}
 
+bool AMPlayerController::GetIsReady() const
+{
+	return IsReady;
+}
 
 
 

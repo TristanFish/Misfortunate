@@ -25,11 +25,16 @@ struct FPlayerInfo {
 		FString PlayerName;
 	UPROPERTY(BlueprintReadWrite)
 		UTexture2D* PlayerIcon;
+	UPROPERTY(BlueprintReadWrite)
+		FString NetID;
+	UPROPERTY(BlueprintReadWrite)
+		bool IsReady;
 
 	FPlayerInfo()
 	{
 		PlayerName = "NONE";
 		PlayerIcon = nullptr;
+		IsReady = false;
 	}
 
 };
@@ -57,13 +62,11 @@ protected:
 	UPROPERTY()
 		class UWJournal* JournalWidget;
 
-	//UPROPERTY()
-		//class UUserWidget* HUDWidget;
+	
 
 	
 	/*Lobby Variables*/
-
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 		TSubclassOf<class UWLobbyMenu> LobbyWidgetClass;
 
 	UPROPERTY()
@@ -76,7 +79,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 		bool IsReady;
 
-	/*Lobby Variables*/
 
 
 	TArray<ALoreTablet*> CollectedTablets;
@@ -86,7 +88,7 @@ public:
 	UPROPERTY(BlueprintReadWrite,Replicated)
 		FPlayerInfo PlayerInfo;
 
-	UPROPERTY(BlueprintReadWrite, Replicated)
+	UPROPERTY(BlueprintReadWrite)
 		TArray<FPlayerInfo> AllPlayersInfo;
 
 	AMPlayerController();
@@ -109,11 +111,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
 
 	virtual void PawnLeavingGame() override;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	// Delegate Functions
 	void InteractionOccurred();
@@ -136,37 +139,27 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_AddTabletsToAllPlayers(ALoreTablet* tablet);
 
-	UFUNCTION(Server, Reliable, WithValidation,BlueprintCallable)
-		void Server_CallUpdate(FPlayerInfo playerInfo_);
-
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_UpdateReadyState(AMPlayerController* playerController);
+	
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_AddToTabletsCollected(ALoreTablet* tablet);
 
-	UFUNCTION(Client, Reliable, WithValidation)
+	UFUNCTION(Client, Reliable, WithValidation,BlueprintCallable)
 		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
 
-	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_InitalizeLobbyInfo();
 
 	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_UpdateReadyState(AMPlayerController* playerController);
-	
+		void Client_UpdateReadyState(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus);
+
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_PossesNewCharacter(ACharacter* playerCharacter);
-
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 		void UpdatePlayerInfo();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void AddPlayerStatusWidget(const TArray<FPlayerInfo>& playerInfoList);
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void UpdateReadyState(AMPlayerController* playerController);
 
 	void SetViewYawExtents(float minYaw, float maxYaw);
 
@@ -175,7 +168,7 @@ public:
 public:
 	TArray<ALoreTablet*> GetCollectedTablets();
 
-
+	 UWLobbyMenu* GetLobbyWidget() const;
 	
-	
+	 bool GetIsReady() const;
 };

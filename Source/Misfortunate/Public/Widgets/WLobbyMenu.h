@@ -26,18 +26,15 @@ public:
 
 public:
 
-
-	virtual void NativeConstruct() override;
-
 	
 
 
+	virtual void NativeConstruct() override;
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UScaleBox* Host_Box = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UScaleBox* Client_Box = nullptr;
-
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UButton* OptionsButton = nullptr;
@@ -48,6 +45,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UButton* ReadyButton = nullptr;
 
+
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 		void AddNewPlayer(FPlayerInfo playerInfo);
 
@@ -57,6 +56,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void AddToPlayerList(class UWPlayerStatus* playerStatus);
 
+	UFUNCTION(BlueprintCallable)
+		void ClearStatusList();
 
 protected:
 

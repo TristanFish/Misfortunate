@@ -16,34 +16,13 @@ class AMisfortunateGameMode : public AGameModeBase
 public:
 	AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer);
 
-
-
-	virtual void PostLogin(APlayerController* NewPlayer) override;
-
-	virtual void Logout(AController* OldPlayer) override;
-
-
-	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaSeconds) override;
-
-	void CheckPlayersDistance();
-	
-
-	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
-
-
-public:
-
 	enum GameState { Lobby, Exploration };
-
 
 	GameState CurrentState;
 
 	// The percent chance that a player will be scared by a event
 	UPROPERTY(VisibleAnywhere)
-		 int EventChance;
-
+		int EventChance;
 
 	//!ScareManager AScareEventManager
 	/*!Pointer to the games scare manager singleton*/
@@ -53,31 +32,61 @@ public:
    /*!Pointer to the games lore manager singleton(Handles initialization and collected lore)*/
 	class ALoreManager* loreManager;
 
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	virtual void Logout(AController* OldPlayer) override;
+
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void EveryoneUpdate();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void InitPlayerInfo(AMPlayerController* player);
+
+	void UpdateReadyState(class AMPlayerController* changedPlayer);
+
+
+	//!GetScareEventManager Getter
+	/*!Returns a pointer to the games scareManager*/
+	AScareEventManager* GetScareEventManager() const;
+
+	// Returns a pointer to the lore manager
+	ALoreManager* GetLoreManager() const;
 
 	void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
 
 	void SetGameState(GameState state_);
 
+	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
 
-	void EveryoneUpdate();
 
 protected:
+
+	// List of connected players
+	UPROPERTY(BlueprintReadWrite)
+		TArray<APlayerController*> ConnectedPlayers;
+
+	UPROPERTY(BlueprintReadWrite)
+		TArray<FPlayerInfo> ConnectedPlayerInfos;
+
+	TArray<AActor*> PossessableCharacters;
+
+
 	// The Character that was selected to have a scare event triggered on
 	APlayerController* selectedCharacter;
-
 
 	// The distance the players are away from each other In the game
 	float DistanceBetweenPlayers;
 
-	// List of connected players
-	TArray<APlayerController*> ConnectedPlayers;
-
-	TArray<AActor*> PossessableCharacters;
-
-	TArray<FPlayerInfo> ConnectedPlayerInfos;
 
 	FTimerHandle CheckDistTimerHandle;
 	FTimerHandle TriggerEventTimerHandle;
+
+	void CheckPlayersDistance();
 
 	// Determines if a scare event will be triggered
 	void CheckEventTrigger();
@@ -86,18 +95,6 @@ protected:
 
 	// Triggers a random scare event
 	void TriggerScareEvent();
-
-
-
-	//!GetScareEventManager Getter
-	/*!Returns a pointer to the games scareManager*/
-	AScareEventManager* GetScareEventManager() const;
-
-
-	// Returns a pointer to the lore manager
-	ALoreManager* GetLoreManager() const;
-
-
 
 };
 

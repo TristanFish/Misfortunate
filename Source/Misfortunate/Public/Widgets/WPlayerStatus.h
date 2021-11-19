@@ -20,12 +20,17 @@ public:
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY(BlueprintReadOnly)
+		FString CurrentPlayerName;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* PlayerName = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UImage* IconTexture = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UBorder* ItemBorder = nullptr;
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void SetUserImage(const struct FBPUniqueNetId& unqiueNetID);
@@ -37,9 +42,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void UpdateReadyState(bool ReadyState_);
 
-
 	FString GetPlayerName() const;
 protected:
+
+	
 
 	bool ReadyState;
 	

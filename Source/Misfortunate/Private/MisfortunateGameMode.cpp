@@ -4,6 +4,7 @@
 #include "MisfortunateHUD.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+
 #include "MPlayerController.h"
 #include "PlayerCharacter.h"
 #include "LobbyPlayerCharacter.h"
@@ -11,6 +12,8 @@
 #include "ScareEventManager.h"
 #include "LoreManager.h"
 #include "Actors/EventZone.h"
+#include "GameFramework/PlayerState.h"
+#include "Widgets/WLobbyMenu.h"
 
 AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -46,7 +49,8 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 		}
 	}
 
-	Cast<AMPlayerController>(NewPlayer)->Client_InitalizeLobbyInfo();
+	InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
+	EveryoneUpdate();
 
 }
 
@@ -72,6 +76,8 @@ void AMisfortunateGameMode::Tick(float DeltaSeconds)
 
 }
 
+#pragma region ScareEvent Functions
+
 void AMisfortunateGameMode::CheckPlayersDistance()
 {
 	int closestDistance = 0;
@@ -87,11 +93,6 @@ void AMisfortunateGameMode::CheckPlayersDistance()
 
 
 }
-
-
-
-
-
 
 void AMisfortunateGameMode::CheckEventTrigger()
 {
@@ -113,8 +114,6 @@ void AMisfortunateGameMode::CheckEventTrigger()
 	}
 	
 }
-
-
 
 void AMisfortunateGameMode::SelectCharacter()
 {
@@ -153,20 +152,18 @@ void AMisfortunateGameMode::TriggerScareEvent()
 	}
 }
 
-void AMisfortunateGameMode::EveryoneUpdate()
+#pragma endregion
+
+void AMisfortunateGameMode::UpdateReadyState(AMPlayerController* changedPlayer)
 {
-	ConnectedPlayerInfos.Empty();
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Gamemode_UpdateReadyState"));
 
 	for (auto player : ConnectedPlayers)
 	{
-		AMPlayerController* controller = Cast<AMPlayerController>(player);
 
-		ConnectedPlayerInfos.Add(controller->PlayerInfo);
+		Cast<AMPlayerController>(player)->Client_UpdateReadyState(changedPlayer->PlayerInfo.PlayerName, changedPlayer->GetIsReady(),changedPlayer->GetLobbyWidget()->PlayerStatusList);
 	}
-	for (auto player : ConnectedPlayers)
-	{
-		Cast<AMPlayerController>(player)->Client_AddPlayersToList(ConnectedPlayerInfos);
-	}
+
 }
 
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const

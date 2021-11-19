@@ -163,7 +163,7 @@ protected:
 
 	FTimerHandle TickTraceCheckTimerHandle;
 
-		void UpdateMovementState(CrawlStates CrawlState_);
+	void UpdateMovementState(CrawlStates CrawlState_);
 	
 	//!ThrowGlowstick Function
 	/*!throws a glow stick in front of the player*/
