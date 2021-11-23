@@ -191,13 +191,13 @@ bool AMPlayerController::Server_AddTabletsToAllPlayers_Validate(ALoreTablet* tab
 
 void AMPlayerController::Server_UpdateReadyState_Implementation(AMPlayerController* playerController)
 {
-	if (playerController->IsReady)
+	if (playerController->GetIsReady())
 	{
-		playerController->IsReady = false;
+		playerController->PlayerInfo.IsReady = false;
 	}
 	else
 	{
-		playerController->IsReady = true;
+		playerController->PlayerInfo.IsReady = true;
 	}
 
 
@@ -265,20 +265,20 @@ bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerIn
 
 
 
-void AMPlayerController::Client_UpdateReadyState_Implementation(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus_)
+void AMPlayerController::Client_UpdateReadyState_Implementation(const FPlayerInfo& changedPlayer)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Client_UpdateReadyState"));
 
 	//UpdateReadyState(playerController);
 
-		for (auto PlayerStatus : playerStatus_)
+		for (auto PlayerStatus : LobbyWidget->PlayerStatusList)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Controller Name: ") + playerName);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Controller Name: ") + changedPlayer.PlayerName);
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Player Status Name: ") + PlayerStatus->CurrentPlayerName);
 
-			if (playerName == PlayerStatus->CurrentPlayerName)
+			if (changedPlayer.PlayerName == PlayerStatus->CurrentPlayerName)
 			{
-				PlayerStatus->UpdateReadyState(IsPlayerReady);
+				PlayerStatus->UpdateReadyState(changedPlayer.IsReady);
 			}
 		}
 
@@ -286,7 +286,7 @@ void AMPlayerController::Client_UpdateReadyState_Implementation(const FString& p
 
 }
 
-bool AMPlayerController::Client_UpdateReadyState_Validate(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus)
+bool AMPlayerController::Client_UpdateReadyState_Validate(const FPlayerInfo& changedPlayer)
 {
 	return true;
 }
@@ -339,7 +339,7 @@ UWLobbyMenu* AMPlayerController::GetLobbyWidget() const
 
 bool AMPlayerController::GetIsReady() const
 {
-	return IsReady;
+	return PlayerInfo.IsReady;
 }
 
 

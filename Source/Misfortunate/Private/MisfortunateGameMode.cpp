@@ -161,7 +161,7 @@ void AMisfortunateGameMode::UpdateReadyState(AMPlayerController* changedPlayer)
 	for (auto player : ConnectedPlayers)
 	{
 
-		Cast<AMPlayerController>(player)->Client_UpdateReadyState(changedPlayer->PlayerInfo.PlayerName, changedPlayer->GetIsReady(),changedPlayer->GetLobbyWidget()->PlayerStatusList);
+		Cast<AMPlayerController>(player)->Client_UpdateReadyState(changedPlayer->PlayerInfo);
 	}
 
 }

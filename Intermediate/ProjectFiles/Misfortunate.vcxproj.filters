@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\Misfortunate.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{83BD2050-AD72-4B1A-9D97-E7F228F37A77}</UniqueIdentifier>
+      <UniqueIdentifier>{8D226D7A-48B5-4A41-99C6-AD39FD97171E}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\Misfortunate.Target.cs">
       <Filter>Source</Filter>
@@ -14,7 +14,7 @@
     <None Include="..\..\.gitattributes" />
     <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{9C0C9FB1-49F5-4B46-BF3E-4CD4447E9CB6}</UniqueIdentifier>
+      <UniqueIdentifier>{84DEE9F4-CD54-46BE-988A-32FF32BAD893}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -32,25 +32,25 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Plugins">
-      <UniqueIdentifier>{2C7CBCFD-E2E9-454B-8235-C6DFC4C64622}</UniqueIdentifier>
+      <UniqueIdentifier>{FC3CA8F6-CC66-430F-A924-99020A3A135E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\AdvancedSessions">
-      <UniqueIdentifier>{F5D1D9B6-C5CF-4F98-8A94-5BA1361A74D5}</UniqueIdentifier>
+      <UniqueIdentifier>{581F39B1-2DBF-4824-AAEA-F4EA95FAF1EB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions">
-      <UniqueIdentifier>{06F26678-02DF-4501-9D1D-AF7B5C858639}</UniqueIdentifier>
+      <UniqueIdentifier>{D3A7008B-2EC5-433D-9FE9-07CA1C90F55F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions\Source">
-      <UniqueIdentifier>{C031F931-80E3-4BB5-9F13-6B109995348D}</UniqueIdentifier>
+      <UniqueIdentifier>{C254B67B-3090-4AA9-85BC-6C80FBA2A49E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions">
-      <UniqueIdentifier>{CDA3C41F-9B18-4F11-B52B-80114A174796}</UniqueIdentifier>
+      <UniqueIdentifier>{F7059EAF-17ED-4040-A79B-AA887EA7735A}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\AdvancedSessions.Build.cs">
       <Filter>Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes">
-      <UniqueIdentifier>{CE388051-41D6-47EF-A4A9-ADCD643328E8}</UniqueIdentifier>
+      <UniqueIdentifier>{EEC5B880-3238-4420-AAAC-E2922353B651}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedExternalUILibrary.h">
       <Filter>Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes</Filter>
@@ -122,7 +122,7 @@
       <Filter>Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes</Filter>
     </ClInclude>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private">
-      <UniqueIdentifier>{AEA66E70-7DD3-4FCC-B6FA-E06CDC4C3EC7}</UniqueIdentifier>
+      <UniqueIdentifier>{1F48D98E-4D5C-4C43-82B4-E067D1C54099}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private\AdvancedExternalUILibrary.cpp">
       <Filter>Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private</Filter>
@@ -188,46 +188,46 @@
       <Filter>Plugins\AdvancedSessions\AdvancedSessions</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSessions\Resources">
-      <UniqueIdentifier>{46C21C2D-E907-4B42-978A-DFCB86753A44}</UniqueIdentifier>
+      <UniqueIdentifier>{4DABA118-6B33-46EA-92B9-04EA4BD7A0B1}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\AdvancedSessions\AdvancedSessions\Resources\Icon128.png">
       <Filter>Plugins\AdvancedSessions\AdvancedSessions\Resources</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions">
-      <UniqueIdentifier>{630C7E39-CED1-4521-B33D-0C05A20EC349}</UniqueIdentifier>
+      <UniqueIdentifier>{02AF2166-3A34-4E21-ABF4-2389A3A90709}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\AdvancedSessions\AdvancedSteamSessions\AdvancedSteamSessions.uplugin">
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions\Resources">
-      <UniqueIdentifier>{EFBD26C4-FDA2-422D-9E30-D650A23EC39F}</UniqueIdentifier>
+      <UniqueIdentifier>{D5E4B732-AA23-41A6-8CEB-B1844EBE514E}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\AdvancedSessions\AdvancedSteamSessions\Resources\Icon128.png">
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Resources</Filter>
     </None>
     <Filter Include="Plugins\SimplePhysicsMovement">
-      <UniqueIdentifier>{80DDECE4-19BC-4EAF-B107-C116BD4E56CA}</UniqueIdentifier>
+      <UniqueIdentifier>{9C1937C1-8D50-4111-91B3-55FDAB443645}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\SimplePhysicsMovement\SimplePhysicsMovement.uplugin">
       <Filter>Plugins\SimplePhysicsMovement</Filter>
     </None>
     <Filter Include="Plugins\SimplePhysicsMovement\Resources">
-      <UniqueIdentifier>{8DDEB5FE-F6C1-4671-A1E1-546474A58A22}</UniqueIdentifier>
+      <UniqueIdentifier>{B45A1E85-EC0E-4B1A-A96A-0990444604F6}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\SimplePhysicsMovement\Resources\Icon128.png">
       <Filter>Plugins\SimplePhysicsMovement\Resources</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions\Source">
-      <UniqueIdentifier>{C2DA7FF0-3061-42C2-B876-18B56C81C301}</UniqueIdentifier>
+      <UniqueIdentifier>{768672B9-1331-49CD-B807-BDB3F27352B8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions">
-      <UniqueIdentifier>{C6E9D7E5-EA75-4A6F-98DD-70CC3CA62F12}</UniqueIdentifier>
+      <UniqueIdentifier>{4AA07B19-39ED-4D90-9949-F1527A27F598}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\AdvancedSteamSessions.Build.cs">
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions</Filter>
     </None>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes">
-      <UniqueIdentifier>{88AC5C12-28CB-4F10-8D7A-C1D49F15EB04}</UniqueIdentifier>
+      <UniqueIdentifier>{238FC9A8-7F90-4D46-857C-21172E9E818F}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamFriendsLibrary.h">
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes</Filter>
@@ -248,7 +248,7 @@
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes</Filter>
     </ClInclude>
     <Filter Include="Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private">
-      <UniqueIdentifier>{E6FBB034-F80E-40C3-92B1-88496F914A15}</UniqueIdentifier>
+      <UniqueIdentifier>{327F7BC3-E8D2-4ACE-B2D3-4B9A912E7BF7}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private\AdvancedSteamFriendsLibrary.cpp">
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private</Filter>
@@ -275,13 +275,13 @@
       <Filter>Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Private</Filter>
     </None>
     <Filter Include="Source\Misfortunate">
-      <UniqueIdentifier>{28E41C28-E020-4940-98D5-112DA6F7450D}</UniqueIdentifier>
+      <UniqueIdentifier>{2C96C640-5D69-4DB3-B6EC-25A35954C280}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\Misfortunate\Misfortunate.Build.cs">
       <Filter>Source\Misfortunate</Filter>
     </None>
     <Filter Include="Source\Misfortunate\Private">
-      <UniqueIdentifier>{DCAEE8B0-CCBD-495C-81E7-69EAC9074A07}</UniqueIdentifier>
+      <UniqueIdentifier>{EA864C02-BF4F-49B7-9ABC-78E5A7FD245D}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\Misfortunate\Private\CrawlableArea.cpp">
       <Filter>Source\Misfortunate\Private</Filter>
@@ -326,7 +326,7 @@
       <Filter>Source\Misfortunate\Private</Filter>
     </ClCompile>
     <Filter Include="Source\Misfortunate\Private\Actors">
-      <UniqueIdentifier>{866F3B04-D929-48B1-B06D-3FDEE9D17F47}</UniqueIdentifier>
+      <UniqueIdentifier>{3C274546-BD76-4497-9B80-85988F24ED6E}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\Misfortunate\Private\Actors\EventZone.cpp">
       <Filter>Source\Misfortunate\Private\Actors</Filter>
@@ -341,7 +341,7 @@
       <Filter>Source\Misfortunate\Private\Actors</Filter>
     </ClCompile>
     <Filter Include="Source\Misfortunate\Private\Widgets">
-      <UniqueIdentifier>{D49BFBEB-5C19-40B6-8716-50E53CEF77DA}</UniqueIdentifier>
+      <UniqueIdentifier>{D39A421C-10AA-4E1D-82FB-1DE2E3A1C053}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\Misfortunate\Private\Widgets\WActiveGames.cpp">
       <Filter>Source\Misfortunate\Private\Widgets</Filter>
@@ -380,7 +380,7 @@
       <Filter>Source\Misfortunate\Private\Widgets</Filter>
     </ClCompile>
     <Filter Include="Source\Misfortunate\Public">
-      <UniqueIdentifier>{DF79EB66-4D65-42EC-92DA-310379861C44}</UniqueIdentifier>
+      <UniqueIdentifier>{DED0C89A-F15A-49D7-A3EA-FAEA30727770}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\Misfortunate\Public\CrawlableArea.h">
       <Filter>Source\Misfortunate\Public</Filter>
@@ -425,7 +425,7 @@
       <Filter>Source\Misfortunate\Public</Filter>
     </ClInclude>
     <Filter Include="Source\Misfortunate\Public\Actors">
-      <UniqueIdentifier>{585C3DD7-FC94-4A36-B640-8AD2D11B6582}</UniqueIdentifier>
+      <UniqueIdentifier>{6030BD57-6E98-4A28-9B05-358A7D3C34FB}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\Misfortunate\Public\Actors\EventZone.h">
       <Filter>Source\Misfortunate\Public\Actors</Filter>
@@ -440,7 +440,7 @@
       <Filter>Source\Misfortunate\Public\Actors</Filter>
     </ClInclude>
     <Filter Include="Source\Misfortunate\Public\Widgets">
-      <UniqueIdentifier>{39D2E94C-ED9D-4F7C-B76E-C84187ED634B}</UniqueIdentifier>
+      <UniqueIdentifier>{BBCF4B06-5BDF-42F6-A198-87C2EACC26B2}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\Misfortunate\Public\Widgets\WActiveGames.h">
       <Filter>Source\Misfortunate\Public\Widgets</Filter>

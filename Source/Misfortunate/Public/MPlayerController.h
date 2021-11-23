@@ -75,10 +75,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 		class UWLobbyMenu* LobbyWidget;
 
-	
-	UPROPERTY(BlueprintReadWrite)
-		bool IsReady;
-
 
 
 	TArray<ALoreTablet*> CollectedTablets;
@@ -150,7 +146,7 @@ public:
 
 
 	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_UpdateReadyState(const FString& playerName, bool IsPlayerReady, const TArray<UWPlayerStatus*>& playerStatus);
+		void Client_UpdateReadyState(const FPlayerInfo& changedPlayer);
 
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_PossesNewCharacter(ACharacter* playerCharacter);

@@ -250,17 +250,17 @@
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\RenderDebug\public
 /I ThirdParty\PhysX3\APEX_1.4\shared\general\PairFilter\include
 /I ThirdParty\PhysX3\APEX_1.4\shared\internal\include
-/I G:\VisualStudio\VC\Tools\MSVC\14.29.30133\INCLUDE
+/I "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE"
 /I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
-/I "D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine"
-/Yc"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h"
-/Fp"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.pch"
-"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.cpp"
-/Fo"D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
+/I C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine
+/Yc"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h"
+/Fp"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.pch"
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.cpp"
+/Fo"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
 /TP
 /GR-
 /W4
