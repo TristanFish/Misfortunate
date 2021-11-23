@@ -5,13 +5,18 @@
 #include "Engine/Texture2D.h"
 #include "TextureResource.h"
 #include "CanvasItem.h"
+#include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMisfortunateHUD::AMisfortunateHUD()
 {
 	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/FirstPerson/Textures/FirstPersonCrosshair"));
-	CrosshairTex = CrosshairTexObj.Object;
+	//static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/FirstPerson/Textures/FirstPersonCrosshair"));
+	//CrosshairTex = CrosshairTexObj.Object;
+	
+
+	//static ConstructorHelpers::FClassFinder<UUserWidget> HUDClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_PlayerHUD"));
+	//HUDWidgetClass = HUDClass.Class;
 }
 
 
@@ -21,6 +26,7 @@ void AMisfortunateHUD::DrawHUD()
 
 	// Draw very simple crosshair
 
+	/*
 	// find center of the Canvas
 	const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
 
@@ -32,4 +38,20 @@ void AMisfortunateHUD::DrawHUD()
 	FCanvasTileItem TileItem( CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
 	TileItem.BlendMode = SE_BLEND_Translucent;
 	Canvas->DrawItem( TileItem );
+	*/
+}
+
+void AMisfortunateHUD::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HUDWidgetClass != nullptr)
+	{
+		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+
+		if (CurrentWidget)
+		{
+			CurrentWidget->AddToViewport();
+		}
+	}
 }

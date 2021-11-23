@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "Misfortunate/Public/Glowstick.h"
+#include "Misfortunate/Public/Actors/Glowstick.h"
 #ifdef _MSC_VER
 #pragma warning (push)
 #pragma warning (disable : 4883)
@@ -56,35 +56,35 @@ void EmptyLinkFunctionForGeneratedCodeGlowstick() {}
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AGlowstick_Statics::Class_MetaDataParams[] = {
-		{ "IncludePath", "Glowstick.h" },
-		{ "ModuleRelativePath", "Public/Glowstick.h" },
+		{ "IncludePath", "Actors/Glowstick.h" },
+		{ "ModuleRelativePath", "Public/Actors/Glowstick.h" },
 	};
 #endif
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AGlowstick_Statics::NewProp_GlowstickMesh_MetaData[] = {
 		{ "Category", "Glowstick" },
-		{ "Comment", "// Mesh that is used to represent a glowstick\n" },
+		{ "Comment", "/*!Mesh that is used to represent a glowstick*/" },
 		{ "EditInline", "true" },
-		{ "ModuleRelativePath", "Public/Glowstick.h" },
-		{ "ToolTip", "Mesh that is used to represent a glowstick" },
+		{ "ModuleRelativePath", "Public/Actors/Glowstick.h" },
+		{ "ToolTip", "!Mesh that is used to represent a glowstick" },
 	};
 #endif
 	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AGlowstick_Statics::NewProp_GlowstickMesh = { "GlowstickMesh", nullptr, (EPropertyFlags)0x00200800000a0009, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AGlowstick, GlowstickMesh), Z_Construct_UClass_UStaticMeshComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AGlowstick_Statics::NewProp_GlowstickMesh_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AGlowstick_Statics::NewProp_GlowstickMesh_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AGlowstick_Statics::NewProp_StoredMaterial_MetaData[] = {
 		{ "Category", "Glowstick" },
-		{ "Comment", "// Material that will be applied to the GlowstickMesh\n" },
-		{ "ModuleRelativePath", "Public/Glowstick.h" },
-		{ "ToolTip", "Material that will be applied to the GlowstickMesh" },
+		{ "Comment", "/*!Material that will be applied to the GlowstickMesh*/" },
+		{ "ModuleRelativePath", "Public/Actors/Glowstick.h" },
+		{ "ToolTip", "!Material that will be applied to the GlowstickMesh" },
 	};
 #endif
 	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AGlowstick_Statics::NewProp_StoredMaterial = { "StoredMaterial", nullptr, (EPropertyFlags)0x0020080000020001, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AGlowstick, StoredMaterial), Z_Construct_UClass_UMaterial_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AGlowstick_Statics::NewProp_StoredMaterial_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AGlowstick_Statics::NewProp_StoredMaterial_MetaData)) };
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AGlowstick_Statics::NewProp_DynamicMatInst_MetaData[] = {
 		{ "Category", "Glowstick" },
-		{ "Comment", "// Used to control and change variables of the materials shader at runtime\n" },
-		{ "ModuleRelativePath", "Public/Glowstick.h" },
-		{ "ToolTip", "Used to control and change variables of the materials shader at runtime" },
+		{ "Comment", "/*!Used to control and change variables of the materials shader at runtime*/" },
+		{ "ModuleRelativePath", "Public/Actors/Glowstick.h" },
+		{ "ToolTip", "!Used to control and change variables of the materials shader at runtime" },
 	};
 #endif
 	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AGlowstick_Statics::NewProp_DynamicMatInst = { "DynamicMatInst", nullptr, (EPropertyFlags)0x0020080000020001, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AGlowstick, DynamicMatInst), Z_Construct_UClass_UMaterialInstanceDynamic_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AGlowstick_Statics::NewProp_DynamicMatInst_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AGlowstick_Statics::NewProp_DynamicMatInst_MetaData)) };
@@ -120,7 +120,7 @@ void EmptyLinkFunctionForGeneratedCodeGlowstick() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AGlowstick, 2421617536);
+	IMPLEMENT_CLASS(AGlowstick, 563821417);
 	template<> MISFORTUNATE_API UClass* StaticClass<AGlowstick>()
 	{
 		return AGlowstick::StaticClass();

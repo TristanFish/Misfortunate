@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "HeadLamp.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -12,14 +11,17 @@ class UInputComponent;
 class UCapsuleComponent;
 class UCharacterMovementComponent;
 class UInputComponent;
-class USpringArmComponent;
-class USpotLightComponent;
 class UStaticMeshComponent;
 class AEventZone;
 
 
-
-
+UENUM()
+enum CrawlStates
+{
+	Stand   UMETA(DisplayName = "Standing"),
+	Crouch UMETA(DisplayName = "Crouching"),
+	Crawl UMETA(DisplayName = "Crawling"),
+};
 
 
 UCLASS(BlueprintType)
@@ -33,45 +35,89 @@ public:
 
 	//!Player Camera
 	/*!The camera that the player will use*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* playerCamera;
 
 	//!Stamina float
 	/*!The stamina that the player uses for walking & running*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement)
 		float Stamina = 100.0f;
 
 	//!SprintMultiplier float
 	/*!Allows the players to string and is used as a scaler for the MaxWalkSpeed*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 		float SprintMultiplier;
+	
+	
 
+	// Crawl Variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
+		float StandRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
+		float StandHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
+		FVector StandMeshPos;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		float CrouchRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		float CrouchHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		FVector CrouchMeshPos;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		bool IsCrouching;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crouch")
+		bool IsCrouchBlocked;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		TEnumAsByte<CrawlStates> CrawlState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		float CrawlRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		float CrawlHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		FVector CrawlMeshPos;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
+		bool IsCrawlBlocked;
+
+	// Crawl Variables
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Replicated, Category = Gameplay)
+		float Misfortune;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		int AvailableGlowsticks;
+
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		 UStaticMeshComponent* headlampMesh;
 			/*Head Lamp Components*/
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-		class USpotLightComponent* lightMid;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-		class USpotLightComponent* lightLeft;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-		class USpotLightComponent* lightRight;
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-		class UStaticMeshComponent* lampMesh;
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-		float BatteryLevel;
-			/*Head Lamp Components*/
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class AHeadLamp* HeadLamp;
 
 	//Removes stamina from our Stamina variable
 	UFUNCTION()
 	void TickStamina();
 protected:
 
-	//!LightState Enum Class
-	/*!Store's the different states the headlamp can be in*/
-	enum class LightState { Off, SingleBeam, TrippleBeam };
+	FRotator LookRotation;
 
 	//!IsPlayerRunning boolean
 	/*!Stores a value for if the player is running or not*/
@@ -81,17 +127,9 @@ protected:
 	/*!Used to create a stamina timer*/
 	FTimerHandle TickStaminaTimerHandle;
 
-	//!TickBatteryTimerHandle FTimerHandler
-	/*!Used to create a headlamp battery timer*/
-	FTimerHandle TickBatteryTimerHandle;
-
 	//!CurrentZone AEventZone
 	/*!Pointer to the zone the player is currently In*/
 	AEventZone* currentZone;
-
-	//!LightState 
-	/*!Handle's what state the headlamp is currently In*/
-	LightState lightState;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -112,20 +150,48 @@ protected:
 	/*!Stops the player from being able to sprint*/
 	void StopSprinting();
 
-	//!ToggleFlashlight Function
-	/*!Toggles the headlamp between modes/turns it off*/
-	void ToggleHeadLamp();
+	float FSelectInterpTarget(float Stand,float Crouch,float Crawl);
 
-	//!TickBattery Function
-	/*!Decreases the battery depending on the lightState*/
-	void TickBattery();
+	FVector VSelectInterpTarget(FVector Stand, FVector Crouch, FVector Crawl);
+
+
+	void HandleCrouchCrawl();
+
+	void ToggleCrawl();
+
+	void TraceChecks();
+
+	FTimerHandle TickTraceCheckTimerHandle;
+
+	void UpdateMovementState(CrawlStates CrawlState_);
 	
 	//!ThrowGlowstick Function
 	/*!throws a glow stick in front of the player*/
 	void ThrowGlowstick();
 
+	UFUNCTION(NetMulticast,Unreliable, WithValidation)
+		void Multi_UpdateLookRotation(FRotator rot);
 
+
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multi_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
+
+
+	UFUNCTION(Server,Reliable,WithValidation)
+		void Server_ThrowGlowstick();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_TriggerHeadLamp();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
+
+	UFUNCTION(Client, Reliable, WithValidation)
+		void Client_SetMisfortune(const float Misfortune_);
 
 	//!GetCurrentZone Getter
 	/*!Returns the current zone the players is in*/
@@ -133,7 +199,20 @@ public:
 
 	//!SetCurrentZone Function
 	/*!Set's the current zone to the given parameter*/
-	void SetCurrentZone(AEventZone& eventZone);
+		void SetCurrentZone(AEventZone* eventZone);
+
+	
+
+	float GetMisfortune() const;
+
+	
+
+
+	void SetMisfortune(const float Misfortune_);
+
+	void IncreaseMisfortune(const float Misfortune_);
+
+	void DecreaseMisfortune(const float Misfortune_);
 
 
 	// Called every frame
@@ -141,6 +220,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+
 
 
 };

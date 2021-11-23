@@ -58,7 +58,11 @@ DEFINE_VTABLE_PTR_HELPER_CTOR_CALLER(AMisfortunateHUD); \
 	DEFINE_DEFAULT_CONSTRUCTOR_CALL(AMisfortunateHUD)
 
 
-#define Misfortunate_Source_Misfortunate_Public_MisfortunateHUD_h_12_PRIVATE_PROPERTY_OFFSET
+#define Misfortunate_Source_Misfortunate_Public_MisfortunateHUD_h_12_PRIVATE_PROPERTY_OFFSET \
+	FORCEINLINE static uint32 __PPO__HUDWidgetClass() { return STRUCT_OFFSET(AMisfortunateHUD, HUDWidgetClass); } \
+	FORCEINLINE static uint32 __PPO__CurrentWidget() { return STRUCT_OFFSET(AMisfortunateHUD, CurrentWidget); }
+
+
 #define Misfortunate_Source_Misfortunate_Public_MisfortunateHUD_h_9_PROLOG
 #define Misfortunate_Source_Misfortunate_Public_MisfortunateHUD_h_12_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \

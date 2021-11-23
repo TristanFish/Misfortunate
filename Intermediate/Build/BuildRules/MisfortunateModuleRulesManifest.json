@@ -1,8 +1,10 @@
 {
 	"SourceFiles": [
-		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate\\Misfortunate.Build.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs"
+		"C:\\Users\\Trist\\OneDrive\\Documents\\GitHub\\Misfortunate\\Source\\Misfortunate\\Misfortunate.Build.cs",
+		"C:\\Users\\Trist\\OneDrive\\Documents\\GitHub\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSessions\\Source\\AdvancedSessions\\AdvancedSessions.Build.cs",
+		"C:\\Users\\Trist\\OneDrive\\Documents\\GitHub\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSteamSessions\\Source\\AdvancedSteamSessions\\AdvancedSteamSessions.Build.cs",
+		"C:\\Users\\Trist\\OneDrive\\Documents\\GitHub\\Misfortunate\\Source\\Misfortunate.Target.cs",
+		"C:\\Users\\Trist\\OneDrive\\Documents\\GitHub\\Misfortunate\\Source\\MisfortunateEditor.Target.cs"
 	],
-	"EngineVersion": "4.26.1"
+	"EngineVersion": "4.26.2"
 }

@@ -9,7 +9,9 @@ UCustomAnimInstance::UCustomAnimInstance()
 {
 	speed = 0.0f;
 	direction = 0.0f;
+	BackwardDir = 180.0f;
 	IsInAir = false;
+
 }
 
 void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -17,20 +19,52 @@ void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 
+
+	if (CharPlayer != nullptr) {
+		speed = CharPlayer->GetVelocity().Size();
+
+		float CalcDirLocal;
+
+		CalcDirLocal = CalculateDirection(CharPlayer->GetVelocity(), CharPlayer->GetActorRotation());
+
+
+		if (FMath::IsNearlyEqual(FMath::Abs(CalcDirLocal), BackwardDir, 1.0f))
+		{
+			if (oldMovementDir < 0.0f)
+			{
+				direction = BackwardDir * -1.0f;
+			}
+			else
+			{
+				direction = BackwardDir;
+			}
+		}
+		else
+		{
+			direction = CalcDirLocal;
+		}
+
+		oldMovementDir = direction;
+
+
+		IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
+
+		IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
+		IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
+	}
+
+}
+
+void UCustomAnimInstance::NativeBeginPlay()
+{
 	AActor* OwningActor = GetOwningActor();
 
-	if (OwningActor != nullptr) {
-		speed = OwningActor->GetVelocity().Size();
-		direction = CalculateDirection(OwningActor->GetVelocity(), OwningActor->GetActorRotation());
-
-
-
+	if (OwningActor != nullptr)
+	{
 		APlayerCharacter* OwningCharacter = Cast<APlayerCharacter>(OwningActor);
 
-		if (OwningCharacter != nullptr)
-		{
-			IsInAir = OwningCharacter->GetCharacterMovement()->IsFalling();
-		}
+		CharPlayer = OwningCharacter;
 	}
+
 
 }

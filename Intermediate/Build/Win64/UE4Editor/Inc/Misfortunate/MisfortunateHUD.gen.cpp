@@ -17,6 +17,8 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateHUD() {}
 	MISFORTUNATE_API UClass* Z_Construct_UClass_AMisfortunateHUD();
 	ENGINE_API UClass* Z_Construct_UClass_AHUD();
 	UPackage* Z_Construct_UPackage__Script_Misfortunate();
+	COREUOBJECT_API UClass* Z_Construct_UClass_UClass();
+	UMG_API UClass* Z_Construct_UClass_UUserWidget_NoRegister();
 // End Cross Module References
 	void AMisfortunateHUD::StaticRegisterNativesAMisfortunateHUD()
 	{
@@ -31,6 +33,15 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateHUD() {}
 #if WITH_METADATA
 		static const UE4CodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_HUDWidgetClass_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FClassPropertyParams NewProp_HUDWidgetClass;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_CurrentWidget_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_CurrentWidget;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UE4CodeGen_Private::FClassParams ClassParams;
 	};
@@ -46,6 +57,25 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateHUD() {}
 		{ "ShowCategories", "Input|MouseInput Input|TouchInput" },
 	};
 #endif
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_HUDWidgetClass_MetaData[] = {
+		{ "Category", "MisfortunateHUD" },
+		{ "ModuleRelativePath", "Public/MisfortunateHUD.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FClassPropertyParams Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_HUDWidgetClass = { "HUDWidgetClass", nullptr, (EPropertyFlags)0x0044000000000001, UE4CodeGen_Private::EPropertyGenFlags::Class, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AMisfortunateHUD, HUDWidgetClass), Z_Construct_UClass_UUserWidget_NoRegister, Z_Construct_UClass_UClass, METADATA_PARAMS(Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_HUDWidgetClass_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_HUDWidgetClass_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_CurrentWidget_MetaData[] = {
+		{ "Category", "MisfortunateHUD" },
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "Public/MisfortunateHUD.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_CurrentWidget = { "CurrentWidget", nullptr, (EPropertyFlags)0x0040000000080009, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AMisfortunateHUD, CurrentWidget), Z_Construct_UClass_UUserWidget_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_CurrentWidget_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_CurrentWidget_MetaData)) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AMisfortunateHUD_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_HUDWidgetClass,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AMisfortunateHUD_Statics::NewProp_CurrentWidget,
+	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_AMisfortunateHUD_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AMisfortunateHUD>::IsAbstract,
 	};
@@ -55,11 +85,11 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateHUD() {}
 		&StaticCppClassTypeInfo,
 		DependentSingletons,
 		nullptr,
-		nullptr,
+		Z_Construct_UClass_AMisfortunateHUD_Statics::PropPointers,
 		nullptr,
 		UE_ARRAY_COUNT(DependentSingletons),
 		0,
-		0,
+		UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateHUD_Statics::PropPointers),
 		0,
 		0x008002ACu,
 		METADATA_PARAMS(Z_Construct_UClass_AMisfortunateHUD_Statics::Class_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UClass_AMisfortunateHUD_Statics::Class_MetaDataParams))
@@ -73,7 +103,7 @@ void EmptyLinkFunctionForGeneratedCodeMisfortunateHUD() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AMisfortunateHUD, 2605367954);
+	IMPLEMENT_CLASS(AMisfortunateHUD, 1391763363);
 	template<> MISFORTUNATE_API UClass* StaticClass<AMisfortunateHUD>()
 	{
 		return AMisfortunateHUD::StaticClass();

@@ -3,28 +3,58 @@
 #pragma once
 
 
-
 #include "GameFramework/Actor.h"
+
 #include "HeadLamp.generated.h"
 
-
-
-UCLASS(Config = ConfigName)
-class AHeadLampInfo : public AActor
+UCLASS(Blueprintable)
+class AHeadLamp : public AActor
 {
 	GENERATED_BODY()
 
 
 public:
 	// Sets default values for this character's properties
-	AHeadLampInfo();
+	AHeadLamp();
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USceneComponent* SceneComponent;
+
+	/*Head Lamp Components*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USpotLightComponent* lightMid;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USpotLightComponent* lightLeft;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USpotLightComponent* lightRight;
 	
 
-	//!TickStaminaTimerHandle FTimerHandler
-	/*!Used to create a battery timer*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USpringArmComponent* flashlightArm;
 	
+
+public:
 
 	virtual void BeginPlay() override;
 
+	//!ToggleFlashlight Function
+	/*!Toggles the headlamp between modes/turns it off*/
+	void ToggleHeadLamp();
+
+
+protected:
+
+	//!LightState Enum Class
+	/*!Store's the different states the headlamp can be in*/
+	enum class LightState { Off, SingleBeam, TrippleBeam };
+
+
+	//!LightState 
+	/*!Handle's what state the headlamp is currently In*/
+	LightState lightState;
+
+	
 };

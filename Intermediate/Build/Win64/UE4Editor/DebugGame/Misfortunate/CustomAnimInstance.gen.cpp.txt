@@ -1,5 +1,5 @@
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-G:\Engines\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-D:\Unreal Projects\Misfortunate\Source\Misfortunate/Public/CustomAnimInstance.h
-D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\CustomAnimInstance.generated.h
+C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
+C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
+C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
+C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate/Public/CustomAnimInstance.h
+C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\CustomAnimInstance.generated.h

@@ -5,7 +5,7 @@
 ===========================================================================*/
 
 #include "UObject/GeneratedCppIncludes.h"
-#include "Misfortunate/Public/EventZone.h"
+#include "Misfortunate/Public/Actors/EventZone.h"
 #ifdef _MSC_VER
 #pragma warning (push)
 #pragma warning (disable : 4883)
@@ -34,7 +34,7 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 		return EventZoneLevel_StaticEnum();
 	}
 	static FCompiledInDeferEnum Z_CompiledInDeferEnum_UEnum_EventZoneLevel(EventZoneLevel_StaticEnum, TEXT("/Script/Misfortunate"), TEXT("EventZoneLevel"), false, nullptr, nullptr);
-	uint32 Get_Z_Construct_UEnum_Misfortunate_EventZoneLevel_Hash() { return 1902155309U; }
+	uint32 Get_Z_Construct_UEnum_Misfortunate_EventZoneLevel_Hash() { return 1118585052U; }
 	UEnum* Z_Construct_UEnum_Misfortunate_EventZoneLevel()
 	{
 #if WITH_HOT_RELOAD
@@ -59,7 +59,7 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 				{ "II.Name", "II" },
 				{ "III.Name", "III" },
 				{ "IV.Name", "IV" },
-				{ "ModuleRelativePath", "Public/EventZone.h" },
+				{ "ModuleRelativePath", "Public/Actors/EventZone.h" },
 				{ "V.Name", "V" },
 				{ "VI.Name", "VI" },
 			};
@@ -131,9 +131,9 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "// Triggers when an actor overlaps the Trigger Volume\n" },
-		{ "ModuleRelativePath", "Public/EventZone.h" },
-		{ "ToolTip", "Triggers when an actor overlaps the Trigger Volume" },
+		{ "Comment", "/*!Triggers when an actor overlaps the Trigger Volume*/" },
+		{ "ModuleRelativePath", "Public/Actors/EventZone.h" },
+		{ "ToolTip", "!Triggers when an actor overlaps the Trigger Volume" },
 	};
 #endif
 	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_AEventZone, nullptr, "OnOverlapBegin", nullptr, nullptr, sizeof(EventZone_eventOnOverlapBegin_Parms), Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_AEventZone_OnOverlapBegin_Statics::Function_MetaDataParams)) };
@@ -169,9 +169,9 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::Function_MetaDataParams[] = {
-		{ "Comment", "// Triggers when an actor exits the Trigger Volume\n" },
-		{ "ModuleRelativePath", "Public/EventZone.h" },
-		{ "ToolTip", "Triggers when an actor exits the Trigger Volume" },
+		{ "Comment", "/*!Triggers when an actor exits the Trigger Volume*/" },
+		{ "ModuleRelativePath", "Public/Actors/EventZone.h" },
+		{ "ToolTip", "!Triggers when an actor exits the Trigger Volume" },
 	};
 #endif
 	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_AEventZone, nullptr, "OnOverlapEnd", nullptr, nullptr, sizeof(EventZone_eventOnOverlapEnd_Parms), Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00020401, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_AEventZone_OnOverlapEnd_Statics::Function_MetaDataParams)) };
@@ -208,23 +208,23 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_Misfortunate,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_AEventZone_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_AEventZone_OnOverlapBegin, "OnOverlapBegin" }, // 3021369445
-		{ &Z_Construct_UFunction_AEventZone_OnOverlapEnd, "OnOverlapEnd" }, // 4212803839
+		{ &Z_Construct_UFunction_AEventZone_OnOverlapBegin, "OnOverlapBegin" }, // 3453404472
+		{ &Z_Construct_UFunction_AEventZone_OnOverlapEnd, "OnOverlapEnd" }, // 2125821876
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEventZone_Statics::Class_MetaDataParams[] = {
 		{ "HideCategories", "Brush Physics Object Blueprint Display Rendering Physics Input" },
-		{ "IncludePath", "EventZone.h" },
-		{ "ModuleRelativePath", "Public/EventZone.h" },
+		{ "IncludePath", "Actors/EventZone.h" },
+		{ "ModuleRelativePath", "Public/Actors/EventZone.h" },
 		{ "ShowCategories", "Input|MouseInput Input|TouchInput" },
 	};
 #endif
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AEventZone_Statics::NewProp_ZoneLevel_MetaData[] = {
 		{ "Category", "EventZone" },
-		{ "Comment", "// The level that the current zone is. (Changeable in editor)\n" },
-		{ "ModuleRelativePath", "Public/EventZone.h" },
-		{ "ToolTip", "The level that the current zone is. (Changeable in editor)" },
+		{ "Comment", "/*!The level that the current zone is. (Changeable in editor)*/" },
+		{ "ModuleRelativePath", "Public/Actors/EventZone.h" },
+		{ "ToolTip", "!The level that the current zone is. (Changeable in editor)" },
 	};
 #endif
 	const UE4CodeGen_Private::FBytePropertyParams Z_Construct_UClass_AEventZone_Statics::NewProp_ZoneLevel = { "ZoneLevel", nullptr, (EPropertyFlags)0x0010000000000005, UE4CodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AEventZone, ZoneLevel), Z_Construct_UEnum_Misfortunate_EventZoneLevel, METADATA_PARAMS(Z_Construct_UClass_AEventZone_Statics::NewProp_ZoneLevel_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AEventZone_Statics::NewProp_ZoneLevel_MetaData)) };
@@ -258,7 +258,7 @@ void EmptyLinkFunctionForGeneratedCodeEventZone() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AEventZone, 2053719837);
+	IMPLEMENT_CLASS(AEventZone, 1845769081);
 	template<> MISFORTUNATE_API UClass* StaticClass<AEventZone>()
 	{
 		return AEventZone::StaticClass();

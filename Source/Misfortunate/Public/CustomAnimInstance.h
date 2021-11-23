@@ -17,6 +17,9 @@ class UCustomAnimInstance : public UAnimInstance
 public:
 	UCustomAnimInstance();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class APlayerCharacter* CharPlayer;
+
 	//!Speed float 
 	/*!Handles the speed of the animation*/
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Generic")
@@ -27,12 +30,35 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		float direction;
 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
+		float oldMovementDir;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
+		float BackwardDir;
+
 	//!IsInAir Bool 
 	/*!Updated when player is/isnt in air (Used for jumping)*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		bool IsInAir;
 
+	//!IsCrawling Bool 
+	/*!Updated when player is/isnt crawling*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
+		bool IsCrawling;
+
+	//!IsCrawling Bool 
+	/*!Updated when player is/isnt crawling*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
+		bool IsCrouched;
+
+
+
 	//!NativeUpdateAnimation Function 
 	/*!Updates the current animations variables while the animation runs*/
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	//!NativeUpdateAnimation Function 
+	/*!Updates the current animations variables while the animation runs*/
+	virtual void NativeBeginPlay() override;
 };

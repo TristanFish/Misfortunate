@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-AdvancedSteamSessions-Win64-DebugGame.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\MisfortunateEditor\DebugGame\Engine\SharedPCH.Engine.NonOptimized.ShadowErrors.h.obj"
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\DebugGame\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\DebugGame\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\DebugGame\AdvancedSteamSessions\Default.rc2.res"
+/OUT:"C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UE4Editor\DebugGame\AdvancedSteamSessions\UE4Editor-AdvancedSteamSessions-Win64-DebugGame.lib"
+/INCLUDE:IMPLEMENT_MODULE_AdvancedSteamSessions
