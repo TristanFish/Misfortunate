@@ -20,6 +20,9 @@ ALobbyPlayerCharacter::ALobbyPlayerCharacter()
 
 	LobbyCam->SetupAttachment(GetRootComponent());
 
+
+	MinYawViewAngle = -80.0f;
+	MaxYawViewAngle = 80.0f;
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +36,7 @@ void ALobbyPlayerCharacter::BeginPlay()
 		return;
 
 	controller->ClientSetRotation(GetActorRotation());
-	controller->SetViewYawExtents(-80.0f, 80.0f);
+	controller->SetViewYawExtents(MinYawViewAngle, MaxYawViewAngle);
 	
 }
 

@@ -40,7 +40,6 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-
 	UFUNCTION(BlueprintImplementableEvent)
 		void EveryoneUpdate();
 
@@ -49,6 +48,7 @@ public:
 
 	void UpdateReadyState(class AMPlayerController* changedPlayer);
 
+	void OnHostStart();
 
 	//!GetScareEventManager Getter
 	/*!Returns a pointer to the games scareManager*/

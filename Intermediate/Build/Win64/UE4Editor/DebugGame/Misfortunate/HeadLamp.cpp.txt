@@ -1,15 +1,15 @@
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Public\HeadLamp.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\HeadLamp.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/SpotLightComponent.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/PointLightComponent.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LocalLightComponent.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LightComponent.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LightComponentBase.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LightComponentBase.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LightComponent.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LocalLightComponent.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\PointLightComponent.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SpotLightComponent.generated.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/SpringArmComponent.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SpringArmComponent.generated.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
+D:\Unreal Projects\Misfortunate\Source\Misfortunate\Public\HeadLamp.h
+D:\Unreal Projects\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\HeadLamp.generated.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/SpotLightComponent.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/PointLightComponent.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LocalLightComponent.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LightComponent.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\Components/LightComponentBase.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LightComponentBase.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LightComponent.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\LocalLightComponent.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\PointLightComponent.generated.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SpotLightComponent.generated.h
+G:\Engines\UE_4.26\Engine\Source\Runtime\Engine\Classes\GameFramework/SpringArmComponent.h
+G:\Engines\UE_4.26\Engine\Intermediate\Build\Win64\UE4Editor\Inc\Engine\SpringArmComponent.generated.h

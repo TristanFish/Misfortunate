@@ -43,6 +43,8 @@ public:
 		void UpdateReadyState(bool ReadyState_);
 
 	FString GetPlayerName() const;
+
+	bool IsReady() const;
 protected:
 
 	

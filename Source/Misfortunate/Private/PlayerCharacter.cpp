@@ -82,7 +82,6 @@ void APlayerCharacter::BeginPlay()
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("MisFortune: %f"), Misfortune));
 
 	GetWorld()->GetTimerManager().SetTimer(TickTraceCheckTimerHandle, this, &APlayerCharacter::TraceChecks, 0.1f, true);
-
 }
 
 // Called every frame

@@ -79,6 +79,7 @@ protected:
 
 	TArray<ALoreTablet*> CollectedTablets;
 
+
 public:
 
 	UPROPERTY(BlueprintReadWrite,Replicated)
@@ -114,6 +115,7 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+
 	// Delegate Functions
 	void InteractionOccurred();
 
@@ -144,12 +146,14 @@ public:
 	UFUNCTION(Client, Reliable, WithValidation,BlueprintCallable)
 		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
 
-
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_UpdateReadyState(const FPlayerInfo& changedPlayer);
 
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_PossesNewCharacter(ACharacter* playerCharacter);
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multi_SwitchToGame();
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 		void UpdatePlayerInfo();

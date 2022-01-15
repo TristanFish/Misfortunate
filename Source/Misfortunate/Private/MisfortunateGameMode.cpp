@@ -56,7 +56,8 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
 {
-
+	ConnectedPlayers.Remove(Cast<APlayerController>(OldPlayer));
+	EveryoneUpdate();
 }
 
 void AMisfortunateGameMode::BeginPlay()
@@ -156,14 +157,32 @@ void AMisfortunateGameMode::TriggerScareEvent()
 
 void AMisfortunateGameMode::UpdateReadyState(AMPlayerController* changedPlayer)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Gamemode_UpdateReadyState"));
-
 	for (auto player : ConnectedPlayers)
 	{
 
 		Cast<AMPlayerController>(player)->Client_UpdateReadyState(changedPlayer->PlayerInfo);
 	}
 
+}
+
+void AMisfortunateGameMode::OnHostStart()
+{
+	PossessableCharacters.Empty();
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+
+	for (int i = 0; i < ConnectedPlayers.Num(); i++)
+	{
+		AMPlayerController* controller = Cast<AMPlayerController>(ConnectedPlayers[i]);
+
+		controller->Multi_SwitchToGame();
+
+
+		controller->UnPossess();
+		controller->Possess(Cast<APlayerCharacter>(PossessableCharacters[i]));
+	}
+
+	SetGameState(Exploration);
 }
 
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const
