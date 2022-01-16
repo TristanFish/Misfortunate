@@ -8,6 +8,15 @@
 #include "MPlayerController.h"
 #include "MisfortunateGameMode.generated.h"
 
+
+UENUM() enum UGameState {
+
+	Lobby UMETA(DisplayName = "Lobby"),
+	Exploration UMETA(DisplayName = "Exploration"),
+
+};
+
+
 UCLASS()
 class AMisfortunateGameMode : public AGameModeBase
 {
@@ -16,9 +25,8 @@ class AMisfortunateGameMode : public AGameModeBase
 public:
 	AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer);
 
-	enum GameState { Lobby, Exploration };
-
-	GameState CurrentState;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+		TEnumAsByte<UGameState> CurrentState;
 
 	// The percent chance that a player will be scared by a event
 	UPROPERTY(VisibleAnywhere)
@@ -59,7 +67,7 @@ public:
 
 	void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
 
-	void SetGameState(GameState state_);
+	void SetGameState(TEnumAsByte<UGameState> state_);
 
 	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
 

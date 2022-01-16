@@ -20,6 +20,7 @@ void EmptyLinkFunctionForGeneratedCodeHeadLamp() {}
 	ENGINE_API UClass* Z_Construct_UClass_USceneComponent_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_USpotLightComponent_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_USpringArmComponent_NoRegister();
+	ENGINE_API UClass* Z_Construct_UClass_USoundBase_NoRegister();
 // End Cross Module References
 	void AHeadLamp::StaticRegisterNativesAHeadLamp()
 	{
@@ -54,6 +55,10 @@ void EmptyLinkFunctionForGeneratedCodeHeadLamp() {}
 		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_flashlightArm_MetaData[];
 #endif
 		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_flashlightArm;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_OnOffSound_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_OnOffSound;
 		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UE4CodeGen_Private::FClassParams ClassParams;
@@ -112,12 +117,20 @@ void EmptyLinkFunctionForGeneratedCodeHeadLamp() {}
 	};
 #endif
 	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AHeadLamp_Statics::NewProp_flashlightArm = { "flashlightArm", nullptr, (EPropertyFlags)0x00100000000a000d, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AHeadLamp, flashlightArm), Z_Construct_UClass_USpringArmComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AHeadLamp_Statics::NewProp_flashlightArm_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AHeadLamp_Statics::NewProp_flashlightArm_MetaData)) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AHeadLamp_Statics::NewProp_OnOffSound_MetaData[] = {
+		{ "Category", "HeadLamp" },
+		{ "ModuleRelativePath", "Public/HeadLamp.h" },
+	};
+#endif
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AHeadLamp_Statics::NewProp_OnOffSound = { "OnOffSound", nullptr, (EPropertyFlags)0x0010000000020005, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AHeadLamp, OnOffSound), Z_Construct_UClass_USoundBase_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AHeadLamp_Statics::NewProp_OnOffSound_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AHeadLamp_Statics::NewProp_OnOffSound_MetaData)) };
 	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AHeadLamp_Statics::PropPointers[] = {
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_SceneComponent,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_lightMid,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_lightLeft,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_lightRight,
 		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_flashlightArm,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AHeadLamp_Statics::NewProp_OnOffSound,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_AHeadLamp_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AHeadLamp>::IsAbstract,
@@ -146,7 +159,7 @@ void EmptyLinkFunctionForGeneratedCodeHeadLamp() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(AHeadLamp, 3834373104);
+	IMPLEMENT_CLASS(AHeadLamp, 1005843258);
 	template<> MISFORTUNATE_API UClass* StaticClass<AHeadLamp>()
 	{
 		return AHeadLamp::StaticClass();

@@ -54,7 +54,7 @@ protected:
 
 
 	UPROPERTY()
-		TSubclassOf<class UWInteraction> HUDWidgetClass;
+		TSubclassOf<class UWPlayerHUD> HUDWidgetClass;
 
 	UPROPERTY()
 		class UWInteraction* InteractionWidget;
@@ -62,9 +62,9 @@ protected:
 	UPROPERTY()
 		class UWJournal* JournalWidget;
 
-	
+	UPROPERTY()
+		class UWPlayerHUD* HUDWidget;
 
-	
 	/*Lobby Variables*/
 	UPROPERTY(BlueprintReadOnly)
 		TSubclassOf<class UWLobbyMenu> LobbyWidgetClass;

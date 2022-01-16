@@ -8,6 +8,7 @@
 #include "Widgets/WInteraction.h"
 #include "Widgets/WLobbyMenu.h"
 #include "Widgets/WPlayerStatus.h"
+#include "WPlayerHUD.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/GameState.h"
@@ -30,7 +31,9 @@ AMPlayerController::AMPlayerController()
 	static ConstructorHelpers::FClassFinder<UUserWidget> LobbyClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_LobbyMenu"));
 	LobbyWidgetClass = LobbyClass.Class;
 
-	
+	static ConstructorHelpers::FClassFinder<UUserWidget> HUDClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_PlayerHUD"));
+	HUDWidgetClass = HUDClass.Class;
+
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerStatusClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_PlayerStatus"));
 	PlayerStatusWidgetClass = PlayerStatusClass.Class;
@@ -48,13 +51,14 @@ void AMPlayerController::BeginPlay()
 
 	JournalWidget = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
 	InteractionWidget = CreateWidget<UWInteraction>(GetWorld(), InteractionWidgetClass);
-	//HUDWidgetClass = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
+	HUDWidget = CreateWidget<UWPlayerHUD>(GetWorld(), HUDWidgetClass);
+	HUDWidget->AddToViewport();
 
 
 	if (!LobbyWidget)
 	{
-		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
-		LobbyWidget->AddToViewport();
+		//LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+		//LobbyWidget->AddToViewport();
 	}
 
 }

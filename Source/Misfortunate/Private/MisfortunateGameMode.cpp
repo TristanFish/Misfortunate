@@ -28,7 +28,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = GameState::Lobby;
+	CurrentState = UGameState::Exploration;
 
 	EventChance = 15;
 }
@@ -39,19 +39,20 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 	ConnectedPlayers.AddUnique(NewPlayer);
 
 
-
-	for (auto possChar : PossessableCharacters)
+	if (CurrentState == UGameState::Lobby)
 	{
-		ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
-		if (!lobbyChar->HasBeenPossesed)
+		for (auto possChar : PossessableCharacters)
 		{
-			Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+			ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
+			if (!lobbyChar->HasBeenPossesed)
+			{
+				Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+			}
 		}
+
+		InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
+		EveryoneUpdate();
 	}
-
-	InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
-	EveryoneUpdate();
-
 }
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
@@ -218,10 +219,10 @@ void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* en
 
 }
 
-void AMisfortunateGameMode::SetGameState(GameState state_)
+void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 {
 	CurrentState = state_;
-	if (CurrentState == GameState::Exploration)
+	if (CurrentState == UGameState::Exploration)
 	{
 		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
 	}

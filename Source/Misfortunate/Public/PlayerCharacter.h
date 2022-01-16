@@ -173,6 +173,7 @@ protected:
 		void Multi_UpdateLookRotation(FRotator rot);
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
+
 		void Multi_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
 
 	UFUNCTION(Server,Reliable,WithValidation)
