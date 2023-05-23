@@ -13,5 +13,14 @@ UCLASS()
 class MISFORTUNATE_API UWStamina : public UUserWidget
 {
 	GENERATED_BODY()
+
+
+public:
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+	class UProgressBar* Stamina = nullptr;
+
+
+	virtual void NativeConstruct() override;
 	
 };

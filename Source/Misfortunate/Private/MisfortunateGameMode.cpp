@@ -19,7 +19,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Misfortuante/Blueprints/Player_BP"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Misfortuante/Blueprints/Actors/Player_BP"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	static ConstructorHelpers::FClassFinder<AMPlayerController> PlayerControllerClassFinder(TEXT("/Game/Misfortuante/Blueprints/M_PlayerController"));
@@ -47,6 +47,8 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			if (!lobbyChar->HasBeenPossesed)
 			{
 				Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Player Possesed"));
 			}
 		}
 
@@ -63,12 +65,24 @@ void AMisfortunateGameMode::Logout(AController* OldPlayer)
 
 void AMisfortunateGameMode::BeginPlay()
 {
-	Super::BeginPlay();
 
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Begin Play"));
+
+
+	Super::BeginPlay();
+}
+
+void AMisfortunateGameMode::EndPlay(EEndPlayReason::Type Reason)
+{
+	if (GetWorldTimerManager().IsTimerActive(CheckDistTimerHandle))
+	{
+		GetWorldTimerManager().ClearTimer(CheckDistTimerHandle);
+	}
 }
 
 void AMisfortunateGameMode::Tick(float DeltaSeconds)
@@ -105,7 +119,7 @@ void AMisfortunateGameMode::CheckEventTrigger()
 			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
-			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Client_SetMisfortune(0.0f);
+			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Server_SetMisfortune(0.0f);
 		}
 
 		else {
@@ -183,7 +197,7 @@ void AMisfortunateGameMode::OnHostStart()
 		controller->Possess(Cast<APlayerCharacter>(PossessableCharacters[i]));
 	}
 
-	SetGameState(Exploration);
+	SetGameState(LobbyExploration);
 }
 
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const

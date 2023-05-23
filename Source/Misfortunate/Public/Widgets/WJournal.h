@@ -20,16 +20,20 @@ public:
 	 bool Initialize() override;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		class UTextBlock* LoreTitle = nullptr;
+		class UTextBlock* CurrentLoreOwner = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		class UTextBlock* Lore = nullptr;
+		class UTextBlock* LoreOwnerInfo = nullptr;
 
-	UPROPERTY(BlueprintReadOnly)
-		class ALoreTablet* CurrentTabletViewed;
+	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidget))
+		class UVerticalBox* LoreBox = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta = (BindWidgetAnim))
 		class UWidgetAnimation* JournalOpenAnim = nullptr;
+
+
+	UPROPERTY(BlueprintReadWrite)
+		FString CurrentLoreOwnerViewed;
 public:
 
 	UFUNCTION()

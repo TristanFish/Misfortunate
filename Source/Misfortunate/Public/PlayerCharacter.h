@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#pragma
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -38,10 +38,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* playerCamera;
 
+	//!HeartBeat Audio
+	/*!The heartbeat audio component that will link to the meta sound*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio)
+		class UAudioComponent* heartbeatAudio;
+
 	//!Stamina float
 	/*!The stamina that the player uses for walking & running*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement)
 		float Stamina = 100.0f;
+
+	//!Max Stamina float
+	/*!The max stamina that the player uses for walking & running*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement)
+		float MaxStamina = 100.0f;
 
 	//!SprintMultiplier float
 	/*!Allows the players to string and is used as a scaler for the MaxWalkSpeed*/
@@ -89,7 +99,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		FVector CrawlMeshPos;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		bool IsCrawlBlocked;
 
@@ -111,6 +120,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class AHeadLamp* HeadLamp;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateHeartBeatAudio();
 
 	//Removes stamina from our Stamina variable
 	UFUNCTION()
@@ -188,8 +200,8 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 
-	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_SetMisfortune(const float Misfortune_);
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetMisfortune(const float Misfortune_);
 
 	//!GetCurrentZone Getter
 	/*!Returns the current zone the players is in*/

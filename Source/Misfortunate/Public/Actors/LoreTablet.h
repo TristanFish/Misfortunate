@@ -33,20 +33,16 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		SharedType sharedType;
 
-	UFUNCTION()
-	void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor);
-
-	// declare overlap end function
-	UFUNCTION()
-	void OnOverlapEnd(class AActor* OverlappedActor, class AActor* OtherActor);
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		FString TabletTitle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FString TabletOwner;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		FString TabletText;
@@ -57,11 +53,14 @@ public:
 
 	
 
-	void SetText(FString& text_, FString& title_);
-	void SetText(FString text_, FString title_);
+	void SetTabletInfo(FString& text_, FString& title_, FString& owner_);
+	void SetTabletInfo(FString text_, FString title_, FString owner_);
 
 	FString GetTabletText();
 
 	FString GetTabletTitle();
+
+	FString GetTabletOwner();
+
 
 };

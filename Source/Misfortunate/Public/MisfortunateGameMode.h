@@ -13,6 +13,7 @@ UENUM() enum UGameState {
 
 	Lobby UMETA(DisplayName = "Lobby"),
 	Exploration UMETA(DisplayName = "Exploration"),
+	LobbyExploration UMETA(DisplayName = "LobbyExploration"),
 
 };
 
@@ -46,6 +47,9 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(EEndPlayReason::Type Reason) override;
+
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -67,7 +71,8 @@ public:
 
 	void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
 
-	void SetGameState(TEnumAsByte<UGameState> state_);
+	UFUNCTION(BlueprintCallable)
+		void SetGameState(TEnumAsByte<UGameState> state_);
 
 	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
 

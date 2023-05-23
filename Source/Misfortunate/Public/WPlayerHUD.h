@@ -19,6 +19,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UWMisfortune* W_Misfortune = nullptr; 
 
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UWStamina* W_Stamina = nullptr;
+
 	virtual void NativeConstruct() override;
 
 	

@@ -2,12 +2,12 @@
 	"Targets": [
 		{
 			"Name": "Misfortunate",
-			"Path": "D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
+			"Path": "G:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
 			"Type": "Game"
 		},
 		{
 			"Name": "MisfortunateEditor",
-			"Path": "D:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs",
+			"Path": "G:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs",
 			"Type": "Editor"
 		}
 	]

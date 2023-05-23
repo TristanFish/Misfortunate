@@ -3,3 +3,7 @@
 
 #include "WStamina.h"
 
+void UWStamina::NativeConstruct()
+{
+	Super::NativeConstruct();
+}

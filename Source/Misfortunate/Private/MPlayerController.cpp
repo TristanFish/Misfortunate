@@ -22,7 +22,7 @@
 
 AMPlayerController::AMPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> JournalClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Journal"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> JournalClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_JournalNew"));
 	JournalWidgetClass = JournalClass.Class;
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> InteractionClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Interaction"));
@@ -52,7 +52,6 @@ void AMPlayerController::BeginPlay()
 	JournalWidget = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
 	InteractionWidget = CreateWidget<UWInteraction>(GetWorld(), InteractionWidgetClass);
 	HUDWidget = CreateWidget<UWPlayerHUD>(GetWorld(), HUDWidgetClass);
-	HUDWidget->AddToViewport();
 
 
 	if (!LobbyWidget)
@@ -133,7 +132,7 @@ void AMPlayerController::ToggleJournal()
 
 void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
 {
-	if (InteractionWidgetClass != nullptr)
+	if (InteractionWidgetClass != nullptr && !InteractionWidget->InteractText->IsVisible())
 	{
 
 		InteractionWidget = CreateWidget<UWInteraction>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InteractionWidgetClass);
@@ -238,7 +237,19 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet
 	}
 
 	InteractionWidget->PlayInteractionAnim();
-	CollectedTablets.Add(tablet);
+
+	
+
+	if (CollectedTablets.Find(tablet->GetTabletOwner()))
+	{
+		CollectedTablets.Find(tablet->GetTabletOwner())->Add(tablet);
+	}
+	else
+	{
+		TArray<ALoreTablet*> Tablets = { tablet };
+		CollectedTablets.Add(tablet->GetTabletOwner(), Tablets);
+	}
+	
 }
 
 bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tablet)
@@ -300,7 +311,11 @@ bool AMPlayerController::Client_PossesNewCharacter_Validate(ACharacter* playerCh
 
 void AMPlayerController::Multi_SwitchToGame_Implementation()
 {
-	LobbyWidget->RemoveFromViewport();
+	if (LobbyWidget->IsInViewport())
+	{
+		LobbyWidget->RemoveFromViewport();
+	}
+	HUDWidget->AddToViewport();
 	SetViewYawExtents(0.0f, 359.0f);
 }
 
@@ -334,7 +349,7 @@ void AMPlayerController::SetViewPitchExtents(float minPitch, float maxPitch)
 
 
 
-TArray<ALoreTablet*> AMPlayerController::GetCollectedTablets()
+TMap<FString,TArray<ALoreTablet*>> AMPlayerController::GetCollectedTablets()
 {
 	return CollectedTablets;
 }

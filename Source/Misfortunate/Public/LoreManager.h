@@ -18,6 +18,10 @@ struct FLoreInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString LoreTitle;
 
+	/*The text the corresponds with the explorer that wrote the lore*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FString LoreOwner;
+
 	/*The text the corresponds with the lore*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FString LoreText;
@@ -36,6 +40,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		TArray<AActor*> LoreTablets;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		TArray<FString> LoreOwners;
 
 protected:
 

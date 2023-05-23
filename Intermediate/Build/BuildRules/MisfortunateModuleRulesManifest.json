@@ -1,10 +1,10 @@
 {
 	"SourceFiles": [
-		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate\\Misfortunate.Build.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSessions\\Source\\AdvancedSessions\\AdvancedSessions.Build.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSteamSessions\\Source\\AdvancedSteamSessions\\AdvancedSteamSessions.Build.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
-		"D:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs"
+		"G:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate\\Misfortunate.Build.cs",
+		"G:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSessions\\Source\\AdvancedSessions\\AdvancedSessions.Build.cs",
+		"G:\\Unreal Projects\\Misfortunate\\Plugins\\AdvancedSessions\\AdvancedSteamSessions\\Source\\AdvancedSteamSessions\\AdvancedSteamSessions.Build.cs",
+		"G:\\Unreal Projects\\Misfortunate\\Source\\Misfortunate.Target.cs",
+		"G:\\Unreal Projects\\Misfortunate\\Source\\MisfortunateEditor.Target.cs"
 	],
-	"EngineVersion": "4.26.2"
+	"EngineVersion": "5.2.0"
 }

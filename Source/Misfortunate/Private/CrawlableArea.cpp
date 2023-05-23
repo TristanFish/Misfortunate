@@ -15,8 +15,8 @@ ACrawlableArea::ACrawlableArea()
 	OnActorEndOverlap.AddDynamic(this, &ACrawlableArea::OnOverlapEnd);
 
 
-	MaxYawView = 20.0f;
-	MinYawView = -20.0f;
+	MaxYawView = 40.0f;
+	MinYawView = -40.0f;
 
 	MaxPitchView = 60.0f;
 	MinPitchView = -60.0f;
@@ -67,16 +67,19 @@ void ACrawlableArea::OnOverlapEnd(class AActor* OverlappedComp, class AActor* Ot
 
 	APlayerCharacter* character = Cast<APlayerCharacter>(OtherActor);
 
-	AMPlayerController* controller = Cast<AMPlayerController>(character->GetController());
 
-
-	if (controller != nullptr && controller->IsLocalController())
+	if (character)
 	{
-		controller->SetViewYawExtents(PrevMinYawView, PrevMaxYawView);
-		controller->SetViewPitchExtents(PrevMinPitchView, PrevMaxPitchView);
+		AMPlayerController* controller = Cast<AMPlayerController>(character->GetController());
 
 
+		if (controller != nullptr && controller->IsLocalController())
+		{
+			controller->SetViewYawExtents(PrevMinYawView, PrevMaxYawView);
+			controller->SetViewPitchExtents(PrevMinPitchView, PrevMaxPitchView);
+
+
+		}
 	}
-
 }
 

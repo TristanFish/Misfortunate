@@ -77,7 +77,7 @@ protected:
 
 
 
-	TArray<ALoreTablet*> CollectedTablets;
+	TMap<FString,TArray<ALoreTablet*>> CollectedTablets;
 
 
 public:
@@ -126,13 +126,17 @@ public:
 	void ToggleJournal();
 	// Delegate Functions
 
-	void DisplayTabletInteraction(ALoreTablet* tablet);
 
-	void HideInteraction();
 
 	void AddToTabletsCollected(ALoreTablet* tablet);
 
 	void AddTabletsToAllPlayers(ALoreTablet* tablet);
+
+	UFUNCTION(BlueprintCallable)
+		void HideInteraction();
+
+	UFUNCTION(BlueprintCallable)
+		void DisplayTabletInteraction(ALoreTablet* tablet);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_AddTabletsToAllPlayers(ALoreTablet* tablet);
@@ -166,7 +170,7 @@ public:
 	void SetViewPitchExtents(float minPitch, float maxPitch);
 
 public:
-	TArray<ALoreTablet*> GetCollectedTablets();
+	TMap<FString, TArray<ALoreTablet*>> GetCollectedTablets();
 
 	 UWLobbyMenu* GetLobbyWidget() const;
 	

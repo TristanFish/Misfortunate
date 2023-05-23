@@ -5,6 +5,8 @@
 #include "Components/SceneComponent.h"
 #include "Components/BillboardComponent.h"
 
+#include "MetasoundSource.h"
+
 // Sets default values
 AScarePoint::AScarePoint(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
