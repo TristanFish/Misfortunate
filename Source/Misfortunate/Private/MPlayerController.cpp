@@ -8,6 +8,7 @@
 #include "Widgets/WInteraction.h"
 #include "Widgets/WLobbyMenu.h"
 #include "Widgets/WPlayerStatus.h"
+#include "WPlayerHUD.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/GameState.h"
@@ -21,7 +22,7 @@
 
 AMPlayerController::AMPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> JournalClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Journal"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> JournalClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_JournalNew"));
 	JournalWidgetClass = JournalClass.Class;
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> InteractionClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_Interaction"));
@@ -30,34 +31,34 @@ AMPlayerController::AMPlayerController()
 	static ConstructorHelpers::FClassFinder<UUserWidget> LobbyClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_LobbyMenu"));
 	LobbyWidgetClass = LobbyClass.Class;
 
-	//static ConstructorHelpers::FClassFinder<UUserWidget> HUDClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_PlayerHUD"));
-	//HUDWidgetClass = HUDClass.Class;
+	static ConstructorHelpers::FClassFinder<UUserWidget> HUDClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/W_PlayerHUD"));
+	HUDWidgetClass = HUDClass.Class;
+
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> PlayerStatusClass(TEXT("/Game/Misfortuante/Blueprints/Widgets/Menu/W_PlayerStatus"));
 	PlayerStatusWidgetClass = PlayerStatusClass.Class;
 	
 
 	bAlwaysRelevant = true;
-
 }
 
 void AMPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	PlayerCameraManager->ViewPitchMin = -70.0f;
-	PlayerCameraManager->ViewPitchMax = 65.0f;
+	SetViewPitchExtents(-70.0f, 65.0f);
 
 
 	JournalWidget = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
 	InteractionWidget = CreateWidget<UWInteraction>(GetWorld(), InteractionWidgetClass);
-	//HUDWidgetClass = CreateWidget<UWJournal>(GetWorld(), JournalWidgetClass);
-
-	if(!LobbyWidget)
-		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+	HUDWidget = CreateWidget<UWPlayerHUD>(GetWorld(), HUDWidgetClass);
 
 
-	LobbyWidget->AddToViewport();
+	if (!LobbyWidget)
+	{
+		//LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+		//LobbyWidget->AddToViewport();
+	}
 
 }
 
@@ -131,7 +132,7 @@ void AMPlayerController::ToggleJournal()
 
 void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
 {
-	if (InteractionWidgetClass != nullptr)
+	if (InteractionWidgetClass != nullptr && !InteractionWidget->InteractText->IsVisible())
 	{
 
 		InteractionWidget = CreateWidget<UWInteraction>(UGameplayStatics::GetPlayerController(GetWorld(), 0), InteractionWidgetClass);
@@ -236,7 +237,19 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet
 	}
 
 	InteractionWidget->PlayInteractionAnim();
-	CollectedTablets.Add(tablet);
+
+	
+
+	if (CollectedTablets.Find(tablet->GetTabletOwner()))
+	{
+		CollectedTablets.Find(tablet->GetTabletOwner())->Add(tablet);
+	}
+	else
+	{
+		TArray<ALoreTablet*> Tablets = { tablet };
+		CollectedTablets.Add(tablet->GetTabletOwner(), Tablets);
+	}
+	
 }
 
 bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tablet)
@@ -247,10 +260,12 @@ bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tabl
 
 void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FPlayerInfo>& playersInfo)
 {
-	if (!LobbyWidget)
-		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Size of players Info: %i"), playersInfo.Num()));
+	if (!LobbyWidget)
+	{
+		LobbyWidget = CreateWidget<UWLobbyMenu>(GetWorld(), LobbyWidgetClass);
+		LobbyWidget->AddToViewport();
+	}
 
 	AllPlayersInfo = playersInfo;
 
@@ -267,23 +282,14 @@ bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerIn
 
 void AMPlayerController::Client_UpdateReadyState_Implementation(const FPlayerInfo& changedPlayer)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Client_UpdateReadyState"));
-
-	//UpdateReadyState(playerController);
-
 		for (auto PlayerStatus : LobbyWidget->PlayerStatusList)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Controller Name: ") + changedPlayer.PlayerName);
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Player Status Name: ") + PlayerStatus->CurrentPlayerName);
 
 			if (changedPlayer.PlayerName == PlayerStatus->CurrentPlayerName)
 			{
 				PlayerStatus->UpdateReadyState(changedPlayer.IsReady);
 			}
 		}
-
-	
-
 }
 
 bool AMPlayerController::Client_UpdateReadyState_Validate(const FPlayerInfo& changedPlayer)
@@ -294,11 +300,26 @@ bool AMPlayerController::Client_UpdateReadyState_Validate(const FPlayerInfo& cha
 
 void AMPlayerController::Client_PossesNewCharacter_Implementation(ACharacter* playerCharacter)
 {
-	this->UnPossess();
-	this->Possess(playerCharacter);
+	UnPossess();
+	Possess(playerCharacter);
 }
 
 bool AMPlayerController::Client_PossesNewCharacter_Validate(ACharacter* playerCharacter)
+{
+	return true;
+}
+
+void AMPlayerController::Multi_SwitchToGame_Implementation()
+{
+	if (LobbyWidget->IsInViewport())
+	{
+		LobbyWidget->RemoveFromViewport();
+	}
+	HUDWidget->AddToViewport();
+	SetViewYawExtents(0.0f, 359.0f);
+}
+
+bool AMPlayerController::Multi_SwitchToGame_Validate()
 {
 	return true;
 }
@@ -309,6 +330,7 @@ void AMPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 
 	DOREPLIFETIME(AMPlayerController, PlayerInfo);
 }
+
 
 void AMPlayerController::SetViewYawExtents(float minYaw, float maxYaw)
 {
@@ -327,7 +349,7 @@ void AMPlayerController::SetViewPitchExtents(float minPitch, float maxPitch)
 
 
 
-TArray<ALoreTablet*> AMPlayerController::GetCollectedTablets()
+TMap<FString,TArray<ALoreTablet*>> AMPlayerController::GetCollectedTablets()
 {
 	return CollectedTablets;
 }

@@ -1,5 +1,0 @@
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\DebugGame\Misfortunate\Definitions.Misfortunate.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/GeneratedCppIncludes.h
-C:\Program Files\Epic Games\UE_4.26\Engine\Source\Runtime\CoreUObject\Public\UObject/MetaData.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate/Public/HeadLamp.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\HeadLamp.generated.h

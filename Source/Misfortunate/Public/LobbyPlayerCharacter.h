@@ -19,6 +19,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class UCameraComponent* LobbyCam;
 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lobby Camera")
+		float MinYawViewAngle;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lobby Camera")
+		float MaxYawViewAngle;
+
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool HasBeenPossesed;
 

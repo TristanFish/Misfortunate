@@ -18,16 +18,14 @@ class MISFORTUNATE_API UWLore : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		class UBackgroundBlur* Background = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-		class UTextBlock* LoreTitle = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UTextBlock* LoreText = nullptr;
 
-	void SetLoreInfo(FString LoreTitle_, FString LoreText_);
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UTextBlock* LoreTitle = nullptr;
+
+	void SetLoreInfo(FString LoreText_, FString LoreTitle_);
 
 
 

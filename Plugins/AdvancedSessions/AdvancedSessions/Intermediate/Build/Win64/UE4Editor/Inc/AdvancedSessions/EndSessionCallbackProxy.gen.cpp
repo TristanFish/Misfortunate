@@ -66,12 +66,10 @@ void EmptyLinkFunctionForGeneratedCodeEndSessionCallbackProxy() {}
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UEndSessionCallbackProxy_EndSession_Statics::Function_MetaDataParams[] = {
 		{ "BlueprintInternalUseOnly", "true" },
-		{ "Category", "Online|AdvancedSessions|Deprecated" },
-		{ "Comment", "// Ends the current session\n" },
-		{ "DeprecatedFunction", "" },
-		{ "DeprecationMessage", "This function is deprecated, I realized that people have been using it wrong and it doesn't have much use in blueprints. Use Destroy Session only instead." },
+		{ "Category", "Online|AdvancedSessions" },
+		{ "Comment", "/**\n\x09 *\x09  Ends the current sessions, Generally for almost all uses you should be using the engines native Destroy Session node instead.\n\x09 *\x09  This exists for people using StartSession and optionally hand managing the session state.\n\x09 */" },
 		{ "ModuleRelativePath", "Classes/EndSessionCallbackProxy.h" },
-		{ "ToolTip", "Ends the current session" },
+		{ "ToolTip", "Ends the current sessions, Generally for almost all uses you should be using the engines native Destroy Session node instead.\nThis exists for people using StartSession and optionally hand managing the session state." },
 		{ "WorldContext", "WorldContextObject" },
 	};
 #endif
@@ -113,7 +111,7 @@ void EmptyLinkFunctionForGeneratedCodeEndSessionCallbackProxy() {}
 		(UObject* (*)())Z_Construct_UPackage__Script_AdvancedSessions,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_UEndSessionCallbackProxy_Statics::FuncInfo[] = {
-		{ &Z_Construct_UFunction_UEndSessionCallbackProxy_EndSession, "EndSession" }, // 683188859
+		{ &Z_Construct_UFunction_UEndSessionCallbackProxy_EndSession, "EndSession" }, // 2904765368
 	};
 #if WITH_METADATA
 	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UEndSessionCallbackProxy_Statics::Class_MetaDataParams[] = {
@@ -168,7 +166,7 @@ void EmptyLinkFunctionForGeneratedCodeEndSessionCallbackProxy() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UEndSessionCallbackProxy, 1446654549);
+	IMPLEMENT_CLASS(UEndSessionCallbackProxy, 2407575008);
 	template<> ADVANCEDSESSIONS_API UClass* StaticClass<UEndSessionCallbackProxy>()
 	{
 		return UEndSessionCallbackProxy::StaticClass();

@@ -5,7 +5,10 @@
 #include "Components/SpotLightComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SceneComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 
+#include "Sound/SoundBase.h"
 
 AHeadLamp::AHeadLamp() 
 {
@@ -74,6 +77,8 @@ void AHeadLamp::ToggleHeadLamp()
 	default:
 		break;
 	}
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
 }
 
 

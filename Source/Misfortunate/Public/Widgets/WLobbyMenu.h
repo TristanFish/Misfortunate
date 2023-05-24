@@ -43,6 +43,9 @@ public:
 		class UButton* QuitButton = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UButton* StartButton = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UButton* ReadyButton = nullptr;
 
 
@@ -69,4 +72,7 @@ protected:
 
 	UFUNCTION()
 		void OnOptionsButtonClicked();
+
+	UFUNCTION()
+		void OnStartButtonClicked();
 };

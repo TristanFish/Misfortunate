@@ -19,7 +19,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Misfortuante/Blueprints/Player_BP"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Misfortuante/Blueprints/Actors/Player_BP"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	static ConstructorHelpers::FClassFinder<AMPlayerController> PlayerControllerClassFinder(TEXT("/Game/Misfortuante/Blueprints/M_PlayerController"));
@@ -28,7 +28,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = GameState::Lobby;
+	CurrentState = UGameState::Exploration;
 
 	EventChance = 15;
 }
@@ -39,34 +39,50 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 	ConnectedPlayers.AddUnique(NewPlayer);
 
 
-
-	for (auto possChar : PossessableCharacters)
+	if (CurrentState == UGameState::Lobby)
 	{
-		ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
-		if (!lobbyChar->HasBeenPossesed)
+		for (auto possChar : PossessableCharacters)
 		{
-			Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+			ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
+			if (!lobbyChar->HasBeenPossesed)
+			{
+				Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+				if (GEngine)
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Player Possesed"));
+			}
 		}
+
+		InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
+		EveryoneUpdate();
 	}
-
-	InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
-	EveryoneUpdate();
-
 }
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
 {
-
+	ConnectedPlayers.Remove(Cast<APlayerController>(OldPlayer));
+	EveryoneUpdate();
 }
 
 void AMisfortunateGameMode::BeginPlay()
 {
-	Super::BeginPlay();
 
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Begin Play"));
+
+
+	Super::BeginPlay();
+}
+
+void AMisfortunateGameMode::EndPlay(EEndPlayReason::Type Reason)
+{
+	if (GetWorldTimerManager().IsTimerActive(CheckDistTimerHandle))
+	{
+		GetWorldTimerManager().ClearTimer(CheckDistTimerHandle);
+	}
 }
 
 void AMisfortunateGameMode::Tick(float DeltaSeconds)
@@ -103,7 +119,7 @@ void AMisfortunateGameMode::CheckEventTrigger()
 			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
-			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Client_SetMisfortune(0.0f);
+			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Server_SetMisfortune(0.0f);
 		}
 
 		else {
@@ -156,14 +172,32 @@ void AMisfortunateGameMode::TriggerScareEvent()
 
 void AMisfortunateGameMode::UpdateReadyState(AMPlayerController* changedPlayer)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Gamemode_UpdateReadyState"));
-
 	for (auto player : ConnectedPlayers)
 	{
 
 		Cast<AMPlayerController>(player)->Client_UpdateReadyState(changedPlayer->PlayerInfo);
 	}
 
+}
+
+void AMisfortunateGameMode::OnHostStart()
+{
+	PossessableCharacters.Empty();
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+
+	for (int i = 0; i < ConnectedPlayers.Num(); i++)
+	{
+		AMPlayerController* controller = Cast<AMPlayerController>(ConnectedPlayers[i]);
+
+		controller->Multi_SwitchToGame();
+
+
+		controller->UnPossess();
+		controller->Possess(Cast<APlayerCharacter>(PossessableCharacters[i]));
+	}
+
+	SetGameState(LobbyExploration);
 }
 
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const
@@ -199,10 +233,10 @@ void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* en
 
 }
 
-void AMisfortunateGameMode::SetGameState(GameState state_)
+void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 {
 	CurrentState = state_;
-	if (CurrentState == GameState::Exploration)
+	if (CurrentState == UGameState::Exploration)
 	{
 		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
 	}

@@ -9,15 +9,22 @@
 #include "Widgets/WPlayerStatus.h"
 
 #include "Kismet/GameplayStatics.h"
+
 #include "MPlayerController.h"
+#include "MisfortunateGameMode.h"
 
 void UWLobbyMenu::NativeConstruct()
 {
 	OptionsButton->OnClicked.AddDynamic(this, &UWLobbyMenu::OnOptionsButtonClicked);
 	QuitButton->OnClicked.AddDynamic(this, &UWLobbyMenu::OnQuitButtonClicked);
 	ReadyButton->OnClicked.AddDynamic(this, &UWLobbyMenu::OnReadyButtonClicked);
+	StartButton->OnClicked.AddDynamic(this, &UWLobbyMenu::OnStartButtonClicked);
 
-
+	if (GetOwningPlayer()->GetNetMode() != ENetMode::NM_ListenServer)
+	{
+		StartButton->bIsEnabled = false;
+		StartButton->SetVisibility(ESlateVisibility::Hidden);
+	}
 
 }
 
@@ -43,7 +50,6 @@ void UWLobbyMenu::AddToPlayerList(UWPlayerStatus* playerStatus)
 	else
 	{
 		Host_Box->AddChild(playerStatus);
-
 	}
 }
 
@@ -65,12 +71,28 @@ void UWLobbyMenu::OnReadyButtonClicked()
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString("Ready Button Clicked"));
-
 	player->Server_UpdateReadyState(player);
 }
 
 void UWLobbyMenu::OnOptionsButtonClicked()
 {
 
+}
+
+void UWLobbyMenu::OnStartButtonClicked()
+{
+	int PlayersReady = 0;
+
+	for (auto status : PlayerStatusList)
+	{
+		if (status->IsReady())
+			PlayersReady++;
+	}
+
+	if (PlayersReady == PlayerStatusList.Num())
+	{
+		AMisfortunateGameMode* gameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		gameMode->OnHostStart();
+	}
 }

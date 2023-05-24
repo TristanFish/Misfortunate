@@ -29,6 +29,17 @@ void EmptyLinkFunctionForGeneratedCodeAdvancedSessionsLibrary() {}
 	ADVANCEDSESSIONS_API UEnum* Z_Construct_UEnum_AdvancedSessions_EOnlineComparisonOpRedux();
 	ADVANCEDSESSIONS_API UScriptStruct* Z_Construct_UScriptStruct_FSessionsSearchSetting();
 // End Cross Module References
+	DEFINE_FUNCTION(UAdvancedSessionsLibrary::execServerTravel)
+	{
+		P_GET_OBJECT(UObject,Z_Param_WorldContextObject);
+		P_GET_PROPERTY(FStrProperty,Z_Param_InURL);
+		P_GET_UBOOL(Z_Param_bAbsolute);
+		P_GET_UBOOL(Z_Param_bShouldSkipGameNotify);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		*(bool*)Z_Param__Result=UAdvancedSessionsLibrary::ServerTravel(Z_Param_WorldContextObject,Z_Param_InURL,Z_Param_bAbsolute,Z_Param_bShouldSkipGameNotify);
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(UAdvancedSessionsLibrary::execHasOnlineSubsystem)
 	{
 		P_GET_PROPERTY(FNameProperty,Z_Param_SubSystemName);
@@ -413,6 +424,7 @@ void EmptyLinkFunctionForGeneratedCodeAdvancedSessionsLibrary() {}
 			{ "MakeLiteralSessionPropertyInt", &UAdvancedSessionsLibrary::execMakeLiteralSessionPropertyInt },
 			{ "MakeLiteralSessionPropertyString", &UAdvancedSessionsLibrary::execMakeLiteralSessionPropertyString },
 			{ "MakeLiteralSessionSearchProperty", &UAdvancedSessionsLibrary::execMakeLiteralSessionSearchProperty },
+			{ "ServerTravel", &UAdvancedSessionsLibrary::execServerTravel },
 			{ "SetPlayerName", &UAdvancedSessionsLibrary::execSetPlayerName },
 			{ "UniqueNetIdToString", &UAdvancedSessionsLibrary::execUniqueNetIdToString },
 		};
@@ -2152,6 +2164,82 @@ void EmptyLinkFunctionForGeneratedCodeAdvancedSessionsLibrary() {}
 		}
 		return ReturnFunction;
 	}
+	struct Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics
+	{
+		struct AdvancedSessionsLibrary_eventServerTravel_Parms
+		{
+			UObject* WorldContextObject;
+			FString InURL;
+			bool bAbsolute;
+			bool bShouldSkipGameNotify;
+			bool ReturnValue;
+		};
+		static const UE4CodeGen_Private::FObjectPropertyParams NewProp_WorldContextObject;
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam NewProp_InURL_MetaData[];
+#endif
+		static const UE4CodeGen_Private::FStrPropertyParams NewProp_InURL;
+		static void NewProp_bAbsolute_SetBit(void* Obj);
+		static const UE4CodeGen_Private::FBoolPropertyParams NewProp_bAbsolute;
+		static void NewProp_bShouldSkipGameNotify_SetBit(void* Obj);
+		static const UE4CodeGen_Private::FBoolPropertyParams NewProp_bShouldSkipGameNotify;
+		static void NewProp_ReturnValue_SetBit(void* Obj);
+		static const UE4CodeGen_Private::FBoolPropertyParams NewProp_ReturnValue;
+		static const UE4CodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UE4CodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UE4CodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UE4CodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_WorldContextObject = { "WorldContextObject", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AdvancedSessionsLibrary_eventServerTravel_Parms, WorldContextObject), Z_Construct_UClass_UObject_NoRegister, METADATA_PARAMS(nullptr, 0) };
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_InURL_MetaData[] = {
+		{ "NativeConst", "" },
+	};
+#endif
+	const UE4CodeGen_Private::FStrPropertyParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_InURL = { "InURL", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Str, RF_Public|RF_Transient|RF_MarkAsNative, 1, STRUCT_OFFSET(AdvancedSessionsLibrary_eventServerTravel_Parms, InURL), METADATA_PARAMS(Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_InURL_MetaData, UE_ARRAY_COUNT(Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_InURL_MetaData)) };
+	void Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bAbsolute_SetBit(void* Obj)
+	{
+		((AdvancedSessionsLibrary_eventServerTravel_Parms*)Obj)->bAbsolute = 1;
+	}
+	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bAbsolute = { "bAbsolute", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(AdvancedSessionsLibrary_eventServerTravel_Parms), &Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bAbsolute_SetBit, METADATA_PARAMS(nullptr, 0) };
+	void Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bShouldSkipGameNotify_SetBit(void* Obj)
+	{
+		((AdvancedSessionsLibrary_eventServerTravel_Parms*)Obj)->bShouldSkipGameNotify = 1;
+	}
+	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bShouldSkipGameNotify = { "bShouldSkipGameNotify", nullptr, (EPropertyFlags)0x0010000000000080, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(AdvancedSessionsLibrary_eventServerTravel_Parms), &Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bShouldSkipGameNotify_SetBit, METADATA_PARAMS(nullptr, 0) };
+	void Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_ReturnValue_SetBit(void* Obj)
+	{
+		((AdvancedSessionsLibrary_eventServerTravel_Parms*)Obj)->ReturnValue = 1;
+	}
+	const UE4CodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UE4CodeGen_Private::EPropertyGenFlags::Bool | UE4CodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, sizeof(bool), sizeof(AdvancedSessionsLibrary_eventServerTravel_Parms), &Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_ReturnValue_SetBit, METADATA_PARAMS(nullptr, 0) };
+	const UE4CodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::PropPointers[] = {
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_WorldContextObject,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_InURL,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bAbsolute,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_bShouldSkipGameNotify,
+		(const UE4CodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::NewProp_ReturnValue,
+	};
+#if WITH_METADATA
+	const UE4CodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::Function_MetaDataParams[] = {
+		{ "Category", "Online|AdvancedSessions|Seamless" },
+		{ "Comment", "//Exposes Server travel to blueprint\n" },
+		{ "DefaultToSelf", "WorldContextObject" },
+		{ "HidePin", "WorldContextObject" },
+		{ "ModuleRelativePath", "Classes/AdvancedSessionsLibrary.h" },
+		{ "ToolTip", "Exposes Server travel to blueprint" },
+	};
+#endif
+	const UE4CodeGen_Private::FFunctionParams Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_UAdvancedSessionsLibrary, nullptr, "ServerTravel", nullptr, nullptr, sizeof(AdvancedSessionsLibrary_eventServerTravel_Parms), Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x04022405, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UE4CodeGen_Private::ConstructUFunction(ReturnFunction, Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
 	struct Z_Construct_UFunction_UAdvancedSessionsLibrary_SetPlayerName_Statics
 	{
 		struct AdvancedSessionsLibrary_eventSetPlayerName_Parms
@@ -2291,6 +2379,7 @@ void EmptyLinkFunctionForGeneratedCodeAdvancedSessionsLibrary() {}
 		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_MakeLiteralSessionPropertyInt, "MakeLiteralSessionPropertyInt" }, // 1436774214
 		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_MakeLiteralSessionPropertyString, "MakeLiteralSessionPropertyString" }, // 2391632036
 		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_MakeLiteralSessionSearchProperty, "MakeLiteralSessionSearchProperty" }, // 714723135
+		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_ServerTravel, "ServerTravel" }, // 257994824
 		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_SetPlayerName, "SetPlayerName" }, // 3431550516
 		{ &Z_Construct_UFunction_UAdvancedSessionsLibrary_UniqueNetIdToString, "UniqueNetIdToString" }, // 1844338001
 	};
@@ -2327,7 +2416,7 @@ void EmptyLinkFunctionForGeneratedCodeAdvancedSessionsLibrary() {}
 		}
 		return OuterClass;
 	}
-	IMPLEMENT_CLASS(UAdvancedSessionsLibrary, 2928963693);
+	IMPLEMENT_CLASS(UAdvancedSessionsLibrary, 594692661);
 	template<> ADVANCEDSESSIONS_API UClass* StaticClass<UAdvancedSessionsLibrary>()
 	{
 		return UAdvancedSessionsLibrary::StaticClass();

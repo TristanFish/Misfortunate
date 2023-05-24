@@ -4,10 +4,20 @@
 #include "Widgets/WJournal.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/VerticalBox.h"
+
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
+
+
+#include "Widgets/WJournal.h"
+#include "Widgets/WLore.h"
+
 #include "PlayerCharacter.h"
 #include "MPlayerController.h"
+#include "MisfortunateGameMode.h"
+#include "LoreManager.h"
+
 #include "Actors/LoreTablet.h"
 
 void UWJournal::NativeConstruct()
@@ -16,9 +26,12 @@ void UWJournal::NativeConstruct()
 
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	if (player->GetCollectedTablets().Num() > 0 && CurrentTabletViewed == nullptr)
+	if (player->GetCollectedTablets().Num() > 0 && CurrentLoreOwnerViewed.IsEmpty())
 	{
-		CurrentTabletViewed = player->GetCollectedTablets()[0];
+
+		TArray<FString> Keys;
+		player->GetCollectedTablets().GenerateKeyArray(Keys);
+		CurrentLoreOwnerViewed = Keys[0];
 		UpdatePageProperties();
 	}
 
@@ -38,15 +51,19 @@ bool UWJournal::Initialize()
 void UWJournal::ToPreviousPage()
 {
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AMisfortunateGameMode* gamemode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	
-	if (player->GetCollectedTablets().Contains(CurrentTabletViewed))
+	if (player->GetCollectedTablets().Contains(CurrentLoreOwnerViewed))
 	{
-		int index = player->GetCollectedTablets().Find(CurrentTabletViewed);
+		int index = gamemode->GetLoreManager()->LoreOwners.Find(CurrentLoreOwnerViewed);
 
-		if (player->GetCollectedTablets().IsValidIndex(index - 1))
+		TArray<FString>* LoreOwners = &gamemode->GetLoreManager()->LoreOwners;
+
+
+		if (LoreOwners->IsValidIndex(index - 1))
 		{
-			CurrentTabletViewed = player->GetCollectedTablets()[index - 1];
+			CurrentLoreOwnerViewed = (*LoreOwners)[index - 1];
 			UpdatePageProperties();
 		}
 
@@ -62,6 +79,7 @@ void UWJournal::ToPreviousPage()
 void UWJournal::ToNextPage()
 {
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	AMisfortunateGameMode* gamemode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 
 	if (!JournalHasOpened)
@@ -72,13 +90,16 @@ void UWJournal::ToNextPage()
 
 	else 
 	{
-		if (player->GetCollectedTablets().Contains(CurrentTabletViewed))
+		if (player->GetCollectedTablets().Contains(CurrentLoreOwnerViewed))
 		{
-			int index = player->GetCollectedTablets().Find(CurrentTabletViewed);
+			int index = gamemode->GetLoreManager()->LoreOwners.Find(CurrentLoreOwnerViewed);
 
-			if (player->GetCollectedTablets().IsValidIndex(index + 1))
+			TArray<FString>* LoreOwners = &gamemode->GetLoreManager()->LoreOwners;
+
+
+			if (LoreOwners->IsValidIndex(index + 1))
 			{
-				CurrentTabletViewed = player->GetCollectedTablets()[index + 1];
+				CurrentLoreOwnerViewed = CurrentLoreOwnerViewed = (*LoreOwners)[index + 1];
 				UpdatePageProperties();
 			}
 
@@ -104,7 +125,26 @@ void UWJournal::UnBindPageDelegates()
 
 void UWJournal::UpdatePageProperties()
 {
-	Lore->SetText(FText::FromString(CurrentTabletViewed->GetTabletText()));
+	for (int child = 0; child < LoreBox->GetChildrenCount(); child++)
+	{
+		
+		LoreBox->RemoveChildAt(child);
+	}
 
-	LoreTitle->SetText(FText::FromString(CurrentTabletViewed->GetTabletTitle()));
+
+	CurrentLoreOwner->SetText(FText::FromString(CurrentLoreOwnerViewed));
+
+	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+
+	TArray<ALoreTablet*> LoreTablets = *player->GetCollectedTablets().Find(CurrentLoreOwnerViewed);
+
+	for (auto tablet : LoreTablets)
+	{
+		UWLore* NewLoreLine = CreateWidget<UWLore>(this, UWLore::StaticClass());
+
+		NewLoreLine->SetLoreInfo(tablet->GetTabletText(), tablet->GetTabletTitle());
+		LoreBox->AddChild(NewLoreLine);
+	}
+
 }

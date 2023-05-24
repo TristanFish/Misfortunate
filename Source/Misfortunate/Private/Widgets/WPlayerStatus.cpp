@@ -16,6 +16,7 @@ void UWPlayerStatus::InitPlayerStatus(FString PlayerName_, UTexture2D* IconImage
 {
 	PlayerName->Text = FText::FromString(PlayerName_);
 	IconTexture->SetBrushFromTexture(IconImage);
+
 	CurrentPlayerName = PlayerName_;
 	ReadyState = false;
 }
@@ -41,4 +42,9 @@ FString UWPlayerStatus::GetPlayerName() const
 {
 
 	return CurrentPlayerName;
+}
+
+bool UWPlayerStatus::IsReady() const
+{
+	return ReadyState;
 }

@@ -17,16 +17,12 @@ class MISFORTUNATE_API UWMisfortune : public UUserWidget
 
 public:
 
-	UPROPERTY(BlueprintReadWrite)
-		float MisfortuneProgress;
-
-	UPROPERTY(BlueprintReadWrite)
-		class APlayerCharacter* playerChar;
-
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
+		class UProgressBar* Misfortune = nullptr;
+	
 public:
 
 	virtual void NativeConstruct() override;
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 };

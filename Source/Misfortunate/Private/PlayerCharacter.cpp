@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SpotLightComponent.h"
+#include "Components/AudioComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "MisfortunateGameMode.h"
 
@@ -16,6 +17,7 @@
 #include "Actors/EventZone.h"
 #include "Actors/Glowstick.h"
 #include "HeadLamp.h"
+#include "CustomAnimInstance.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -31,25 +33,26 @@ APlayerCharacter::APlayerCharacter()
 	playerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	headlampMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeadLampMesh"));
 
+	heartbeatAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("HeartBeatAudio"));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshOutput(TEXT("StaticMesh'/Game/Misfortuante/Models/PlayerObjects/HeadLamp.HeadLamp'"));
 	headlampMesh->SetStaticMesh(MeshOutput.Object);
 	
 
 
-	playerCamera->SetupAttachment(GetMesh(), FName("Head"));
+	playerCamera->SetupAttachment(GetMesh(),  FName("Head"));
 	headlampMesh->SetupAttachment(GetMesh(), FName("Head"));
 
-
+	heartbeatAudio->SetupAttachment(GetRootComponent());
 
 	playerCamera->bUsePawnControlRotation = true;
-
 
 	SetReplicates(true);
 
 	SprintMultiplier = 1.3f;
 	AvailableGlowsticks = 3;
 	
+
 
 	Misfortune = FMath::RandRange(10.0f, 80.0f);
 
@@ -59,7 +62,7 @@ APlayerCharacter::APlayerCharacter()
 	StandHalfHeight = 78.0f;
 
 	CrouchRadius = 30.0f;
-	CrouchHalfHeight = 60.0f;
+	CrouchHalfHeight = 45.0f;
 
 	CrawlRadius = 20.0f;
 	CrawlHalfHeight = 20.0f;
@@ -79,10 +82,9 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	APawn::BeginPlay();
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("MisFortune: %f"), Misfortune));
 
 	GetWorld()->GetTimerManager().SetTimer(TickTraceCheckTimerHandle, this, &APlayerCharacter::TraceChecks, 0.1f, true);
-
+	GetWorld()->GetTimerManager().SetTimer(TickStaminaTimerHandle, this, &APlayerCharacter::TickStamina, 0.2f, true);
 }
 
 // Called every frame
@@ -112,13 +114,37 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::TickStamina()
 {
+	float PlayerSpeed = Cast<UCustomAnimInstance>(GetMesh()->GetAnimInstance())->speed;
 
-	if (GetVelocity().Size() > 0)
+
+
+	if (GetCharacterMovement()->Velocity.Size() > 0.0)
 	{
-		Stamina -= 1.5f;
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Stamina: %f"), Stamina));
 
+		if (PlayerSpeed > 451.0f)
+		{
+			Stamina -= 1.5f;
+			if (!heartbeatAudio->IsPlaying())
+				heartbeatAudio->FadeIn(1.0f, 1.0);
+		}
+		else if (PlayerSpeed <= 451.0f && Stamina < MaxStamina)
+		{
+			Stamina = FMath::Clamp(Stamina + 0.5f, 0.0f, MaxStamina);
+		}	
 	}
+	else
+	{
+		Stamina = FMath::Clamp(Stamina + 1.5f, 0.0f, MaxStamina);
+
+		if (FMath::IsNearlyEqual(Stamina, MaxStamina, 5.0f))
+		{
+			if(heartbeatAudio->IsPlaying())
+				heartbeatAudio->FadeOut(1.0f, 0.5);
+		}
+	}
+
+
+	UpdateHeartBeatAudio();
 }
 
 void APlayerCharacter::MoveForward(float Val)
@@ -166,7 +192,6 @@ void APlayerCharacter::AllowSprint()
 			IsPlayerRunning = true;
 		}
 		GetCharacterMovement()->MaxWalkSpeed *= SprintMultiplier;
-		GetWorld()->GetTimerManager().SetTimer(TickStaminaTimerHandle, this, &APlayerCharacter::TickStamina, 0.2f, IsPlayerRunning);
 
 	}
 }
@@ -176,7 +201,6 @@ void APlayerCharacter::StopSprinting()
 
 	IsPlayerRunning = false;
 	GetCharacterMovement()->MaxWalkSpeed /= SprintMultiplier;
-	GetWorld()->GetTimerManager().PauseTimer(TickStaminaTimerHandle);
 }
 
 
@@ -452,14 +476,12 @@ float APlayerCharacter::GetMisfortune() const
 	return Misfortune;
 }
 
-void APlayerCharacter::Client_SetMisfortune_Implementation(const float Misfortune_)
+void APlayerCharacter::Server_SetMisfortune_Implementation(const float Misfortune_)
 {
 	Misfortune = Misfortune_;
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, FString::Printf(TEXT("Misfortune: %f"), Misfortune));
-
 }
 
-bool APlayerCharacter::Client_SetMisfortune_Validate(const float Misfortune_)
+bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)
 {
 	return true;
 }

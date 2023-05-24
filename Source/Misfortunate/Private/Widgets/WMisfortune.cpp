@@ -8,18 +8,6 @@
 void UWMisfortune::NativeConstruct()
 {
 	Super::NativeConstruct();
-	playerChar = Cast<APlayerCharacter>(GetOwningPlayerPawn());
-
-	MisfortuneProgress = playerChar->GetMisfortune();
 }
 
-void UWMisfortune::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
-{
-	Super::NativeTick(MyGeometry, DeltaTime);
 
-	if (playerChar->GetMisfortune() != MisfortuneProgress)
-	{
-		MisfortuneProgress = FMath::Lerp(MisfortuneProgress, playerChar->GetMisfortune(), 0.01);
-	}
-
-}

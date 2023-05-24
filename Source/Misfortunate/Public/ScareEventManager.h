@@ -5,8 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Containers/Map.h"
+#include "Engine/DataTable.h"
+
 #include "Actors/EventZone.h"
 #include "Actors/ScarePoint.h"
+
+
 #include "ScareEventManager.generated.h"
 
 class UAudioComponent;
@@ -14,7 +18,7 @@ class UAudioComponent;
 
 // Used to determine whether the scare will be in 3D space at a specific location or 2D sound.
 UENUM()
-enum ScareLocationType {
+enum EScareLocationType {
 
 	Positional,
 	NonPositional,
@@ -30,7 +34,7 @@ struct FScareSettings
 		TEnumAsByte<ScareType> scareType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TEnumAsByte<ScareLocationType> locationType;
+		TEnumAsByte<EScareLocationType> locationType;
 
 
 
@@ -67,16 +71,27 @@ FORCEINLINE uint32 GetTypeHash(const FScareSettings& Thing)
 #endif
 
 
+
 USTRUCT(BlueprintType)
 struct FScareAudio
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<class USoundCue*> audioClips;
+		TArray<class UMetaSoundSource*> audioClips;
 
 };
 
+USTRUCT(BlueprintType)
+struct FScareData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FScareSettings ScareSettings;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		 FScareAudio ScareAudio;
+};
 
 UCLASS()
 class MISFORTUNATE_API AScareEventManager : public AActor
@@ -90,11 +105,6 @@ public:
 	
 
 
-	//!Scares Map
-	/*!Map that enables us to add Sound cue's in engine and map then to a scare type*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TMap<FScareSettings, FScareAudio> scares;
-
 protected:
 
 	//!CheckForScareTriggerDelay Float
@@ -106,6 +116,8 @@ protected:
 	/* Hold's the distance the players need to go away from each other until scare event's have the possibility of happening*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ScareDistanceThreshold;
+
+
 
 protected:
 
@@ -125,6 +137,12 @@ protected:
 	/*!Hold's a pointer to all the scare points that exist in the level*/
 	TArray<AActor*> scarePoints;
 
+	//!Scares Map
+	/*!Map that enables us to add Sound cue's in engine and map then to a scare type*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<FScareData> scares;
+
+	UDataTable* ScareDataTable;
 
 
 	//!StartEvent Function
@@ -157,5 +175,10 @@ public:
 	//!GetScareTriggerDelay Getter
 	/* Returns the CheckForScareTriggerDelay float  */
 	float GetScareTriggerDelay() const;
+
+
+
+private:
+	void InitalizeScarePoints();
 
 };

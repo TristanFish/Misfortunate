@@ -1,3 +1,0 @@
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Development\Misfortunate\Definitions.Misfortunate.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Source\Misfortunate\Public\Actors/Glowstick.h
-C:\Users\Trist\OneDrive\Documents\GitHub\Misfortunate\Intermediate\Build\Win64\UE4Editor\Inc\Misfortunate\Glowstick.generated.h

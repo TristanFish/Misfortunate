@@ -35,6 +35,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USpringArmComponent* flashlightArm;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class USoundBase* OnOffSound;
+
 
 public:
 

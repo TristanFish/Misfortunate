@@ -54,7 +54,7 @@ protected:
 
 
 	UPROPERTY()
-		TSubclassOf<class UWInteraction> HUDWidgetClass;
+		TSubclassOf<class UWPlayerHUD> HUDWidgetClass;
 
 	UPROPERTY()
 		class UWInteraction* InteractionWidget;
@@ -62,9 +62,9 @@ protected:
 	UPROPERTY()
 		class UWJournal* JournalWidget;
 
-	
+	UPROPERTY()
+		class UWPlayerHUD* HUDWidget;
 
-	
 	/*Lobby Variables*/
 	UPROPERTY(BlueprintReadOnly)
 		TSubclassOf<class UWLobbyMenu> LobbyWidgetClass;
@@ -77,7 +77,8 @@ protected:
 
 
 
-	TArray<ALoreTablet*> CollectedTablets;
+	TMap<FString,TArray<ALoreTablet*>> CollectedTablets;
+
 
 public:
 
@@ -114,6 +115,7 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+
 	// Delegate Functions
 	void InteractionOccurred();
 
@@ -124,13 +126,17 @@ public:
 	void ToggleJournal();
 	// Delegate Functions
 
-	void DisplayTabletInteraction(ALoreTablet* tablet);
 
-	void HideInteraction();
 
 	void AddToTabletsCollected(ALoreTablet* tablet);
 
 	void AddTabletsToAllPlayers(ALoreTablet* tablet);
+
+	UFUNCTION(BlueprintCallable)
+		void HideInteraction();
+
+	UFUNCTION(BlueprintCallable)
+		void DisplayTabletInteraction(ALoreTablet* tablet);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_AddTabletsToAllPlayers(ALoreTablet* tablet);
@@ -144,12 +150,14 @@ public:
 	UFUNCTION(Client, Reliable, WithValidation,BlueprintCallable)
 		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
 
-
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_UpdateReadyState(const FPlayerInfo& changedPlayer);
 
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_PossesNewCharacter(ACharacter* playerCharacter);
+
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+		void Multi_SwitchToGame();
 
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
 		void UpdatePlayerInfo();
@@ -162,7 +170,7 @@ public:
 	void SetViewPitchExtents(float minPitch, float maxPitch);
 
 public:
-	TArray<ALoreTablet*> GetCollectedTablets();
+	TMap<FString, TArray<ALoreTablet*>> GetCollectedTablets();
 
 	 UWLobbyMenu* GetLobbyWidget() const;
 	

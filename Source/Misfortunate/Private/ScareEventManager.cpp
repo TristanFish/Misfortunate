@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundAttenuation.h"
 #include "PlayerCharacter.h"
-#include "Sound/SoundCue.h"
+#include "MetasoundSource.h"
 #include "MPlayerController.h"
 
 // Sets default values
@@ -15,14 +15,25 @@ AScareEventManager::AScareEventManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	scaresMaping.Add(EventZoneLevel::I, { Whisper });
-	scaresMaping.Add(EventZoneLevel::II, { Whisper });
-	scaresMaping.Add(EventZoneLevel::III, { Whisper });
-	scaresMaping.Add(EventZoneLevel::IV, { Whisper });
-	scaresMaping.Add(EventZoneLevel::V, { Whisper });
-	scaresMaping.Add(EventZoneLevel::VI, { Whisper });
+	scaresMaping.Add(EventZoneLevel::I, { Whisper,Wind });
+	scaresMaping.Add(EventZoneLevel::II, { Whisper,Wind });
+	scaresMaping.Add(EventZoneLevel::III, { Whisper,Wind });
+	scaresMaping.Add(EventZoneLevel::IV, { Whisper,Wind });
+	scaresMaping.Add(EventZoneLevel::V, { Whisper,Wind });
+	scaresMaping.Add(EventZoneLevel::VI, { Whisper,Wind });
 
 	ScareDistanceThreshold = 100.0f;
+
+	static ConstructorHelpers::FObjectFinder<UDataTable> DataTableClass(TEXT("/Game/Misfortuante/DataStructures/DT_ScareData.DT_ScareData"));
+	ScareDataTable = DataTableClass.Object;
+
+	for (auto RowName : ScareDataTable->GetRowNames())
+	{
+		FScareData* ScareData = ScareDataTable->FindRow<FScareData>(RowName,"");
+
+		scares.Add(*ScareData);
+	}
+
 }
 
 // Called when the game starts or when spawned
@@ -30,8 +41,7 @@ void AScareEventManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AScarePoint::StaticClass(), scarePoints);
-
+	InitalizeScarePoints();
 
 	
 }
@@ -62,11 +72,11 @@ TMap<FScareSettings, FScareAudio> AScareEventManager::GetMapOfSameScareType(Scar
 
 	for (auto scare : scares)
 	{
-		if (scare.Key.scareType == scareType)
+		if (scare.ScareSettings.scareType == scareType)
 		{
-			if (!returnMap.Contains(scare.Key))
+			if (!returnMap.Contains(scare.ScareSettings))
 			{
-				returnMap.Add(scare.Key, scare.Value);
+				returnMap.Add(scare.ScareSettings, scare.ScareAudio);
 			}
 		}
 	}
@@ -80,46 +90,57 @@ void AScareEventManager::StartEvent(EventZoneLevel zoneLevel)
 	{
 		if (i.Key == zoneLevel)
 		{
-			AScarePoint* scarePoint = GetNearestScarePoint();
+			AScarePoint* ScarePoint = GetNearestScarePoint();
 
 			TArray<FScareAudio> AudioArray;
 			TArray<FScareSettings> SettingsArray;
-			TMap<FScareSettings, FScareAudio> scaresOfType;
+			TMap<FScareSettings, FScareAudio> ScaresOfType;
 
-			int scareIndex, typeIndex, audioIndex;
 
-			if (!scarePoint->UseScareType)
+
+			int ScareIndex,TypeIndex, AudioIndex;
+
+			if (!ScarePoint->UseScareType)
 			{
-				 scareIndex = FMath::RandRange(0, i.Value.Num() - 1);
-				 scaresOfType = GetMapOfSameScareType(i.Value[scareIndex]);
+				ScareIndex = FMath::RandRange(0, i.Value.Num() - 1);
+				ScaresOfType = GetMapOfSameScareType(i.Value[ScareIndex]);
 			}
 			else
 			{
-				scaresOfType = GetMapOfSameScareType(scarePoint->scareType);
+				ScaresOfType = GetMapOfSameScareType(ScarePoint->scareType);
 
 			}
 
-
-			typeIndex = FMath::RandRange(0, scaresOfType.Num() -1);
-			
-			scaresOfType.GenerateKeyArray(SettingsArray);
-			scaresOfType.GenerateValueArray(AudioArray);
+			ScaresOfType.GenerateKeyArray(SettingsArray);
+			ScaresOfType.GenerateValueArray(AudioArray);
 
 
-			audioIndex = FMath::RandRange(0, AudioArray[typeIndex].audioClips.Num() - 1);
+			TypeIndex = FMath::RandRange(0, ScaresOfType.Num() -1);
+			AudioIndex = FMath::RandRange(0, AudioArray[TypeIndex].audioClips.Num() - 1);
 
-			USoundCue* SoundCue = AudioArray[typeIndex].audioClips[audioIndex];
+
+			UMetaSoundSource* SoundCue;
+			if (ScarePoint->UseCustomCue)
+			{
+				SoundCue = ScarePoint->ScareCue;
+			}
+			else
+			{
+				SoundCue = AudioArray[TypeIndex].audioClips[AudioIndex];
+			}
+
 
 
 			AMPlayerController* controller = Cast<AMPlayerController>(selectedCharacter->GetController());
 
-			if (SettingsArray[typeIndex].locationType == ScareLocationType::Positional)
+			if (SettingsArray[TypeIndex].locationType == EScareLocationType::Positional)
 			{
-				controller->ClientPlaySoundAtLocation(SoundCue, scarePoint->GetActorLocation());
+				controller->ClientPlaySoundAtLocation(Cast<USoundBase>(SoundCue), ScarePoint->GetActorLocation());
+				
 			}
 			else
 			{
-				controller->ClientPlaySound(SoundCue);
+				controller->ClientPlaySound(Cast<USoundBase>(SoundCue));
 			}
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, selectedCharacter->GetName());
 			break;
@@ -163,4 +184,13 @@ float AScareEventManager::GetScareDistanceThreshold() const
 float AScareEventManager::GetScareTriggerDelay() const
 {
 	return CheckForScareTriggerDelay;
+}
+
+void AScareEventManager::InitalizeScarePoints()
+{
+	if (scarePoints.Num() <= 0)
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AScarePoint::StaticClass(), scarePoints);
+	}
+
 }

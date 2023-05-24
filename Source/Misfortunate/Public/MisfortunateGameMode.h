@@ -8,6 +8,16 @@
 #include "MPlayerController.h"
 #include "MisfortunateGameMode.generated.h"
 
+
+UENUM() enum UGameState {
+
+	Lobby UMETA(DisplayName = "Lobby"),
+	Exploration UMETA(DisplayName = "Exploration"),
+	LobbyExploration UMETA(DisplayName = "LobbyExploration"),
+
+};
+
+
 UCLASS()
 class AMisfortunateGameMode : public AGameModeBase
 {
@@ -16,9 +26,8 @@ class AMisfortunateGameMode : public AGameModeBase
 public:
 	AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer);
 
-	enum GameState { Lobby, Exploration };
-
-	GameState CurrentState;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+		TEnumAsByte<UGameState> CurrentState;
 
 	// The percent chance that a player will be scared by a event
 	UPROPERTY(VisibleAnywhere)
@@ -38,8 +47,10 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(EEndPlayReason::Type Reason) override;
 
+
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void EveryoneUpdate();
@@ -49,6 +60,7 @@ public:
 
 	void UpdateReadyState(class AMPlayerController* changedPlayer);
 
+	void OnHostStart();
 
 	//!GetScareEventManager Getter
 	/*!Returns a pointer to the games scareManager*/
@@ -59,7 +71,8 @@ public:
 
 	void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
 
-	void SetGameState(GameState state_);
+	UFUNCTION(BlueprintCallable)
+		void SetGameState(TEnumAsByte<UGameState> state_);
 
 	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
 

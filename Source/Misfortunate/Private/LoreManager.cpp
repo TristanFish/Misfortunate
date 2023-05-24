@@ -8,7 +8,7 @@
 
 ALoreManager::ALoreManager()
 {
-	static ConstructorHelpers::FObjectFinder<UDataTable> LoreTable(TEXT("DataTable'/Game/Misfortuante/Data/T_LoreData.T_LoreData'"));
+	static ConstructorHelpers::FObjectFinder<UDataTable> LoreTable(TEXT("DataTable'/Game/Misfortuante/DataStructures/DT_LoreData.DT_LoreData'"));
 
 	if(LoreTable.Succeeded())
 	{
@@ -38,7 +38,17 @@ void ALoreManager::InitTablets()
 		FString index = "Row_" + FString::FromInt(i);
 		nextLoreInfo = LoreDataTable->FindRow<FLoreInfo>(FName(index), ContextString, true);
 
-		Cast<ALoreTablet>(LoreTablets[i])->SetText(*nextLoreInfo->LoreText,nextLoreInfo->LoreTitle);
+		if (nextLoreInfo)
+		{
+			Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(*nextLoreInfo->LoreText, nextLoreInfo->LoreTitle, nextLoreInfo->LoreOwner);
+			LoreOwners.AddUnique(nextLoreInfo->LoreOwner);
+		}
+		else
+		{
+			Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(FString("None"), FString("None"), FString("None"));
+
+		}
+		Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(FString("None"), FString("None"), FString("None"));
 	}
 	
 }

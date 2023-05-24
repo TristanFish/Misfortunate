@@ -18,11 +18,6 @@ ALoreTablet::ALoreTablet()
 	TabletMesh->SetupAttachment(RootComponent);
 
 
-	OnActorBeginOverlap.AddDynamic(this, &ALoreTablet::OnOverlapBegin);
-	OnActorEndOverlap.AddDynamic(this, &ALoreTablet::OnOverlapEnd);
-
-
-
 }
 
 
@@ -44,16 +39,19 @@ void ALoreTablet::Tick(float DeltaTime)
 }
 
 
-void ALoreTablet::SetText(FString& text_, FString& title_)
+void ALoreTablet::SetTabletInfo(FString& text_, FString& title_, FString& owner_)
 {
 	TabletText = text_;
 	TabletTitle = title_;
+	TabletOwner = owner_;
 }
 
-void ALoreTablet::SetText(FString text_, FString title_)
+void ALoreTablet::SetTabletInfo(FString text_, FString title_, FString owner_)
 {
 	TabletText = text_;
 	TabletTitle = title_;
+	TabletOwner = owner_;
+
 }
 
 FString ALoreTablet::GetTabletText()
@@ -66,35 +64,10 @@ FString ALoreTablet::GetTabletTitle()
 	return TabletTitle;
 }
 
-void ALoreTablet::OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor)
+FString ALoreTablet::GetTabletOwner()
 {
+	return TabletOwner;
 
-	APlayerCharacter* character = Cast<APlayerCharacter>(OtherActor);
-
-	AMPlayerController* controller = Cast<AMPlayerController>(character->GetController());
-
-
-	if (controller != nullptr && controller->IsLocalController())
-	{
-		controller->DisplayTabletInteraction(this);
-
-	}
-
-
-
-	
 }
 
-void ALoreTablet::OnOverlapEnd(class AActor* OverlappedActor, class AActor* OtherActor)
-{
-	APlayerCharacter* character = Cast<APlayerCharacter>(OtherActor);
 
-	AMPlayerController* controller = Cast<AMPlayerController>(character->GetController());
-
-
-	if (controller != nullptr && controller->IsLocalController())
-	{
-		controller->HideInteraction();
-
-	}
-}

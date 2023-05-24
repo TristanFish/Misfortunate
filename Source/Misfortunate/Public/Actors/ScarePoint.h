@@ -18,6 +18,7 @@ enum ScareType {
 	Wind,
 	Footsteps,
 	SingingNoises,
+	Environment
 };
 
 UCLASS()
@@ -39,7 +40,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "UseScareType"))
 		TEnumAsByte<ScareType> scareType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool UseCustomCue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "UseCustomCue"))
+		class UMetaSoundSource* ScareCue;
 
 
 protected:
