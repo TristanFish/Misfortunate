@@ -22,17 +22,17 @@ protected:
 
 	//!GlowstickMesh UStaticMeshComponent
 	/*!Mesh that is used to represent a glowstick*/
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 		UStaticMeshComponent* GlowstickMesh;
 
 	//!StoredMaterial UMaterial
 	/*!Material that will be applied to the GlowstickMesh*/
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UMaterial* StoredMaterial;
 
 	//!DynamicMatInst UMaterialInstanceDynamic
 	/*!Used to control and change variables of the materials shader at runtime*/
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UMaterialInstanceDynamic* DynamicMatInst;
 
 	void DecreaseBrightness();
