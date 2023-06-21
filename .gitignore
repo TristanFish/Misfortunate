@@ -73,3 +73,5 @@ Plugins/*/Intermediate/*
 DerivedDataCache/*
 
 
+*.exp
+*.exp
