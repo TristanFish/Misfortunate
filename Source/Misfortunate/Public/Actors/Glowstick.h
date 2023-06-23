@@ -71,7 +71,7 @@ public:
 	/*!Get's pointer to the glow stick mesh*/
 	UStaticMeshComponent* GetMesh() const;
 
-
+	UFUNCTION()
 	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
 
 };

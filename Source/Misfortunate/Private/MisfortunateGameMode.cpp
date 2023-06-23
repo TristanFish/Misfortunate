@@ -28,7 +28,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = UGameState::Exploration;
+	CurrentState = UGameState::Lobby;
 
 	EventChance = 15;
 }

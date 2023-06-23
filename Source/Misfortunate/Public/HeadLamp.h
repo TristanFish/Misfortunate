@@ -70,7 +70,7 @@ public:
 	void ToggleHeadLamp();
 
 
-
+	UFUNCTION()
 	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
 
 protected:
