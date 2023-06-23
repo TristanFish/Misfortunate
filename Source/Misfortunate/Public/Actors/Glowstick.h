@@ -30,13 +30,34 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UMaterial* StoredMaterial;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UPointLightComponent* GlowLight;
+
 	//!DynamicMatInst UMaterialInstanceDynamic
 	/*!Used to control and change variables of the materials shader at runtime*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		UMaterialInstanceDynamic* DynamicMatInst;
 
-	void DecreaseBrightness();
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lighting|Dim Speed")
+		float FastestDimSpeed;
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lighting|Dim Speed")
+		float SlowestDimSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lighting|Dim Speed")
+		float CurrentDimSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lighting|Decrease Step")
+		float GlowLightDecreaseStep;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Lighting|Decrease Step")
+		float MaterialEmmesionDecreaseStep;
+
+	void DecreaseBrightness();
+	
 private:
 	FTimerHandle TickLifetimeTimerHandle;
 
@@ -49,5 +70,8 @@ public:
 	//!GetMesh Getter
 	/*!Get's pointer to the glow stick mesh*/
 	UStaticMeshComponent* GetMesh() const;
+
+	UFUNCTION()
+	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
 
 };

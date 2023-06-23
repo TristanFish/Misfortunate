@@ -10,6 +10,9 @@
 
 #include "Sound/SoundBase.h"
 
+#include "PlayerCharacter.h"
+
+
 AHeadLamp::AHeadLamp() 
 {
 
@@ -44,6 +47,16 @@ AHeadLamp::AHeadLamp()
 	lightLeft->SetIsReplicated(true);
 	lightMid->SetIsReplicated(true);
 
+
+	MaxOutsideLightDecreaseRate = 5.0;
+	MinOutsideLightDecreaseRate = 1.0;
+
+	MaxCentreLightDecreaseRate = 10.0;
+	MinCentreLightDecreaseRate = 3.0;
+
+
+	MisfortuneToStartDim = 20.0f;
+
 	bReplicates = true;
 
 }
@@ -51,6 +64,10 @@ AHeadLamp::AHeadLamp()
 void AHeadLamp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OriginalCentreLightIntensity = lightMid->Intensity;
+
+	OriginalOutsideLightIntensity = lightLeft->Intensity;
 }
 
 void AHeadLamp::ToggleHeadLamp()
@@ -79,6 +96,23 @@ void AHeadLamp::ToggleHeadLamp()
 	}
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+}
+
+void AHeadLamp::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player)
+{
+	float CentreLightIndensity, OutsideLightIntensity;
+
+	if (NewMisfortune >= MisfortuneToStartDim)
+	{
+		CentreLightIndensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinCentreLightDecreaseRate, MaxCentreLightDecreaseRate), NewMisfortune);
+
+		OutsideLightIntensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinOutsideLightDecreaseRate, MaxOutsideLightDecreaseRate), NewMisfortune);
+
+		lightMid->SetIntensity(CentreLightIndensity);
+		lightLeft->SetIntensity(OutsideLightIntensity);
+		lightRight->SetIntensity(OutsideLightIntensity);
+	}
+	
 }
 
 

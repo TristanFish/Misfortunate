@@ -45,11 +45,6 @@ public:
 	//!IsCrawling Bool 
 	/*!Updated when player is/isnt crawling*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
-		bool IsCrawling;
-
-	//!IsCrawling Bool 
-	/*!Updated when player is/isnt crawling*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		bool IsCrouched;
 
 

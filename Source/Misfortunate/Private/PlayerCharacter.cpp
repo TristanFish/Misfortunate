@@ -63,17 +63,11 @@ APlayerCharacter::APlayerCharacter()
 
 	CrouchRadius = 30.0f;
 	CrouchHalfHeight = 45.0f;
-
-	CrawlRadius = 20.0f;
-	CrawlHalfHeight = 20.0f;
-
 	IsCrouchBlocked = false;
-	IsCrawlBlocked = false;
 
 
 	StandMeshPos = FVector(0.0f, 0.0f, -80.0f);
-	CrouchMeshPos = FVector(-20.0f, 0.0f, -80.0f);
-	CrawlMeshPos = FVector(-20.0f, 0.0f, -19.0f);
+	CrouchMeshPos = FVector(0.0f, 0.0f, -80.0f);
 }
 
 
@@ -83,8 +77,16 @@ void APlayerCharacter::BeginPlay()
 {
 	APawn::BeginPlay();
 
+	OriginalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+
+
 	GetWorld()->GetTimerManager().SetTimer(TickTraceCheckTimerHandle, this, &APlayerCharacter::TraceChecks, 0.1f, true);
 	GetWorld()->GetTimerManager().SetTimer(TickStaminaTimerHandle, this, &APlayerCharacter::TickStamina, 0.2f, true);
+
+
+	OnMisfortuneChanged.AddDynamic(HeadLamp, &AHeadLamp::OnMisfortuneChange);
+
+
 }
 
 // Called every frame
@@ -121,20 +123,30 @@ void APlayerCharacter::TickStamina()
 	if (GetCharacterMovement()->Velocity.Size() > 0.0)
 	{
 
-		if (PlayerSpeed > 451.0f)
+		
+
+
+		if (PlayerSpeed >= OriginalMaxWalkSpeed)
 		{
-			Stamina -= 1.5f;
+			float StaminaDecrese = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, (OriginalMaxWalkSpeed * SprintMultiplier)), FVector2D(0.0f, 4.0f), PlayerSpeed);
+
+			Stamina -= StaminaDecrese;
 			if (!heartbeatAudio->IsPlaying())
 				heartbeatAudio->FadeIn(1.0f, 1.0);
 		}
-		else if (PlayerSpeed <= 451.0f && Stamina < MaxStamina)
+
+		else if (PlayerSpeed < OriginalMaxWalkSpeed && Stamina < MaxStamina)
 		{
-			Stamina = FMath::Clamp(Stamina + 0.5f, 0.0f, MaxStamina);
+			float StaminaIncrease = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, OriginalMaxWalkSpeed), FVector2D(5.0f, 2.5f), PlayerSpeed);
+
+			Stamina = FMath::Clamp(Stamina + StaminaIncrease, 0.0f, MaxStamina);
 		}	
 	}
 	else
 	{
-		Stamina = FMath::Clamp(Stamina + 1.5f, 0.0f, MaxStamina);
+		float StaminaIncrease = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, OriginalMaxWalkSpeed), FVector2D(5.0f, 2.5f), PlayerSpeed);
+
+		Stamina = FMath::Clamp(Stamina + StaminaIncrease, 0.0f, MaxStamina);
 
 		if (FMath::IsNearlyEqual(Stamina, MaxStamina, 5.0f))
 		{
@@ -179,7 +191,7 @@ void APlayerCharacter::AllowSprint()
 
 		if (CrawlState == CrawlStates::Crouch)
 		{
-			if (!IsCrouchBlocked && !IsCrawlBlocked)
+			if (!IsCrouchBlocked)
 			{
 				CrawlState = CrawlStates::Stand;
 				IsCrouching = false;
@@ -191,7 +203,7 @@ void APlayerCharacter::AllowSprint()
 		{
 			IsPlayerRunning = true;
 		}
-		GetCharacterMovement()->MaxWalkSpeed *= SprintMultiplier;
+		GetCharacterMovement()->MaxWalkSpeed = OriginalMaxWalkSpeed * SprintMultiplier;
 
 	}
 }
@@ -200,11 +212,11 @@ void APlayerCharacter::StopSprinting()
 {
 
 	IsPlayerRunning = false;
-	GetCharacterMovement()->MaxWalkSpeed /= SprintMultiplier;
+	GetCharacterMovement()->MaxWalkSpeed /=  SprintMultiplier;
 }
 
 
-float APlayerCharacter::FSelectInterpTarget(float Stand, float Crouch, float Crawl)
+float APlayerCharacter::FSelectInterpTarget(float Stand, float Crouch)
 {
 	float targetValue = 0.0f;
 
@@ -216,9 +228,6 @@ float APlayerCharacter::FSelectInterpTarget(float Stand, float Crouch, float Cra
 	case CrawlStates::Crouch:
 		targetValue = Crouch;
 		break;
-	case CrawlStates::Crawl:
-		targetValue = Crawl;
-		break;
 	default:
 		break;
 	}
@@ -226,7 +235,7 @@ float APlayerCharacter::FSelectInterpTarget(float Stand, float Crouch, float Cra
 	return targetValue;
 }
 
-FVector APlayerCharacter::VSelectInterpTarget(FVector Stand,FVector Crouch, FVector Crawl)
+FVector APlayerCharacter::VSelectInterpTarget(FVector Stand,FVector Crouch)
 {
 	FVector targetValue = FVector(0.0f);
 
@@ -238,9 +247,6 @@ FVector APlayerCharacter::VSelectInterpTarget(FVector Stand,FVector Crouch, FVec
 
 	case CrawlStates::Crouch:
 		targetValue = Crouch;
-		break;
-	case CrawlStates::Crawl:
-		targetValue = Crawl;
 		break;
 	default:
 		break;
@@ -259,6 +265,7 @@ void APlayerCharacter::ToggleCrawl()
 	{
 	case CrawlStates::Stand:
 		UpdateMovementState(CrawlStates::Crouch);
+		IsCrouching = true;
 		break;
 
 	case CrawlStates::Crouch:
@@ -269,13 +276,6 @@ void APlayerCharacter::ToggleCrawl()
 			UpdateMovementState(CrawlStates::Stand);
 			break;
 		}
-		UpdateMovementState(CrawlStates::Crawl);
-		IsCrouching = true;
-		break;
-	case CrawlStates::Crawl:
-
-		UpdateMovementState(CrawlStates::Crouch);
-		IsCrouching = true;
 		break;
 	default:
 		break;
@@ -295,7 +295,7 @@ void APlayerCharacter::TraceChecks()
 	for (int i = 0; i < 4; i++)
 	{
 		Start = GetActorLocation() + VecLengths[i];
-		End = GetActorUpVector() * FSelectInterpTarget(CrouchHalfHeight * 2.3, CrouchHalfHeight * 2.3, CrouchHalfHeight * 2.8) + Start;
+		End = GetActorUpVector() * FSelectInterpTarget(CrouchHalfHeight * 2.3, CrouchHalfHeight * 2.3) + Start;
 
 
 		bool IsHit = GetWorld()->LineTraceSingleByChannel(RV_Hit, Start, End, ECollisionChannel::ECC_Visibility);
@@ -304,16 +304,6 @@ void APlayerCharacter::TraceChecks()
 		IsCrouchBlocked = IsHit;
 	}
 
-	for (int i = 0; i < 4; i++)
-	{
-		Start = GetActorLocation() + (VecLengths[i] );
-		End = GetActorUpVector() * 34.0f + Start;
-
-
-		bool IsHit = GetWorld()->LineTraceSingleByChannel(RV_Hit, Start, End, ECollisionChannel::ECC_Visibility);
-
-		IsCrawlBlocked = IsHit;
-	}
 }
 
 void APlayerCharacter::Server_TriggerHeadLamp_Implementation()
@@ -345,9 +335,9 @@ void APlayerCharacter::UpdateMovementState(CrawlStates CrawlState_)
 {
 	CrawlState = CrawlState_;
 
-	float TargetRad = FSelectInterpTarget(StandRadius, CrouchRadius, CrawlRadius);
-	float TargetHalfHeight = FSelectInterpTarget(StandHalfHeight, CrouchHalfHeight, CrawlHalfHeight);
-	FVector TargetLoc = VSelectInterpTarget(StandMeshPos, CrouchMeshPos, CrawlMeshPos);
+	float TargetRad = FSelectInterpTarget(StandRadius, CrouchRadius);
+	float TargetHalfHeight = FSelectInterpTarget(StandHalfHeight, CrouchHalfHeight);
+	FVector TargetLoc = VSelectInterpTarget(StandMeshPos, CrouchMeshPos);
 
 
 	if (GetLocalRole() < ROLE_Authority)
@@ -368,9 +358,7 @@ void APlayerCharacter::Multi_UpdateMovementState_Implementation(CrawlStates Craw
 	CrawlState = CrawlState_;
 	GetCapsuleComponent()->SetCapsuleSize(TargetRad, TargetHalfHeight);
 	GetMesh()->SetRelativeLocation(TargetLoc);
-	GetCharacterMovement()->MaxWalkSpeed = FSelectInterpTarget(450.0f, 150.0f, 75.0f);
-	
-
+	GetCharacterMovement()->MaxWalkSpeed = FSelectInterpTarget(GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);	
 }
 
 bool APlayerCharacter::Multi_UpdateMovementState_Validate(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc)
@@ -416,6 +404,8 @@ bool APlayerCharacter::Server_ThrowGlowstick_Validate()
 void APlayerCharacter::Server_ThrowGlowstick_Implementation()
 {
 	AGlowstick* spawnedGlowstick = GetWorld()->SpawnActor<AGlowstick>((GetActorForwardVector() * 100) + GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f));
+
+	OnMisfortuneChanged.AddDynamic(spawnedGlowstick, &AGlowstick::OnMisfortuneChange);
 }
 
 
@@ -479,6 +469,8 @@ float APlayerCharacter::GetMisfortune() const
 void APlayerCharacter::Server_SetMisfortune_Implementation(const float Misfortune_)
 {
 	Misfortune = Misfortune_;
+
+	OnMisfortuneChanged.Broadcast(Misfortune, this);
 }
 
 bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)

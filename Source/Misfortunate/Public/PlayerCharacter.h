@@ -20,8 +20,12 @@ enum CrawlStates
 {
 	Stand   UMETA(DisplayName = "Standing"),
 	Crouch UMETA(DisplayName = "Crouching"),
-	Crawl UMETA(DisplayName = "Crawling"),
 };
+
+
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMisfortuneChangedSignature, float, NewMisfortune, APlayerCharacter*, Player);
 
 
 UCLASS(BlueprintType)
@@ -53,9 +57,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement)
 		float MaxStamina = 100.0f;
 
+
 	//!SprintMultiplier float
 	/*!Allows the players to string and is used as a scaler for the MaxWalkSpeed*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 		float SprintMultiplier;
 	
 	
@@ -90,23 +95,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		TEnumAsByte<CrawlStates> CrawlState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		float CrawlRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		float CrawlHalfHeight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		FVector CrawlMeshPos;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		bool IsCrawlBlocked;
-
 	// Crawl Variables
+
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Replicated, Category = Gameplay)
 		float Misfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		float MaxMisfortune;
+
+
+	FOnMisfortuneChangedSignature OnMisfortuneChanged;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		int AvailableGlowsticks;
@@ -143,6 +144,9 @@ protected:
 	/*!Pointer to the zone the player is currently In*/
 	AEventZone* currentZone;
 
+
+	float OriginalMaxWalkSpeed;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -162,9 +166,9 @@ protected:
 	/*!Stops the player from being able to sprint*/
 	void StopSprinting();
 
-	float FSelectInterpTarget(float Stand,float Crouch,float Crawl);
+	float FSelectInterpTarget(float Stand,float Crouch);
 
-	FVector VSelectInterpTarget(FVector Stand, FVector Crouch, FVector Crawl);
+	FVector VSelectInterpTarget(FVector Stand, FVector Crouch);
 
 
 	void HandleCrouchCrawl();
