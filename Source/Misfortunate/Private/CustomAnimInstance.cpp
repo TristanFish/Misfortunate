@@ -49,7 +49,6 @@ void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
 
-		IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
 		IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
 	}
 

@@ -38,6 +38,28 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class USoundBase* OnOffSound;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float MisfortuneToStartDim;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float OriginalCentreLightIntensity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float OriginalOutsideLightIntensity;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float MaxOutsideLightDecreaseRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float MinOutsideLightDecreaseRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float MaxCentreLightDecreaseRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float MinCentreLightDecreaseRate;
 
 public:
 
@@ -47,6 +69,9 @@ public:
 	/*!Toggles the headlamp between modes/turns it off*/
 	void ToggleHeadLamp();
 
+
+
+	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
 
 protected:
 
