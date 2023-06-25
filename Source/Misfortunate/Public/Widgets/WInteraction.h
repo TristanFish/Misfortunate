@@ -39,11 +39,11 @@ public:
 	void PlayInteractionAnim();
 
 
-	void SetLatestTablet(class ALoreTablet* tablet);
+	void SetLatestTablet(class AInteractibleObject* tablet);
 
 protected:
 
-	class ALoreTablet* LatestTablet;
+	class AInteractibleObject* LatestInteractible;
 
 	UFUNCTION()
 		void OnFadeOutAnimationFinished();

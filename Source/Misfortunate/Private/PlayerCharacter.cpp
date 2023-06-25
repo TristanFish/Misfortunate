@@ -54,7 +54,7 @@ APlayerCharacter::APlayerCharacter()
 	
 
 
-	Misfortune = FMath::RandRange(10.0f, 80.0f);
+	Misfortune = 0.0f;
 
 	CrawlState = CrawlStates::Stand;
 
@@ -126,7 +126,7 @@ void APlayerCharacter::TickStamina()
 		
 
 
-		if (PlayerSpeed >= OriginalMaxWalkSpeed)
+		if (PlayerSpeed > OriginalMaxWalkSpeed)
 		{
 			float StaminaDecrese = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, (OriginalMaxWalkSpeed * SprintMultiplier)), FVector2D(0.0f, 4.0f), PlayerSpeed);
 
@@ -358,7 +358,7 @@ void APlayerCharacter::Multi_UpdateMovementState_Implementation(CrawlStates Craw
 	CrawlState = CrawlState_;
 	GetCapsuleComponent()->SetCapsuleSize(TargetRad, TargetHalfHeight);
 	GetMesh()->SetRelativeLocation(TargetLoc);
-	GetCharacterMovement()->MaxWalkSpeed = FSelectInterpTarget(GetCharacterMovement()->MaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);	
+	GetCharacterMovement()->MaxWalkSpeed = FSelectInterpTarget(OriginalMaxWalkSpeed, GetCharacterMovement()->MaxWalkSpeedCrouched);
 }
 
 bool APlayerCharacter::Multi_UpdateMovementState_Validate(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc)

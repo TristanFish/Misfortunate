@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Engine/TriggerBox.h"
-#include "LoreTablet.generated.h"
+#include "InteractibleObject.h"
 
+#include "LoreTablet.generated.h"
 
 
 // Define's if a lore tablet is shared between players when collected or not
@@ -19,7 +19,7 @@ enum class SharedType : uint8
 };
 
 UCLASS()
-class MISFORTUNATE_API ALoreTablet : public ATriggerBox
+class MISFORTUNATE_API ALoreTablet : public AInteractibleObject
 {
 	GENERATED_BODY()
 	
@@ -38,29 +38,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FString TabletTitle;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FString TabletOwner;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		FString TabletText;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	
-
-	void SetTabletInfo(FString& text_, FString& title_, FString& owner_);
-	void SetTabletInfo(FString text_, FString title_, FString owner_);
-
-	FString GetTabletText();
-
-	FString GetTabletTitle();
-
-	FString GetTabletOwner();
 
 
 };

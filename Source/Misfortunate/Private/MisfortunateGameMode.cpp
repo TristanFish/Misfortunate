@@ -210,11 +210,11 @@ ALoreManager* AMisfortunateGameMode::GetLoreManager() const
 	return loreManager;
 }
 
-void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class ALoreTablet* tablet)
+void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject)
 {
 	for (auto player : ConnectedPlayers)
 	{
-		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(tablet);
+		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(interactibleObject);
 	}
 }
 

@@ -42,7 +42,7 @@ void UWInteraction::UnBindDelegate()
 void UWInteraction::InteractionMessage()
 {
 
-	Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->AddToTabletsCollected(LatestTablet);
+	Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->AddToTabletsCollected(LatestInteractible);
 
 	
 	PlayInteractionAnim();
@@ -53,9 +53,9 @@ void UWInteraction::PlayInteractionAnim()
 	PlayAnimation(FadeOutAnim);
 }
 
-void UWInteraction::SetLatestTablet(ALoreTablet* tablet)
+void UWInteraction::SetLatestTablet(AInteractibleObject* tablet)
 {
-	LatestTablet = tablet;
+	LatestInteractible = tablet;
 }
 
 void UWInteraction::OnFadeOutAnimationFinished()

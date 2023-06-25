@@ -74,7 +74,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetGameState(TEnumAsByte<UGameState> state_);
 
-	void AddLoreTabletToAllPlayers(class ALoreTablet* tablet);
+	void AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject);
 
 
 protected:
