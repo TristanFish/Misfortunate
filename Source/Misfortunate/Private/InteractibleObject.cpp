@@ -3,11 +3,22 @@
 
 #include "InteractibleObject.h"
 
+#include "Components/ShapeComponent.h"
+#include "Components/BillboardComponent.h"
+
 // Sets default values
 AInteractibleObject::AInteractibleObject()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCollisionComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+
+
+	GetCollisionComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECollisionResponse::ECR_Block);
+
+	GetSpriteComponent()->bHiddenInGame = true;
+	GetCollisionComponent()->bHiddenInGame = true;
 
 }
 
@@ -16,6 +27,13 @@ void AInteractibleObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+}
+
+
+
+void AInteractibleObject::OnInteracted_Implementation()
+{
 }
 
 // Called every frame

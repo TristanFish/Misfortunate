@@ -28,7 +28,6 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = UGameState::Lobby;
 
 	EventChance = 15;
 }
@@ -55,6 +54,27 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 		InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
 		EveryoneUpdate();
 	}
+
+
+	else if (CurrentState == UGameState::Exploration)
+	{
+		if (PossessableCharacters.Num() == 0)
+		{
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+		}
+
+		for (auto possChar : PossessableCharacters)
+		{
+			APlayerCharacter* character = Cast<APlayerCharacter>(possChar);
+			if (!character->HasBeenPossesed)
+			{
+				Cast<AMPlayerController>(NewPlayer)->UnPossess();
+				Cast<AMPlayerController>(NewPlayer)->Possess(character);
+				character->HasBeenPossesed = true;
+				break;
+			}
+		}
+	}
 }
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
@@ -69,9 +89,14 @@ void AMisfortunateGameMode::BeginPlay()
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
+
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Begin Play"));
+	
+
+	if (PossessableCharacters.Num() == 0)
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+	}
 
 
 	Super::BeginPlay();

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -62,9 +63,10 @@ public:
 	/*!Allows the players to string and is used as a scaler for the MaxWalkSpeed*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 		float SprintMultiplier;
-	
-	
 
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		bool HasBeenPossesed = false;
+	
 	// Crawl Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
 		float StandRadius;
@@ -94,7 +96,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		TEnumAsByte<CrawlStates> CrawlState;
-
 	// Crawl Variables
 
 
@@ -105,7 +106,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		float MaxMisfortune;
 
-
 	FOnMisfortuneChangedSignature OnMisfortuneChanged;
 
 
@@ -113,6 +113,7 @@ public:
 		int AvailableGlowsticks;
 
 
+	TSubclassOf<class AGlowstick> Glowstick_Class;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		 UStaticMeshComponent* headlampMesh;
@@ -128,6 +129,22 @@ public:
 	//Removes stamina from our Stamina variable
 	UFUNCTION()
 	void TickStamina();
+
+#pragma region Enhanced Input
+	void Move(const  FInputActionValue& Value);
+
+	void Turn(const  FInputActionValue& Value);
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+		class UInputMappingContext* InputMapping;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+		class UMisfortunateInputConfig* InputActions;
+#pragma endregion
+
+
 protected:
 
 	FRotator LookRotation;
@@ -150,14 +167,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//!MoveForward Function
-	/*!Move's the player forward*/
-	void MoveForward(float Val);
-
-	//!MoveRight Function
-	/*!Move's the player right*/
-	void MoveRight(float Val);
-
 	//!AllowSprint Function
 	/*!Allow's the player to sprint*/
 	void AllowSprint();
@@ -169,7 +178,6 @@ protected:
 	float FSelectInterpTarget(float Stand,float Crouch);
 
 	FVector VSelectInterpTarget(FVector Stand, FVector Crouch);
-
 
 	void HandleCrouchCrawl();
 
@@ -224,8 +232,10 @@ public:
 
 	void SetMisfortune(const float Misfortune_);
 
+	UFUNCTION(BlueprintCallable)
 	void IncreaseMisfortune(const float Misfortune_);
 
+	UFUNCTION(BlueprintCallable)
 	void DecreaseMisfortune(const float Misfortune_);
 
 
@@ -235,6 +245,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PossessedBy(AController* NewController) override;
 
 
 

@@ -35,6 +35,12 @@ protected:
 		FString LoreText;
 
 
+
+public:
+
+	UFUNCTION(BlueprintNativeEvent)
+		void OnInteracted();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

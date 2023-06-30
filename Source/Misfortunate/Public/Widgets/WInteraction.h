@@ -34,7 +34,7 @@ public:
 	void UnBindDelegate();
 
 	UFUNCTION()
-		void InteractionMessage();
+		void OnInteractionClicked();
 
 	void PlayInteractionAnim();
 

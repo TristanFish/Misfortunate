@@ -20,6 +20,12 @@
 #include "CustomAnimInstance.h"
 #include "Net/UnrealNetwork.h"
 
+
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "EnhancedInput/Public/EnhancedInputComponent.h"
+#include "MisfortunateInputConfig.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -38,7 +44,9 @@ APlayerCharacter::APlayerCharacter()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshOutput(TEXT("StaticMesh'/Game/Misfortuante/Models/PlayerObjects/HeadLamp.HeadLamp'"));
 	headlampMesh->SetStaticMesh(MeshOutput.Object);
 	
+	static ConstructorHelpers::FObjectFinder<UBlueprint> GlowstickOutput(TEXT("/Script/Engine.Blueprint'/Game/Misfortuante/Blueprints/Interactibles/BP_Glowstick.BP_Glowstick'"));
 
+	Glowstick_Class = GlowstickOutput.Object->GeneratedClass;
 
 	playerCamera->SetupAttachment(GetMesh(),  FName("Head"));
 	headlampMesh->SetupAttachment(GetMesh(), FName("Head"));
@@ -52,7 +60,6 @@ APlayerCharacter::APlayerCharacter()
 	SprintMultiplier = 1.3f;
 	AvailableGlowsticks = 3;
 	
-
 
 	Misfortune = 0.0f;
 
@@ -159,28 +166,53 @@ void APlayerCharacter::TickStamina()
 	UpdateHeartBeatAudio();
 }
 
-void APlayerCharacter::MoveForward(float Val)
+void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	if (Val != 0)
+	if (Controller != nullptr)
 	{
+		const FVector2D MoveValue = Value.Get<FVector2D>();
+		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
-		AddMovementInput(GetActorForwardVector(), Val);
+		// Forward/Backward direction
+		if (MoveValue.Y != 0.f)
+		{
+			// Get forward vector
+			const FVector Direction = MovementRotation.RotateVector(FVector::ForwardVector);
 
-		
+			AddMovementInput(Direction, MoveValue.Y);
+		}
+
+		// Right/Left direction
+		if (MoveValue.X != 0.f)
+		{
+			// Get right vector
+			const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
+
+			AddMovementInput(Direction, MoveValue.X);
+		}
 	}
 }
 
-void APlayerCharacter::MoveRight(float Val)
+void APlayerCharacter::Turn(const FInputActionValue& Value)
 {
-	if (Val != 0)
+	if (Controller != nullptr)
 	{
+		const FVector2D LookValue = Value.Get<FVector2D>();
 
-		AddMovementInput(GetActorRightVector(), Val);
-	
-		
+		if (LookValue.X != 0.f)
+		{
+			AddControllerYawInput(LookValue.X);
+		}
+
+		if (LookValue.Y != 0.f)
+		{
+			AddControllerPitchInput(LookValue.Y);
+		}
 	}
-	
 }
+
+
+
 
 void APlayerCharacter::AllowSprint()
 {
@@ -403,7 +435,7 @@ bool APlayerCharacter::Server_ThrowGlowstick_Validate()
 
 void APlayerCharacter::Server_ThrowGlowstick_Implementation()
 {
-	AGlowstick* spawnedGlowstick = GetWorld()->SpawnActor<AGlowstick>((GetActorForwardVector() * 100) + GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f));
+	AGlowstick* spawnedGlowstick = GetWorld()->SpawnActor<AGlowstick>(Glowstick_Class,(GetActorForwardVector() * 100) + GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f));
 
 	OnMisfortuneChanged.AddDynamic(spawnedGlowstick, &AGlowstick::OnMisfortuneChange);
 }
@@ -417,6 +449,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerCharacter, Misfortune);
+	DOREPLIFETIME(APlayerCharacter, HasBeenPossesed);
 
 }
 
@@ -426,23 +459,35 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	check(PlayerInputComponent);
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerCharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerCharacter::StopJumping);
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &APlayerCharacter::AllowSprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &APlayerCharacter::StopSprinting);
 
-	PlayerInputComponent->BindAction("ToggleLight", IE_Pressed, this, &APlayerCharacter::Server_TriggerHeadLamp);
+	AMPlayerController* PC = Cast<AMPlayerController>(GetController());
 
-	PlayerInputComponent->BindAction("Throw", IE_Pressed, this, &APlayerCharacter::ThrowGlowstick);
-	PlayerInputComponent->BindAction("Crawl", IE_Pressed, this, &APlayerCharacter::ToggleCrawl);
+	// Get the local player subsystem
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+	// Clear out existing mapping, and add our mapping
+	Subsystem->ClearAllMappings();
+	Subsystem->AddMappingContext(InputMapping, 0);
+
+	UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	PEI->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+	PEI->BindAction(InputActions->InputTurn, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
 
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
 
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 
+	PEI->BindAction(InputActions->InputToggleLight, ETriggerEvent::Started, this, &APlayerCharacter::Server_TriggerHeadLamp);
+
+
+	PEI->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::ThrowGlowstick);
+	PEI->BindAction(InputActions->InputCrouch, ETriggerEvent::Started, this, &APlayerCharacter::ToggleCrawl);
+
+}
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
 }
 
 AEventZone* APlayerCharacter::GetCurrentZone() const
@@ -485,11 +530,13 @@ void APlayerCharacter::SetMisfortune(const float Misfortune_)
 
 void APlayerCharacter::IncreaseMisfortune(const float Misfortune_)
 {
-	Misfortune += Misfortune_;
+
+	Server_SetMisfortune(FMath::Clamp(Misfortune + Misfortune_,0.0f,MaxMisfortune));
+
 }
 
 void APlayerCharacter::DecreaseMisfortune(const float Misfortune_)
 {
-	Misfortune -= Misfortune_;
+	Server_SetMisfortune(FMath::Clamp(Misfortune - Misfortune_, 0.0f, MaxMisfortune));
 }
 

@@ -52,6 +52,9 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+
+public:
+
 	UFUNCTION(BlueprintImplementableEvent)
 		void EveryoneUpdate();
 
