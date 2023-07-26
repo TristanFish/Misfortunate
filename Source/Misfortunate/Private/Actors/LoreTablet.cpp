@@ -39,35 +39,6 @@ void ALoreTablet::Tick(float DeltaTime)
 }
 
 
-void ALoreTablet::SetTabletInfo(FString& text_, FString& title_, FString& owner_)
-{
-	TabletText = text_;
-	TabletTitle = title_;
-	TabletOwner = owner_;
-}
 
-void ALoreTablet::SetTabletInfo(FString text_, FString title_, FString owner_)
-{
-	TabletText = text_;
-	TabletTitle = title_;
-	TabletOwner = owner_;
-
-}
-
-FString ALoreTablet::GetTabletText()
-{
-	return TabletText;
-}
-
-FString ALoreTablet::GetTabletTitle()
-{
-	return TabletTitle;
-}
-
-FString ALoreTablet::GetTabletOwner()
-{
-	return TabletOwner;
-
-}
 
 

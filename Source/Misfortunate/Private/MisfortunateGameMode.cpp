@@ -28,7 +28,6 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = UGameState::Lobby;
 
 	EventChance = 15;
 }
@@ -55,6 +54,27 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 		InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
 		EveryoneUpdate();
 	}
+
+
+	else if (CurrentState == UGameState::Exploration)
+	{
+		if (PossessableCharacters.Num() == 0)
+		{
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+		}
+
+		for (auto possChar : PossessableCharacters)
+		{
+			APlayerCharacter* character = Cast<APlayerCharacter>(possChar);
+			if (!character->HasBeenPossesed)
+			{
+				Cast<AMPlayerController>(NewPlayer)->Possess(character);
+				character->HasBeenPossesed = true;
+				character->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0));
+				break;
+			}
+		}
+	}
 }
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
@@ -69,9 +89,14 @@ void AMisfortunateGameMode::BeginPlay()
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
+
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Begin Play"));
+	
+
+	if (PossessableCharacters.Num() == 0)
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+	}
 
 
 	Super::BeginPlay();
@@ -119,7 +144,6 @@ void AMisfortunateGameMode::CheckEventTrigger()
 			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
-			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Server_SetMisfortune(0.0f);
 		}
 
 		else {
@@ -210,11 +234,11 @@ ALoreManager* AMisfortunateGameMode::GetLoreManager() const
 	return loreManager;
 }
 
-void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class ALoreTablet* tablet)
+void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject)
 {
 	for (auto player : ConnectedPlayers)
 	{
-		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(tablet);
+		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(interactibleObject);
 	}
 }
 
@@ -238,6 +262,9 @@ void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 	CurrentState = state_;
 	if (CurrentState == UGameState::Exploration)
 	{
-		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		if (scareManager)
+		{
+			GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		}
 	}
 }
