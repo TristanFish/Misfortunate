@@ -99,6 +99,9 @@ public:
 
 	UPROPERTY()
 		FPrevPageClicked PrevPageClicked;
+
+
+	virtual void OnPossess(APawn* InPawn) override;
 	
 public:
 

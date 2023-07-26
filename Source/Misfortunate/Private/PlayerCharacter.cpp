@@ -7,6 +7,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Components/AudioComponent.h"
+#include "Components/PostProcessComponent.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "MisfortunateGameMode.h"
 
@@ -26,6 +28,10 @@
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "MisfortunateInputConfig.h"
 
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialParameterCollectionInstance.h"
+
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -41,12 +47,26 @@ APlayerCharacter::APlayerCharacter()
 
 	heartbeatAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("HeartBeatAudio"));
 
+
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshOutput(TEXT("StaticMesh'/Game/Misfortuante/Models/PlayerObjects/HeadLamp.HeadLamp'"));
 	headlampMesh->SetStaticMesh(MeshOutput.Object);
 	
-	static ConstructorHelpers::FObjectFinder<UBlueprint> GlowstickOutput(TEXT("/Script/Engine.Blueprint'/Game/Misfortuante/Blueprints/Interactibles/BP_Glowstick.BP_Glowstick'"));
+	static ConstructorHelpers::FClassFinder<AGlowstick> GlowstickOutput(TEXT("/Game/Misfortuante/Blueprints/Interactibles/BP_Glowstick"));
+	Glowstick_Class = GlowstickOutput.Class;
 
-	Glowstick_Class = GlowstickOutput.Object->GeneratedClass;
+	static ConstructorHelpers::FObjectFinder<UMaterial> BlurOutput(TEXT("/Script/Engine.Material'/Game/Misfortuante/Materials/M_RadialBlur.M_RadialBlur'"));
+
+	if (BlurOutput.Object)
+	{
+		BlurMaterial_Dynamic = BlurOutput.Object;
+	}
+
+
+
+
+
+
 
 	playerCamera->SetupAttachment(GetMesh(),  FName("Head"));
 	headlampMesh->SetupAttachment(GetMesh(), FName("Head"));
@@ -62,7 +82,7 @@ APlayerCharacter::APlayerCharacter()
 	
 
 	Misfortune = 0.0f;
-
+	MaxMisfortune = 100.0f;
 	CrawlState = CrawlStates::Stand;
 
 	StandRadius = 45.0f;
@@ -75,6 +95,12 @@ APlayerCharacter::APlayerCharacter()
 
 	StandMeshPos = FVector(0.0f, 0.0f, -80.0f);
 	CrouchMeshPos = FVector(0.0f, 0.0f, -80.0f);
+
+
+
+
+
+
 }
 
 
@@ -83,6 +109,26 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	APawn::BeginPlay();
+
+
+	if (BlurMaterial_Dynamic)
+	{
+
+		if (!RadialBlurInstance)
+		{
+			RadialBlurInstance = UMaterialInstanceDynamic::Create(BlurMaterial_Dynamic, this);
+
+
+			if (RadialBlurInstance)
+			{
+				playerCamera->AddOrUpdateBlendable(RadialBlurInstance, 1.0f);
+			}
+		}
+
+		float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxMisfortune), FVector2D(0.0, 1.0f), Misfortune);
+
+		RadialBlurInstance->SetScalarParameterValue(FName("BlurIntensity"), NewBlur);
+	}
 
 	OriginalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
@@ -101,8 +147,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
-	if (GetWorld()->IsServer())
+	if (IsNetMode(ENetMode::NM_ListenServer))
 	{
 		Multi_UpdateLookRotation(GetControlRotation());
 	}
@@ -119,6 +164,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 		playerCamera->bUsePawnControlRotation = true;
 
 	}
+
+	Local_PrintDebugMessages();
 }
 
 void APlayerCharacter::TickStamina()
@@ -166,8 +213,15 @@ void APlayerCharacter::TickStamina()
 	UpdateHeartBeatAudio();
 }
 
+
+
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+
+	//FInputActionValue NewValue = Value;
+	//Server_Move(NewValue);
+
 	if (Controller != nullptr)
 	{
 		const FVector2D MoveValue = Value.Get<FVector2D>();
@@ -453,14 +507,18 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 }
 
-// Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+
+void APlayerCharacter::Server_SetupPlayerInputComponent_Implementation(UInputComponent* PlayerInputComponent, AMPlayerController* PC)
 {
-	check(PlayerInputComponent);
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 
-	AMPlayerController* PC = Cast<AMPlayerController>(GetController());
+	Multi_SetupPlayerInputComponent(PlayerInputComponent, PC);
+	
+}
+
+void APlayerCharacter::Multi_SetupPlayerInputComponent_Implementation(UInputComponent* PlayerInputComponent, AMPlayerController* PC)
+{
+
 
 	// Get the local player subsystem
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
@@ -484,10 +542,69 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PEI->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::ThrowGlowstick);
 	PEI->BindAction(InputActions->InputCrouch, ETriggerEvent::Started, this, &APlayerCharacter::ToggleCrawl);
 
+
 }
 
-void APlayerCharacter::PossessedBy(AController* NewController)
+// Called to bind functionality to input
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	check(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	
+
+
+	AMPlayerController* PC = Cast<AMPlayerController>(GetController());
+
+
+
+
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+	// Clear out existing mapping, and add our mapping
+	Subsystem->ClearAllMappings();
+	Subsystem->AddMappingContext(InputMapping, 0);
+
+	UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+
+	PEI->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+	PEI->BindAction(InputActions->InputTurn, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
+
+
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
+
+
+	PEI->BindAction(InputActions->InputToggleLight, ETriggerEvent::Started, this, &APlayerCharacter::Server_TriggerHeadLamp);
+
+
+	PEI->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::ThrowGlowstick);
+	PEI->BindAction(InputActions->InputCrouch, ETriggerEvent::Started, this, &APlayerCharacter::ToggleCrawl);
+
+	if (GetLocalRole() < ROLE_Authority)
+	{
+		Server_SetupPlayerInputComponent(PlayerInputComponent, PC);
+
+	}
+}
+
+
+
+void APlayerCharacter::Local_PrintDebugMessages_Implementation()
+{
+	
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Player: %s Misfortune Is: %f"), *GetName(), Misfortune));
+
+
+		float OutValue;
+
+		if (RadialBlurInstance)
+		{
+			RadialBlurInstance->GetScalarParameterValue(FName("BlurIntensity"), OutValue);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Player %s BlurIntensity Is: %f"), *GetName(), OutValue));
+		}
+		
+
 }
 
 AEventZone* APlayerCharacter::GetCurrentZone() const
@@ -505,6 +622,25 @@ void APlayerCharacter::SetCurrentZone(AEventZone* eventZone)
 }
 
 
+
+void APlayerCharacter::Local_OnMisfortuneChanged_Implementation(const float NewMisfortune)
+{
+	if (GetController())
+	{
+
+
+		if (RadialBlurInstance)
+		{
+			float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxMisfortune), FVector2D(0.0, 1.0f), NewMisfortune);
+
+			RadialBlurInstance->SetScalarParameterValue(FName("BlurIntensity"), NewBlur);
+			
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("BlurIntensity Is: %f"), NewBlur));
+
+		}
+	}
+}
 
 float APlayerCharacter::GetMisfortune() const
 {
@@ -525,7 +661,9 @@ bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)
 
 void APlayerCharacter::SetMisfortune(const float Misfortune_)
 {
-	Misfortune = Misfortune_;
+	Server_SetMisfortune(FMath::Clamp(Misfortune_, 0.0f, MaxMisfortune));
+
+	Local_OnMisfortuneChanged(Misfortune_); 
 }
 
 void APlayerCharacter::IncreaseMisfortune(const float Misfortune_)
@@ -533,10 +671,15 @@ void APlayerCharacter::IncreaseMisfortune(const float Misfortune_)
 
 	Server_SetMisfortune(FMath::Clamp(Misfortune + Misfortune_,0.0f,MaxMisfortune));
 
+	Local_OnMisfortuneChanged(Misfortune);
+
 }
 
 void APlayerCharacter::DecreaseMisfortune(const float Misfortune_)
 {
 	Server_SetMisfortune(FMath::Clamp(Misfortune - Misfortune_, 0.0f, MaxMisfortune));
+
+	Local_OnMisfortuneChanged(Misfortune);
+
 }
 

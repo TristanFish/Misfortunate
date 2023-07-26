@@ -19,6 +19,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+#include "PlayerCharacter.h"
+#include "EnhancedInputSubsystems.h"
 
 
 AMPlayerController::AMPlayerController()
@@ -41,6 +43,14 @@ AMPlayerController::AMPlayerController()
 	
 
 	bAlwaysRelevant = true;
+}
+
+void AMPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	
+	
 }
 
 void AMPlayerController::BeginPlay()

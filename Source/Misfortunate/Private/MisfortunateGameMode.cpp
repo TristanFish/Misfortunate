@@ -68,9 +68,9 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			APlayerCharacter* character = Cast<APlayerCharacter>(possChar);
 			if (!character->HasBeenPossesed)
 			{
-				Cast<AMPlayerController>(NewPlayer)->UnPossess();
 				Cast<AMPlayerController>(NewPlayer)->Possess(character);
 				character->HasBeenPossesed = true;
+				character->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0));
 				break;
 			}
 		}
@@ -144,7 +144,6 @@ void AMisfortunateGameMode::CheckEventTrigger()
 			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
-			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Server_SetMisfortune(0.0f);
 		}
 
 		else {
@@ -263,6 +262,9 @@ void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 	CurrentState = state_;
 	if (CurrentState == UGameState::Exploration)
 	{
-		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		if (scareManager)
+		{
+			GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		}
 	}
 }
