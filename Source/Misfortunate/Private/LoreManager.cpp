@@ -40,15 +40,16 @@ void ALoreManager::InitTablets()
 
 		if (nextLoreInfo)
 		{
-			Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(*nextLoreInfo->LoreText, nextLoreInfo->LoreTitle, nextLoreInfo->LoreOwner);
+
+			Cast<ALoreTablet>(LoreTablets[i])->SetLoreInfo(*nextLoreInfo->LoreText, nextLoreInfo->LoreTitle, nextLoreInfo->LoreOwner);
 			LoreOwners.AddUnique(nextLoreInfo->LoreOwner);
 		}
 		else
 		{
-			Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(FString("None"), FString("None"), FString("None"));
+			Cast<ALoreTablet>(LoreTablets[i])->SetLoreInfo(FString("None"), FString("None"), FString("None"));
 
 		}
-		Cast<ALoreTablet>(LoreTablets[i])->SetTabletInfo(FString("None"), FString("None"), FString("None"));
+		Cast<ALoreTablet>(LoreTablets[i])->SetLoreInfo(FString("None"), FString("None"), FString("None"));
 	}
 	
 }
