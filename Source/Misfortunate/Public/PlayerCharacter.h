@@ -38,6 +38,17 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 	//!Player Camera
 	/*!The camera that the player will use*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -133,9 +144,7 @@ public:
 #pragma endregion 
 
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateHeartBeatAudio();
-
+	
 	
 
 #pragma region Enhanced Input
@@ -201,19 +210,35 @@ public:
 		void DecreaseMisfortune(const float Misfortune_);
 
 #pragma endregion
+
+
+	//!GetCurrentZone Getter
+/*!Returns the current zone the players is in*/
+	AEventZone* GetCurrentZone() const;
+
+	//!SetCurrentZone Function
+	/*!Set's the current zone to the given parameter*/
+	void SetCurrentZone(AEventZone* eventZone);
+
+
+
+	UFUNCTION(Client, Reliable)
+		void Local_PrintDebugMessages();
+
+	
+	UFUNCTION()
+		void AddNewModifier(class UModifier* NewModifier);
+
+	UFUNCTION()
+		void RemoveModifier(class UModifier* ModifierToRemove);
 protected:
 
-	
-
-	//!CurrentZone AEventZone
-	/*!Pointer to the zone the player is currently In*/
-	AEventZone* currentZone;
 
 
+	UPROPERTY()
+		TArray<class UModifier*> ActiveModifiers;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	
+
 
 #pragma region Movement
 
@@ -234,6 +259,10 @@ protected:
 	//!AllowSprint Function
 	/*!Allow's the player to sprint*/
 	void AllowSprint();
+
+	//!AllowSprint Function
+	/*!Allow's the player to sprint*/
+	void SlowSprintSpeed();
 
 	//!StopSprinting Function
 	/*!Stops the player from being able to sprint*/
@@ -260,9 +289,14 @@ protected:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateHeartBeatAudio();
 
 
 #pragma endregion 
+
+
+
 
 
 	void TraceChecks();
@@ -270,30 +304,16 @@ protected:
 	FTimerHandle TickTraceCheckTimerHandle;
 
 	
+
+
+	//!CurrentZone AEventZone
+/*!Pointer to the zone the player is currently In*/
+	AEventZone* currentZone;
+
+
+
 	//!ThrowGlowstick Function
 	/*!throws a glow stick in front of the player*/
 	void ThrowGlowstick();
-
-	
-public:
-
-
-	UFUNCTION(Client, Reliable)
-		void Local_PrintDebugMessages();
-	
-	//!GetCurrentZone Getter
-	/*!Returns the current zone the players is in*/
-	AEventZone* GetCurrentZone() const;
-
-	//!SetCurrentZone Function
-	/*!Set's the current zone to the given parameter*/
-	void SetCurrentZone(AEventZone* eventZone);
-
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 };
 

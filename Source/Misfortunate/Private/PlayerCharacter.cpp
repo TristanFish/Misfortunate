@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+
 #include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,6 +28,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "MisfortunateInputConfig.h"
+#include "Modifier.h"
 
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -165,7 +167,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	}
 
-	Local_PrintDebugMessages();
+	//Local_PrintDebugMessages();
 }
 
 void APlayerCharacter::TickStamina()
@@ -294,11 +296,23 @@ void APlayerCharacter::AllowSprint()
 	}
 }
 
+void APlayerCharacter::SlowSprintSpeed()
+{
+	if (Stamina > 0.0f)
+	{
+		float SpeedDecrese = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, MaxStamina), FVector2D(75.0f, 0.0f), Stamina);
+
+
+		GetCharacterMovement()->MaxWalkSpeed = ((OriginalMaxWalkSpeed * SprintMultiplier) - SpeedDecrese);
+
+	}
+}
+
 void APlayerCharacter::StopSprinting()
 {
 
 	IsPlayerRunning = false;
-	GetCharacterMovement()->MaxWalkSpeed /=  SprintMultiplier;
+	GetCharacterMovement()->MaxWalkSpeed = OriginalMaxWalkSpeed;
 }
 
 
@@ -533,6 +547,7 @@ void APlayerCharacter::Multi_SetupPlayerInputComponent_Implementation(UInputComp
 
 
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed);
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
 
 
@@ -571,6 +586,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed);
 	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
 
 
@@ -619,6 +635,18 @@ void APlayerCharacter::SetCurrentZone(AEventZone* eventZone)
 		currentZone = eventZone;
 
 	}
+}
+
+
+
+void APlayerCharacter::AddNewModifier(UModifier* NewModifier)
+{
+	ActiveModifiers.Add(NewModifier);
+}
+
+void APlayerCharacter::RemoveModifier(UModifier* ModifierToRemove)
+{
+	ActiveModifiers.Remove(ModifierToRemove);
 }
 
 
