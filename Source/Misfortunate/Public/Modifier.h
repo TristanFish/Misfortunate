@@ -10,6 +10,7 @@
  * 
  */
 
+
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EModifierTypes: uint8
 {
@@ -49,6 +50,10 @@ public:
 		float TimeTillStop;
 
 	FTimerHandle StopTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class APlayerCharacter* OwningPlayer;
+
 	
 	UFUNCTION(BlueprintNativeEvent)
 		 void StartModifier();

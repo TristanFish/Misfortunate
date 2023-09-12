@@ -238,7 +238,44 @@ void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject*
 {
 	for (auto player : ConnectedPlayers)
 	{
-		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(interactibleObject);
+		Cast<AMPlayerController>(player)->Client_AddToInteractibles(interactibleObject);
+	}
+}
+
+void AMisfortunateGameMode::ChangeCanMisfortuneIncrease_Implementation(const bool bCanMisfortuneIncrease)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		character->bCanMisfortuneIncrease = bCanMisfortuneIncrease;
+	}
+}
+
+void AMisfortunateGameMode::SetOtherPlayersMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		if (PlayerNotToSet != character)
+		{
+			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange,0.0f, 100.0f);
+		}
+	}
+
+}
+
+void AMisfortunateGameMode::SetPlayerMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		if (PlayerToSet == character)
+		{
+			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange, 0.0f, 100.0f);
+		}
 	}
 }
 
@@ -251,7 +288,6 @@ void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* en
 		if (enteredChar == character)
 		{
 			character->SetCurrentZone(zone);
-
 		}
 	}
 

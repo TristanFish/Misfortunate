@@ -125,7 +125,7 @@ void AMPlayerController::ToggleJournal()
 	{
 		if (JournalWidget->IsInViewport())
 		{
-			JournalWidget->RemoveFromViewport();
+			JournalWidget->RemoveFromParent();
 			SetInputMode(FInputModeGameOnly());
 			JournalWidget->UnBindPageDelegates();
 			bShowMouseCursor = false;
@@ -151,7 +151,7 @@ void AMPlayerController::DisplayInteraction(AInteractibleObject* interactibleObj
 		if (InteractionWidget)
 		{
 			InteractionWidget->AddToViewport();
-			InteractionWidget->SetLatestTablet(interactibleObject);
+			InteractionWidget->SetLatestInteractible(interactibleObject);
 			InteractionWidget->BindDelegate();
 		}
 		
@@ -172,22 +172,9 @@ void AMPlayerController::HideInteraction()
 
 void AMPlayerController::AddToTabletsCollected(AInteractibleObject* interactibleObject)
 {
+	Client_AddToInteractibles(interactibleObject);
 
-		Client_AddToTabletsCollected(interactibleObject);
-	/*
-	else
-	{
-		if (HasAuthority())
-		{
-			AddTabletsToAllPlayers(tablet);
-		}
-		else
-		{
-			Server_AddTabletsToAllPlayers(tablet);
-		}
-
-	}*/
-
+	interactibleObject->OnInteracted();
 }
 void AMPlayerController::Server_AddTabletsToAllPlayers_Implementation(AInteractibleObject* interactibleObject)
 {
@@ -237,7 +224,7 @@ void AMPlayerController::AddTabletsToAllPlayers(AInteractibleObject* interactibl
 
 
 
-void AMPlayerController::Client_AddToTabletsCollected_Implementation(AInteractibleObject* interactibleObject)
+void AMPlayerController::Client_AddToInteractibles_Implementation(AInteractibleObject* interactibleObject)
 {
 
 	
@@ -249,7 +236,7 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(AInteractib
 	InteractionWidget->PlayInteractionAnim();
 
 	
-
+	
 	if (CollectedLore.Find(interactibleObject->GetLoreOwner()))
 	{
 		CollectedLore.Find(interactibleObject->GetLoreOwner())->Add(interactibleObject);
@@ -262,7 +249,7 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(AInteractib
 	
 }
 
-bool AMPlayerController::Client_AddToTabletsCollected_Validate(AInteractibleObject* tablet)
+bool AMPlayerController::Client_AddToInteractibles_Validate(AInteractibleObject* tablet)
 {
 	return true;
 }

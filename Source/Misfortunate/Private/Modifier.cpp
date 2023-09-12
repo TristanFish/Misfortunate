@@ -3,7 +3,7 @@
 
 #include "Modifier.h"
 #include "ModifierManager.h"
-
+#include "PlayerCharacter.h"
 
 
 UModifier::UModifier()
@@ -22,12 +22,13 @@ void UModifier::StartModifier_Implementation()
 	if (ModifierFlags & StaticCast<int32>(EModifierTypes::TIMED))
 	{
 		GetWorld()->GetTimerManager().SetTimer(StopTimer, this, &UModifier::StopModifier, TimeTillStop, false);
-
+		
 	}
 }
 
 void UModifier::StopModifier_Implementation()
 {
+	OwningPlayer->RemoveModifier(this);
 }
 
 

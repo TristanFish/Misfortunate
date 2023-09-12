@@ -59,7 +59,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	TSubclassOf<UModifier> GetRandomModifier(const int& PlayerIndex);
+	TSubclassOf<UModifier> GetRandomModifier(const int& PlayerIndex, UPARAM(meta = (Bitmask, BitmaskEnum = EAnimDescriptorFlags)) int32 MatchModifierFlags = 0);
 
 
 public:	
@@ -67,7 +67,9 @@ public:
 
 
 	UFUNCTION(Server, Reliable)
-		void AddPlayerModifier(APlayerCharacter* PlayerToAdd);
+		void AddPlayerModifier(APlayerCharacter* PlayerToAdd, UPARAM(meta = (Bitmask, BitmaskEnum = EAnimDescriptorFlags)) int32 MatchModifierFlags = 0);
+
+
 
 	UFUNCTION()
 		void AddGlobalModifier(TSubclassOf<UModifier> ModifierType);

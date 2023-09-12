@@ -27,7 +27,7 @@ void AModifierManager::BeginPlay()
 	
 }
 
-TSubclassOf<UModifier> AModifierManager::GetRandomModifier(const int& PlayerIndex)
+TSubclassOf<UModifier> AModifierManager::GetRandomModifier(const int& PlayerIndex, int32 MatchModifierFlags)
 {
 	bool FoundModifier = false, HasModifier = false;
 	while (!FoundModifier)
@@ -54,23 +54,27 @@ TSubclassOf<UModifier> AModifierManager::GetRandomModifier(const int& PlayerInde
 		}
 		else
 		{
-			if (PlayerIndex == -1)
-			{
-				return PossibleModifiers[RandomModiferIndex];
-			}
-			else
-			{
-				for (auto Modifier : PlayerModifiers[PlayerIndex].Modifiers)
-				{
-					if (PossibleModifiers[RandomModiferIndex] == Modifier->GetClass())
-					{
-						HasModifier = true;
-					}
-				}
 
-				if (!HasModifier)
+			if (PossibleModifiers[RandomModiferIndex].GetDefaultObject()->HasModifiers(MatchModifierFlags))
+			{
+				if (PlayerIndex == -1)
 				{
 					return PossibleModifiers[RandomModiferIndex];
+				}
+				else
+				{
+					for (auto Modifier : PlayerModifiers[PlayerIndex].Modifiers)
+					{
+						if (PossibleModifiers[RandomModiferIndex] == Modifier->GetClass())
+						{
+							HasModifier = true;
+						}
+					}
+
+					if (!HasModifier)
+					{
+						return PossibleModifiers[RandomModiferIndex];
+					}
 				}
 			}
 		}
@@ -80,35 +84,37 @@ TSubclassOf<UModifier> AModifierManager::GetRandomModifier(const int& PlayerInde
 	return TSubclassOf<UModifier>();
 }
 
-void AModifierManager::AddPlayerModifier_Implementation(APlayerCharacter* PlayerToAdd)
+void AModifierManager::AddPlayerModifier_Implementation(APlayerCharacter* PlayerToAdd, int32 MatchModifierFlags)
 {
-	int index;
+	int PlayerIndex;
 	bool Found = false;
 
 	for (int i = 0; i < PlayerModifiers.Num(); i++)
 	{
 		if (PlayerModifiers[i].PlayerWithModifiers == PlayerToAdd)
 		{
-			index = i;
+			PlayerIndex = i;
 			Found = true;
 		}
 	}
 
 	if (Found)
 	{
-		PlayerModifiers[index].Modifiers.AddUnique(NewObject<UModifier>(GetRandomModifier(index)->StaticClass()));
+		PlayerModifiers[PlayerIndex].Modifiers.AddUnique(NewObject<UModifier>(GetRandomModifier(PlayerIndex, MatchModifierFlags)->StaticClass()));
 
 	}
 	else
 	{
 		TArray<UModifier*> Modifiers;
 
-		Modifiers.Add(NewObject<UModifier>(GetRandomModifier(-1)->StaticClass()));
+		Modifiers.Add(NewObject<UModifier>(GetRandomModifier(-1, MatchModifierFlags)->StaticClass()));
 		 
 		PlayerModifiers.Emplace(PlayerToAdd, Modifiers);
 	}
 
 }
+
+
 
 void AModifierManager::AddGlobalModifier(TSubclassOf<UModifier> ModifierType)
 {

@@ -85,6 +85,10 @@ APlayerCharacter::APlayerCharacter()
 
 	Misfortune = 0.0f;
 	MaxMisfortune = 100.0f;
+	MaxMisfortuneChange = 15.0f;
+
+	bCanMisfortuneIncrease = false;
+
 	CrawlState = CrawlStates::Stand;
 
 	StandRadius = 45.0f;
@@ -516,7 +520,11 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APlayerCharacter, Misfortune);
+	DOREPLIFETIME(APlayerCharacter, Misfortune); 
+	DOREPLIFETIME(APlayerCharacter, MaxMisfortune);
+	DOREPLIFETIME(APlayerCharacter, MaxMisfortuneChange);
+	DOREPLIFETIME(APlayerCharacter, bCanMisfortuneIncrease);
+
 	DOREPLIFETIME(APlayerCharacter, HasBeenPossesed);
 
 }
@@ -642,6 +650,8 @@ void APlayerCharacter::SetCurrentZone(AEventZone* eventZone)
 void APlayerCharacter::AddNewModifier(UModifier* NewModifier)
 {
 	ActiveModifiers.Add(NewModifier);
+	NewModifier->OwningPlayer = this;
+	NewModifier->StartModifier();
 }
 
 void APlayerCharacter::RemoveModifier(UModifier* ModifierToRemove)
@@ -651,12 +661,12 @@ void APlayerCharacter::RemoveModifier(UModifier* ModifierToRemove)
 
 
 
+
+
 void APlayerCharacter::Local_OnMisfortuneChanged_Implementation(const float NewMisfortune)
 {
 	if (GetController())
 	{
-
-
 		if (RadialBlurInstance)
 		{
 			float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxMisfortune), FVector2D(0.0, 1.0f), NewMisfortune);
@@ -687,27 +697,35 @@ bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)
 	return true;
 }
 
-void APlayerCharacter::SetMisfortune(const float Misfortune_)
-{
-	Server_SetMisfortune(FMath::Clamp(Misfortune_, 0.0f, MaxMisfortune));
 
-	Local_OnMisfortuneChanged(Misfortune_); 
-}
+
+
+
 
 void APlayerCharacter::IncreaseMisfortune(const float Misfortune_)
 {
+	if (bCanMisfortuneIncrease)
+	{
+		float ModifiedMisfortune = FMath::Clamp(Misfortune_, 0.0f, MaxMisfortuneChange);
+		Server_SetMisfortune(FMath::Clamp(Misfortune + ModifiedMisfortune, 0.0f, MaxMisfortune));
 
-	Server_SetMisfortune(FMath::Clamp(Misfortune + Misfortune_,0.0f,MaxMisfortune));
-
-	Local_OnMisfortuneChanged(Misfortune);
-
+		Local_OnMisfortuneChanged(Misfortune);
+	}
 }
 
 void APlayerCharacter::DecreaseMisfortune(const float Misfortune_)
 {
-	Server_SetMisfortune(FMath::Clamp(Misfortune - Misfortune_, 0.0f, MaxMisfortune));
+	float ModifiedMisfortune = FMath::Clamp(Misfortune_, 0.0f, MaxMisfortuneChange);
+	Server_SetMisfortune(FMath::Clamp(Misfortune - ModifiedMisfortune, 0.0f, MaxMisfortune));
 
 	Local_OnMisfortuneChanged(Misfortune);
 
 }
 
+
+
+
+AMisfortunateGameMode* APlayerCharacter::GetGameMode()
+{
+	return Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+}

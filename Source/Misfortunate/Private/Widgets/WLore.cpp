@@ -13,8 +13,8 @@ void UWLore::NativeConstruct()
 
 void UWLore::SetLoreInfo(FString LoreText_, FString LoreTitle_)
 {
-	LoreTitle->Text.FromString(LoreTitle_);
-	LoreText->Text.FromString(LoreText_);
+	LoreTitle->GetText().FromString(LoreTitle_);
+	LoreText->GetText().FromString(LoreText_);
 
 }
 

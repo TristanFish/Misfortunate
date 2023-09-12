@@ -149,8 +149,6 @@ public:
 
 #pragma region Enhanced Input
 	
-
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 		class UInputMappingContext* InputMapping;
 
@@ -186,8 +184,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = Gameplay)
 		float Misfortune;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
 		float MaxMisfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+		float MaxMisfortuneChange;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+	bool bCanMisfortuneIncrease;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FOnMisfortuneChangedSignature OnMisfortuneChanged;
@@ -196,18 +200,25 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_SetMisfortune(const float Misfortune_);
 
+
 	UFUNCTION(Client, Reliable)
 	void Local_OnMisfortuneChanged(const float NewMisfortune);
 
+	
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseMisfortune(const float Misfortune_);
+
+	UFUNCTION(BlueprintCallable)
+	void DecreaseMisfortune(const float Misfortune_);
+
+
 	float GetMisfortune() const;
 
-	void SetMisfortune(const float Misfortune_);
 
-	UFUNCTION(BlueprintCallable)
-		void IncreaseMisfortune(const float Misfortune_);
-
-	UFUNCTION(BlueprintCallable)
-		void DecreaseMisfortune(const float Misfortune_);
+	
 
 #pragma endregion
 
@@ -231,6 +242,10 @@ public:
 
 	UFUNCTION()
 		void RemoveModifier(class UModifier* ModifierToRemove);
+
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		class AMisfortunateGameMode* GetGameMode();
 protected:
 
 
@@ -294,9 +309,6 @@ protected:
 
 
 #pragma endregion 
-
-
-
 
 
 	void TraceChecks();

@@ -41,7 +41,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float MisfortuneToStartDim;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float OriginalCentreLightIntensity;
 
@@ -61,6 +60,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float MinCentreLightDecreaseRate;
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		bool bAreSideLightsDisabled;
+
 public:
 
 	virtual void BeginPlay() override;
@@ -70,8 +73,19 @@ public:
 	void ToggleHeadLamp();
 
 
+	
+
 	UFUNCTION()
 	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
+
+
+	
+
+	UFUNCTION(Client, Reliable)
+	void SetSideLightsVisibility_Client(bool bAreSideLightsDisabled_);
+
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void SetSideLightsVisibility_Server(bool bAreSideLightsDisabled_);
 
 protected:
 
