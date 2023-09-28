@@ -15,25 +15,29 @@ AScareEventManager::AScareEventManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	scaresMaping.Add(EventZoneLevel::I, { Whisper,Wind });
-	scaresMaping.Add(EventZoneLevel::II, { Whisper,Wind });
-	scaresMaping.Add(EventZoneLevel::III, { Whisper,Wind });
-	scaresMaping.Add(EventZoneLevel::IV, { Whisper,Wind });
-	scaresMaping.Add(EventZoneLevel::V, { Whisper,Wind });
-	scaresMaping.Add(EventZoneLevel::VI, { Whisper,Wind });
+	ScareZoneMapping.Add(EventZoneLevel::I, { Whisper });
+	ScareZoneMapping.Add(EventZoneLevel::II, { Wind });
+	ScareZoneMapping.Add(EventZoneLevel::III, { Footsteps });
+	ScareZoneMapping.Add(EventZoneLevel::IV, { SingingNoises });
+	ScareZoneMapping.Add(EventZoneLevel::V, { Environment });
+	ScareZoneMapping.Add(EventZoneLevel::VI, { Whisper,Wind });
 
 	ScareDistanceThreshold = 100.0f;
+
+	TickSinceLastScareInterval =0.2f;
 
 	static ConstructorHelpers::FObjectFinder<UDataTable> DataTableClass(TEXT("/Game/Misfortuante/DataStructures/DT_ScareData.DT_ScareData"));
 	ScareDataTable = DataTableClass.Object;
 
-	for (auto RowName : ScareDataTable->GetRowNames())
+	if (Scare_List.IsEmpty())
 	{
-		FScareData* ScareData = ScareDataTable->FindRow<FScareData>(RowName,"");
+		for (auto RowName : ScareDataTable->GetRowNames())
+		{
+			FScareData* ScareData = ScareDataTable->FindRow<FScareData>(RowName, "");
 
-		scares.Add(*ScareData);
+			Scare_List.Add(*ScareData);
+		}
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -43,7 +47,7 @@ void AScareEventManager::BeginPlay()
 
 	InitalizeScarePoints();
 
-	
+	GetWorldTimerManager().SetTimer(TimeSinceLastScareTimerHandle, this, &AScareEventManager::TickTimeSinceLastScare, TickSinceLastScareInterval, true);
 }
 
 // Called every frame
@@ -56,7 +60,6 @@ void AScareEventManager::Tick(float DeltaTime)
 
 void AScareEventManager::TriggerScareEvent(APlayerCharacter* char_)
 {
-
 	selectedCharacter = char_;
 	StartEvent(char_->GetCurrentZone()->ZoneLevel);
 }
@@ -70,7 +73,7 @@ TMap<FScareSettings, FScareAudio> AScareEventManager::GetMapOfSameScareType(Scar
 	TMap<FScareSettings, FScareAudio> returnMap;
 
 
-	for (auto scare : scares)
+	for (auto scare : Scare_List)
 	{
 		if (scare.ScareSettings.scareType == scareType)
 		{
@@ -86,7 +89,7 @@ TMap<FScareSettings, FScareAudio> AScareEventManager::GetMapOfSameScareType(Scar
 
 void AScareEventManager::StartEvent(EventZoneLevel zoneLevel)
 {
-	for (auto i : scaresMaping)
+	for (auto i : ScareZoneMapping)
 	{
 		if (i.Key == zoneLevel)
 		{
@@ -186,6 +189,19 @@ float AScareEventManager::GetScareTriggerDelay() const
 	return CheckForScareTriggerDelay;
 }
 
+bool AScareEventManager::HasValidTimeSinceLastScare()
+{
+	GetWorldTimerManager().PauseTimer(TimeSinceLastScareTimerHandle);
+	if (TimeSinceLastScare > MinimumTimeBetweenScareTrigger)
+	{
+		TimeSinceLastScare = 0.0f;
+		GetWorldTimerManager().UnPauseTimer(TimeSinceLastScareTimerHandle);
+		return true;
+	}
+
+	return false;
+}
+
 void AScareEventManager::InitalizeScarePoints()
 {
 	if (scarePoints.Num() <= 0)
@@ -193,4 +209,9 @@ void AScareEventManager::InitalizeScarePoints()
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AScarePoint::StaticClass(), scarePoints);
 	}
 
+}
+
+void AScareEventManager::TickTimeSinceLastScare()
+{
+	TimeSinceLastScare += TickSinceLastScareInterval;
 }

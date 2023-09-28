@@ -16,6 +16,8 @@
 #include "MPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+
 #include "Math/UnrealMathUtility.h"
 #include "Actors/EventZone.h"
 #include "Actors/Glowstick.h"
@@ -70,7 +72,7 @@ APlayerCharacter::APlayerCharacter()
 
 
 
-	playerCamera->SetupAttachment(GetMesh(),  FName("Head"));
+	playerCamera->SetupAttachment(GetMesh(), FName("Head"));
 	headlampMesh->SetupAttachment(GetMesh(), FName("Head"));
 
 	heartbeatAudio->SetupAttachment(GetRootComponent());
@@ -157,19 +159,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		Multi_UpdateLookRotation(GetControlRotation());
 	}
+	
 
 
-	if (UGameplayStatics::GetPlayerPawn(GetWorld(), 0) != this)
+	
+	if (UGameplayStatics::GetPlayerPawn(GetWorld(),0) != this)
 	{
 		playerCamera->bUsePawnControlRotation = false;
 
 		playerCamera->SetWorldRotation(LookRotation);
 	}
-	else
-	{
-		playerCamera->bUsePawnControlRotation = true;
-
-	}
+	
+	RetrieveControlRotation();
 
 	//Local_PrintDebugMessages();
 }
@@ -262,19 +263,23 @@ void APlayerCharacter::Turn(const FInputActionValue& Value)
 		if (LookValue.X != 0.f)
 		{
 			AddControllerYawInput(LookValue.X);
+
 		}
 
 		if (LookValue.Y != 0.f)
 		{
 			AddControllerPitchInput(LookValue.Y);
 		}
+
+
+		
 	}
 }
 
 
 
 
-void APlayerCharacter::AllowSprint()
+void APlayerCharacter::AllowSprint_Server_Implementation()
 {
 	if (Stamina > 0.0f)
 	{
@@ -300,7 +305,7 @@ void APlayerCharacter::AllowSprint()
 	}
 }
 
-void APlayerCharacter::SlowSprintSpeed()
+void APlayerCharacter::SlowSprintSpeed_Server_Implementation()
 {
 	if (Stamina > 0.0f)
 	{
@@ -312,13 +317,27 @@ void APlayerCharacter::SlowSprintSpeed()
 	}
 }
 
-void APlayerCharacter::StopSprinting()
+void APlayerCharacter::StopSprinting_Server_Implementation()
 {
 
 	IsPlayerRunning = false;
 	GetCharacterMovement()->MaxWalkSpeed = OriginalMaxWalkSpeed;
 }
 
+
+
+
+void APlayerCharacter::SetUseControllerDesiredRotation_Server_Implementation(bool b)
+{
+	GetCharacterMovement()->bUseControllerDesiredRotation = b;
+
+}
+
+void APlayerCharacter::SetUsePawnControlRotation_Server_Implementation(bool b)
+{
+	playerCamera->bUsePawnControlRotation = b;
+
+}
 
 float APlayerCharacter::FSelectInterpTarget(float Stand, float Crouch)
 {
@@ -383,6 +402,14 @@ void APlayerCharacter::ToggleCrawl()
 		break;
 	default:
 		break;
+	}
+}
+
+void APlayerCharacter::RetrieveControlRotation()
+{
+	if (HasAuthority() || IsLocallyControlled())
+	{
+		ControlRotation = GetController()->GetControlRotation();
 	}
 }
 
@@ -490,11 +517,7 @@ void APlayerCharacter::Multi_UpdateLookRotation_Implementation(FRotator rot)
 	}
 }
 
-bool APlayerCharacter::Multi_UpdateLookRotation_Validate(FRotator rot)
-{
 
-	return true;
-}
 
 
 
@@ -524,7 +547,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(APlayerCharacter, MaxMisfortune);
 	DOREPLIFETIME(APlayerCharacter, MaxMisfortuneChange);
 	DOREPLIFETIME(APlayerCharacter, bCanMisfortuneIncrease);
-
+	DOREPLIFETIME_CONDITION(APlayerCharacter, ControlRotation, COND_SkipOwner);
 	DOREPLIFETIME(APlayerCharacter, HasBeenPossesed);
 
 }
@@ -544,28 +567,34 @@ void APlayerCharacter::Multi_SetupPlayerInputComponent_Implementation(UInputComp
 
 	// Get the local player subsystem
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
-	// Clear out existing mapping, and add our mapping
-	Subsystem->ClearAllMappings();
-	Subsystem->AddMappingContext(InputMapping, 0);
 
-	UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (Subsystem)
+	{
+		// Clear out existing mapping, and add our mapping
+		Subsystem->ClearAllMappings();
+		Subsystem->AddMappingContext(InputMapping, 0);
 
-	PEI->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-	PEI->BindAction(InputActions->InputTurn, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
+		UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
-
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed);
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
-
-
-	PEI->BindAction(InputActions->InputToggleLight, ETriggerEvent::Started, this, &APlayerCharacter::Server_TriggerHeadLamp);
+		if (PEI)
+		{
+			PEI->BindAction(InputActions->InputMove, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+			PEI->BindAction(InputActions->InputTurn, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
 
 
-	PEI->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::ThrowGlowstick);
-	PEI->BindAction(InputActions->InputCrouch, ETriggerEvent::Started, this, &APlayerCharacter::ToggleCrawl);
+			PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint_Server);
+			PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed_Server);
+			PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting_Server);
 
 
+			PEI->BindAction(InputActions->InputToggleLight, ETriggerEvent::Started, this, &APlayerCharacter::Server_TriggerHeadLamp);
+
+
+			PEI->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::ThrowGlowstick);
+			PEI->BindAction(InputActions->InputCrouch, ETriggerEvent::Started, this, &APlayerCharacter::ToggleCrawl);
+		}
+		
+	}
 }
 
 // Called to bind functionality to input
@@ -593,9 +622,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PEI->BindAction(InputActions->InputTurn, ETriggerEvent::Triggered, this, &APlayerCharacter::Turn);
 
 
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint);
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed);
-	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Started, this, &APlayerCharacter::AllowSprint_Server);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Triggered, this, &APlayerCharacter::SlowSprintSpeed_Server);
+	PEI->BindAction(InputActions->InputSprint, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprinting_Server);
 
 
 	PEI->BindAction(InputActions->InputToggleLight, ETriggerEvent::Started, this, &APlayerCharacter::Server_TriggerHeadLamp);
@@ -606,7 +635,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	if (GetLocalRole() < ROLE_Authority)
 	{
-		Server_SetupPlayerInputComponent(PlayerInputComponent, PC);
+		//Server_SetupPlayerInputComponent(PlayerInputComponent, PC);
 
 	}
 }

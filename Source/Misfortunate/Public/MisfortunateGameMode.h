@@ -122,15 +122,13 @@ protected:
 	// The Character that was selected to have a scare event triggered on
 	APlayerController* selectedCharacter;
 
-	// The distance the players are away from each other In the game
-	float DistanceBetweenPlayers;
 
 
 	FTimerHandle CheckDistTimerHandle;
 	FTimerHandle TriggerEventTimerHandle;
 
-	void CheckPlayersDistance();
-
+	float GetDistanceBetweenPlayers();
+	float GetCombinedMisfortune();
 	// Determines if a scare event will be triggered
 	void CheckEventTrigger();
 

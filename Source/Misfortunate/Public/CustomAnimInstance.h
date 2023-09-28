@@ -47,6 +47,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		bool IsCrouched;
 
+	
+
 
 
 	//!NativeUpdateAnimation Function 
@@ -56,4 +58,9 @@ public:
 	//!NativeUpdateAnimation Function 
 	/*!Updates the current animations variables while the animation runs*/
 	virtual void NativeBeginPlay() override;
+
+
+
+private:
+
 };

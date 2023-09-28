@@ -246,7 +246,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 		class AMisfortunateGameMode* GetGameMode();
-protected:
+public:
 
 
 
@@ -263,6 +263,8 @@ protected:
 	/*!Stores a value for if the player is running or not*/
 	bool IsPlayerRunning;
 
+
+
 	//!TickStaminaTimerHandle FTimerHandler
 	/*!Used to create a stamina timer*/
 	FTimerHandle TickStaminaTimerHandle;
@@ -273,15 +275,25 @@ protected:
 
 	//!AllowSprint Function
 	/*!Allow's the player to sprint*/
-	void AllowSprint();
+	UFUNCTION(Server, Reliable)
+	void AllowSprint_Server();
 
 	//!AllowSprint Function
 	/*!Allow's the player to sprint*/
-	void SlowSprintSpeed();
+	UFUNCTION(Server, Reliable)
+	void SlowSprintSpeed_Server();
 
 	//!StopSprinting Function
 	/*!Stops the player from being able to sprint*/
-	void StopSprinting();
+	UFUNCTION(Server, Reliable)
+	void StopSprinting_Server();
+
+	UFUNCTION(Server, Reliable)
+	void SetUseControllerDesiredRotation_Server(bool b);
+
+	UFUNCTION(Server, Reliable)
+	void SetUsePawnControlRotation_Server(bool b);
+
 
 	float FSelectInterpTarget(float Stand,float Crouch);
 
@@ -292,7 +304,7 @@ protected:
 	void UpdateMovementState(CrawlStates CrawlState_);
 
 
-	UFUNCTION(NetMulticast, Unreliable, WithValidation)
+	UFUNCTION(NetMulticast, Unreliable)
 		void Multi_UpdateLookRotation(FRotator rot);
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
@@ -306,6 +318,16 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void UpdateHeartBeatAudio();
+
+
+public:
+	
+	void RetrieveControlRotation();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+	 FRotator ControlRotation;
+
+
 
 
 #pragma endregion 
