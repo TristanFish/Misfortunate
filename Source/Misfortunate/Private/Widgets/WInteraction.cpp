@@ -53,9 +53,9 @@ void UWInteraction::PlayInteractionAnim()
 	PlayAnimation(FadeOutAnim);
 }
 
-void UWInteraction::SetLatestTablet(AInteractibleObject* tablet)
+void UWInteraction::SetLatestInteractible(AInteractibleObject* interactible)
 {
-	LatestInteractible = tablet;
+	LatestInteractible = interactible;
 }
 
 void UWInteraction::OnFadeOutAnimationFinished()

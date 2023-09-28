@@ -39,7 +39,7 @@ public:
 	void PlayInteractionAnim();
 
 
-	void SetLatestTablet(class AInteractibleObject* tablet);
+	void SetLatestInteractible(class AInteractibleObject* interactible);
 
 protected:
 

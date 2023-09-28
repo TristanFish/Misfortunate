@@ -117,12 +117,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ScareDistanceThreshold;
 
-
+		//!MinimumTimeBetweenScareTrigger Float
+		/* */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MinimumTimeBetweenScareTrigger;
 
 protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//!StartEvent Function
+	/*!Starts a scare event depending on the given zoneLevel*/
+	void StartEvent(EventZoneLevel zoneLevel);
 
 	//!selectedCharacter APlayerCharacter
 	/*!Pointer to the character that was selected to get scared. */
@@ -130,7 +137,7 @@ protected:
 
 	//!ScaresMaping TMap
 	/*!Map's out what scares are linked to specific zone levels */
-	TMap<EventZoneLevel, TArray<ScareType>> scaresMaping;
+	TMap<EventZoneLevel, TArray<ScareType>> ScareZoneMapping;
 	
 
 	//!scarePoints TArray
@@ -140,14 +147,12 @@ protected:
 	//!Scares Map
 	/*!Map that enables us to add Sound cue's in engine and map then to a scare type*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FScareData> scares;
+		TArray<FScareData> Scare_List;
 
 	UDataTable* ScareDataTable;
 
 
-	//!StartEvent Function
-	/*!Starts a scare event depending on the given zoneLevel*/
-	void StartEvent(EventZoneLevel zoneLevel);
+
 
 	//!GetNearestScarePoint Function
 	/*!Return's the scare point that is closest to the Selected Character*/
@@ -177,8 +182,24 @@ public:
 	float GetScareTriggerDelay() const;
 
 
+	bool HasValidTimeSinceLastScare();
+private:
+
+
+	void InitalizeScarePoints();
+
+	float TickSinceLastScareInterval;
+
+	float TimeSinceLastScare;
+
+
+	FTimerHandle TimeSinceLastScareTimerHandle;
+
+
 
 private:
-	void InitalizeScarePoints();
+
+
+	void TickTimeSinceLastScare();
 
 };

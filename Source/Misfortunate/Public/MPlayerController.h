@@ -148,7 +148,7 @@ public:
 		void Server_UpdateReadyState(AMPlayerController* playerController);
 	
 	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_AddToTabletsCollected(AInteractibleObject* interactibleObject);
+		void Client_AddToInteractibles(AInteractibleObject* interactibleObject);
 
 	UFUNCTION(Client, Reliable, WithValidation,BlueprintCallable)
 		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
