@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Engine/Classes/Materials/Material.h"
+#include "Materials/Material.h"
 #include "Glowstick.generated.h"
 
 UCLASS()

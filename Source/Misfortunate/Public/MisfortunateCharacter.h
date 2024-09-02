@@ -10,7 +10,6 @@ class UInputComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
 class UCameraComponent;
-class UMotionControllerComponent;
 class UAnimMontage;
 class USoundBase;
 
@@ -43,13 +42,6 @@ class AMisfortunateCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
-	/** Motion controller (right hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* R_MotionController;
-
-	/** Motion controller (left hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* L_MotionController;
 
 public:
 	AMisfortunateCharacter();

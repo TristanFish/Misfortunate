@@ -7,9 +7,9 @@ public class MisfortunateEditorTarget : TargetRules
 {
 	public MisfortunateEditorTarget(TargetInfo Target) : base(Target)
 	{
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
         Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
 		ExtraModuleNames.Add("Misfortunate");
 	}
 }
