@@ -46,7 +46,8 @@ SourceArt/**/*.tga
 
 # Binary Files
 Binaries/*
-Plugins/*/Binaries/*
+Plugins/AdvancedSessions/AdvancedSessions/Binaries/*
+Plugins/AdvancedSessions/AdvancedSteamSessions/Binaries/*
 
 # Builds
 Build/*
@@ -68,8 +69,12 @@ Saved/*
 # Compiled source files for the engine to use
 Intermediate/*
 Plugins/*/Intermediate/*
+Plugins/AdvancedSessions/AdvancedSessions/Intermediate/*
+Plugins/AdvancedSessions/AdvancedSteamSessions/Intermediate/*
+
 
 # Cache files for the editor to use
 DerivedDataCache/*
 
 
+*.exp

@@ -10,6 +10,9 @@
 
 #include "Sound/SoundBase.h"
 
+#include "PlayerCharacter.h"
+
+
 AHeadLamp::AHeadLamp() 
 {
 
@@ -44,41 +47,106 @@ AHeadLamp::AHeadLamp()
 	lightLeft->SetIsReplicated(true);
 	lightMid->SetIsReplicated(true);
 
+
+	MaxOutsideLightDecreaseRate = 5.0;
+	MinOutsideLightDecreaseRate = 1.0;
+
+	MaxCentreLightDecreaseRate = 10.0;
+	MinCentreLightDecreaseRate = 3.0;
+
+
+	MisfortuneToStartDim = 20.0f;
+
 	bReplicates = true;
+
+	bAreSideLightsDisabled = false;
 
 }
 
 void AHeadLamp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OriginalCentreLightIntensity = lightMid->Intensity;
+
+	OriginalOutsideLightIntensity = lightLeft->Intensity;
 }
 
 void AHeadLamp::ToggleHeadLamp()
 {
-	switch (lightState)
-	{
-	case LightState::Off:
-		lightMid->SetVisibility(true);
-		lightState = LightState::SingleBeam;
-		break;
-	case LightState::SingleBeam:
-		lightLeft->SetVisibility(true);
-		lightRight->SetVisibility(true);
-		lightState = LightState::TrippleBeam;
 
-		break;
-	case LightState::TrippleBeam:
-		lightMid->SetVisibility(false);
-		lightLeft->SetVisibility(false);
-		lightRight->SetVisibility(false);
-		lightState = LightState::Off;
-		break;
 
-	default:
-		break;
-	}
+		switch (lightState)
+		{
+		case LightState::Off:
+			lightMid->SetVisibility(true);
+			lightState = LightState::SingleBeam;
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+			break;
+		case LightState::SingleBeam:
+			if (!bAreSideLightsDisabled)
+			{
+				lightLeft->SetVisibility(true);
+				lightRight->SetVisibility(true);
+				lightState = LightState::TrippleBeam;
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+			}
+			break;
+		case LightState::TrippleBeam:
+			lightMid->SetVisibility(false);
+			lightLeft->SetVisibility(false);
+			lightRight->SetVisibility(false);
+			lightState = LightState::Off;
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+			break;
 
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnOffSound, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetActorLocation());
+		default:
+			break;
+		}
+
 }
 
+void AHeadLamp::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player)
+{
+	float CentreLightIndensity, OutsideLightIntensity;
 
+	if (NewMisfortune >= MisfortuneToStartDim)
+	{
+		CentreLightIndensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinCentreLightDecreaseRate, MaxCentreLightDecreaseRate), NewMisfortune);
+
+		
+
+		lightMid->SetIntensity(CentreLightIndensity);
+
+		if (!bAreSideLightsDisabled)
+		{
+			OutsideLightIntensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinOutsideLightDecreaseRate, MaxOutsideLightDecreaseRate), NewMisfortune);
+			lightLeft->SetIntensity(OutsideLightIntensity);
+			lightRight->SetIntensity(OutsideLightIntensity);
+		}
+	}
+	
+}
+
+void AHeadLamp::SetSideLightsVisibility_Client_Implementation(bool bSetSideLightsDisabled_)
+{
+	bAreSideLightsDisabled = bSetSideLightsDisabled_;
+
+	lightLeft->SetVisibility(!bAreSideLightsDisabled);
+	lightRight->SetVisibility(!bAreSideLightsDisabled);
+
+	if (bAreSideLightsDisabled)
+	{
+		lightState = LightState::SingleBeam;
+	}
+	else
+	{
+		lightState = LightState::TrippleBeam;
+	}
+	
+}
+
+void AHeadLamp::SetSideLightsVisibility_Server_Implementation(bool bSetSideLightsDisabled_)
+{
+	SetSideLightsVisibility_Client(bSetSideLightsDisabled_);
+}

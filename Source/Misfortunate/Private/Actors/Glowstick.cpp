@@ -2,6 +2,8 @@
 
 
 #include "Actors/Glowstick.h"
+#include "Components/PointLightComponent.h"
+#include "PlayerCharacter.h"
 
 // Sets default values
 AGlowstick::AGlowstick()
@@ -10,22 +12,31 @@ AGlowstick::AGlowstick()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GlowstickMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Glowstick"));
-
 	RootComponent = GlowstickMesh;
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> StickMesh(TEXT("StaticMesh'/Game/Misfortuante/Models/PlayerObjects/Glowstick.Glowstick'"));
+	GlowLight = CreateDefaultSubobject<UPointLightComponent>(TEXT("GlowstickLight"));
 
+	GlowLight->SetupAttachment(GlowstickMesh);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> StickMesh(TEXT("StaticMesh'/Game/Misfortuante/Models/PlayerObjects/Glowstick.Glowstick'"));
 	GlowstickMesh->SetStaticMesh(StickMesh.Object);
 
 	static ConstructorHelpers::FObjectFinder<UMaterial> StickMaterial(TEXT("Material'/Game/Textures/M_Glowstick.M_Glowstick'"));
-
 	StoredMaterial = StickMaterial.Object;
 
+
 	DynamicMatInst = UMaterialInstanceDynamic::Create(StoredMaterial, GlowstickMesh);
-
 	GlowstickMesh->SetMaterial(0, DynamicMatInst);
-
 	GlowstickMesh->SetSimulatePhysics(true);
+
+
+	FastestDimSpeed = 2.0f;
+	SlowestDimSpeed = 10.0f;
+
+	GlowLightDecreaseStep = 1.5f;
+
+
+	MaterialEmmesionDecreaseStep = 1.0f;
 
 	bReplicates = true;
 }
@@ -45,14 +56,23 @@ void AGlowstick::DecreaseBrightness()
 
 	DynamicMatInst->GetScalarParameterValue(FName(TEXT("Emision")), newBrightness);
 
-	newBrightness -= 0.2;
 
-	if (newBrightness <= 1.0f)
+	if (newBrightness > 1.0f)
+	{
+		newBrightness -= MaterialEmmesionDecreaseStep;
+		DynamicMatInst->SetScalarParameterValue(FName("Emision"), newBrightness);
+	}
+	if (GlowLight->Intensity > 5.0f)
+	{
+		GlowLight->SetIntensity(GlowLight->Intensity - GlowLightDecreaseStep);
+	}
+
+
+	if (newBrightness <= 1.0f && GlowLight->Intensity <= 5.0f)
 	{
 		Destroy();
 	}
 
-	DynamicMatInst->SetScalarParameterValue(FName("Emision"), newBrightness);
 }
 
 // Called every frame
@@ -65,5 +85,14 @@ void AGlowstick::Tick(float DeltaTime)
 UStaticMeshComponent* AGlowstick::GetMesh() const
 {
 	return GlowstickMesh;
+}
+
+void AGlowstick::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player)
+{
+	GetWorld()->GetTimerManager().ClearTimer(TickLifetimeTimerHandle);
+
+	float DecreaseSpeed = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, Player->MaxMisfortune), FVector2D(SlowestDimSpeed, FastestDimSpeed), NewMisfortune);
+
+	GetWorld()->GetTimerManager().SetTimer(TickLifetimeTimerHandle, this, &AGlowstick::DecreaseBrightness, FastestDimSpeed, true);
 }
 

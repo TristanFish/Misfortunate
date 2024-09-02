@@ -12,6 +12,8 @@ UCustomAnimInstance::UCustomAnimInstance()
 	BackwardDir = 180.0f;
 	IsInAir = false;
 
+
+	
 }
 
 void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -49,8 +51,12 @@ void UCustomAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		IsInAir = CharPlayer->GetCharacterMovement()->IsFalling();
 
-		IsCrawling = CharPlayer->CrawlState == CrawlStates::Crawl;
 		IsCrouched = CharPlayer->CrawlState == CrawlStates::Crouch;
+
+
+	
+
+
 	}
 
 }
@@ -68,3 +74,5 @@ void UCustomAnimInstance::NativeBeginPlay()
 
 
 }
+
+

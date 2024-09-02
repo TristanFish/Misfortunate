@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -20,8 +21,12 @@ enum CrawlStates
 {
 	Stand   UMETA(DisplayName = "Standing"),
 	Crouch UMETA(DisplayName = "Crouching"),
-	Crawl UMETA(DisplayName = "Crawling"),
 };
+
+
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMisfortuneChangedSignature, float, NewMisfortune, APlayerCharacter*, Player);
 
 
 UCLASS(BlueprintType)
@@ -33,6 +38,17 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 	//!Player Camera
 	/*!The camera that the player will use*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -42,6 +58,15 @@ public:
 	/*!The heartbeat audio component that will link to the meta sound*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Audio)
 		class UAudioComponent* heartbeatAudio;
+
+	UPROPERTY()
+		UMaterialInstanceDynamic* RadialBlurInstance;
+
+	UPROPERTY()
+		UMaterialInterface* BlurMaterial_Dynamic;
+	
+
+#pragma region Movement
 
 	//!Stamina float
 	/*!The stamina that the player uses for walking & running*/
@@ -55,11 +80,12 @@ public:
 
 	//!SprintMultiplier float
 	/*!Allows the players to string and is used as a scaler for the MaxWalkSpeed*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
 		float SprintMultiplier;
-	
-	
 
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		bool HasBeenPossesed = false;
+	
 	// Crawl Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Stand")
 		float StandRadius;
@@ -89,29 +115,23 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
 		TEnumAsByte<CrawlStates> CrawlState;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		float CrawlRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		float CrawlHalfHeight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		FVector CrawlMeshPos;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MovementSettings|Crawl")
-		bool IsCrawlBlocked;
-
 	// Crawl Variables
 
+	//Removes stamina from our Stamina variable
+	UFUNCTION()
+		void TickStamina();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Replicated, Category = Gameplay)
-		float Misfortune;
 
+#pragma endregion
+
+
+
+#pragma region Lighting
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		int AvailableGlowsticks;
 
 
+	TSubclassOf<class AGlowstick> Glowstick_Class;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		 UStaticMeshComponent* headlampMesh;
@@ -121,13 +141,121 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class AHeadLamp* HeadLamp;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateHeartBeatAudio();
+#pragma endregion 
 
-	//Removes stamina from our Stamina variable
+
+	
+	
+
+#pragma region Enhanced Input
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+		class UInputMappingContext* InputMapping;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+		class UMisfortunateInputConfig* InputActions;
+
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_ThrowGlowstick();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_TriggerHeadLamp();
+
+
+	void Move(const  FInputActionValue& Value);
+
+	void Turn(const  FInputActionValue& Value);
+	// Called to bind functionality to input
+	UFUNCTION(Server, Reliable)
+	 void Server_SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent, class AMPlayerController* PC);
+
+	UFUNCTION(NetMulticast, Reliable)
+		void Multi_SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent, class AMPlayerController* PC);
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+#pragma endregion
+
+
+#pragma region Misfortune
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = Gameplay)
+		float Misfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
+		float MaxMisfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+		float MaxMisfortuneChange;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+	bool bCanMisfortuneIncrease;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		FOnMisfortuneChangedSignature OnMisfortuneChanged;
+
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetMisfortune(const float Misfortune_);
+
+
+	UFUNCTION(Client, Reliable)
+	void Local_OnMisfortuneChanged(const float NewMisfortune);
+
+	
+
+
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseMisfortune(const float Misfortune_);
+
+	UFUNCTION(BlueprintCallable)
+	void DecreaseMisfortune(const float Misfortune_);
+
+
+	float GetMisfortune() const;
+
+
+	
+
+#pragma endregion
+
+
+	//!GetCurrentZone Getter
+/*!Returns the current zone the players is in*/
+	AEventZone* GetCurrentZone() const;
+
+	//!SetCurrentZone Function
+	/*!Set's the current zone to the given parameter*/
+	void SetCurrentZone(AEventZone* eventZone);
+
+
+
+	UFUNCTION(Client, Reliable)
+		void Local_PrintDebugMessages();
+
+	
 	UFUNCTION()
-	void TickStamina();
-protected:
+		void AddNewModifier(class UModifier* NewModifier);
+
+	UFUNCTION()
+		void RemoveModifier(class UModifier* ModifierToRemove);
+
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+		class AMisfortunateGameMode* GetGameMode();
+public:
+
+
+
+	UPROPERTY()
+		TArray<class UModifier*> ActiveModifiers;
+
+
+
+#pragma region Movement
 
 	FRotator LookRotation;
 
@@ -135,104 +263,91 @@ protected:
 	/*!Stores a value for if the player is running or not*/
 	bool IsPlayerRunning;
 
+
+
 	//!TickStaminaTimerHandle FTimerHandler
 	/*!Used to create a stamina timer*/
 	FTimerHandle TickStaminaTimerHandle;
 
-	//!CurrentZone AEventZone
-	/*!Pointer to the zone the player is currently In*/
-	AEventZone* currentZone;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	float OriginalMaxWalkSpeed;
 
-	//!MoveForward Function
-	/*!Move's the player forward*/
-	void MoveForward(float Val);
-
-	//!MoveRight Function
-	/*!Move's the player right*/
-	void MoveRight(float Val);
 
 	//!AllowSprint Function
 	/*!Allow's the player to sprint*/
-	void AllowSprint();
+	UFUNCTION(Server, Reliable)
+	void AllowSprint_Server();
+
+	//!AllowSprint Function
+	/*!Allow's the player to sprint*/
+	UFUNCTION(Server, Reliable)
+	void SlowSprintSpeed_Server();
 
 	//!StopSprinting Function
 	/*!Stops the player from being able to sprint*/
-	void StopSprinting();
+	UFUNCTION(Server, Reliable)
+	void StopSprinting_Server();
 
-	float FSelectInterpTarget(float Stand,float Crouch,float Crawl);
+	UFUNCTION(Server, Reliable)
+	void SetUseControllerDesiredRotation_Server(bool b);
 
-	FVector VSelectInterpTarget(FVector Stand, FVector Crouch, FVector Crawl);
+	UFUNCTION(Server, Reliable)
+	void SetUsePawnControlRotation_Server(bool b);
 
 
-	void HandleCrouchCrawl();
+	float FSelectInterpTarget(float Stand,float Crouch);
+
+	FVector VSelectInterpTarget(FVector Stand, FVector Crouch);
 
 	void ToggleCrawl();
 
-	void TraceChecks();
-
-	FTimerHandle TickTraceCheckTimerHandle;
-
 	void UpdateMovementState(CrawlStates CrawlState_);
-	
-	//!ThrowGlowstick Function
-	/*!throws a glow stick in front of the player*/
-	void ThrowGlowstick();
 
-	UFUNCTION(NetMulticast,Unreliable, WithValidation)
+
+	UFUNCTION(NetMulticast, Unreliable)
 		void Multi_UpdateLookRotation(FRotator rot);
 
 	UFUNCTION(NetMulticast, Reliable, WithValidation)
 
 		void Multi_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
 
-	UFUNCTION(Server,Reliable,WithValidation)
-		void Server_ThrowGlowstick();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_TriggerHeadLamp();
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_UpdateMovementState(CrawlStates CrawlState_, float TargetRad, float TargetHalfHeight, FVector TargetLoc);
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION(BlueprintImplementableEvent)
+		void UpdateHeartBeatAudio();
+
+
 public:
+	
+	void RetrieveControlRotation();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_SetMisfortune(const float Misfortune_);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
+	 FRotator ControlRotation;
 
-	//!GetCurrentZone Getter
-	/*!Returns the current zone the players is in*/
-	AEventZone* GetCurrentZone() const;
 
-	//!SetCurrentZone Function
-	/*!Set's the current zone to the given parameter*/
-		void SetCurrentZone(AEventZone* eventZone);
+
+
+#pragma endregion 
+
+
+	void TraceChecks();
+
+	FTimerHandle TickTraceCheckTimerHandle;
 
 	
 
-	float GetMisfortune() const;
 
-	
-
-
-	void SetMisfortune(const float Misfortune_);
-
-	void IncreaseMisfortune(const float Misfortune_);
-
-	void DecreaseMisfortune(const float Misfortune_);
-
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//!CurrentZone AEventZone
+/*!Pointer to the zone the player is currently In*/
+	AEventZone* currentZone;
 
 
 
-
+	//!ThrowGlowstick Function
+	/*!throws a glow stick in front of the player*/
+	void ThrowGlowstick();
 };
 

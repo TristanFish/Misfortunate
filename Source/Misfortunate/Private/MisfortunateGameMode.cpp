@@ -26,9 +26,7 @@ AMisfortunateGameMode::AMisfortunateGameMode(const class FObjectInitializer& Obj
 
 	PlayerControllerClass = PlayerControllerClassFinder.Class;
 
-	DistanceBetweenPlayers = 0.0f;
 
-	CurrentState = UGameState::Exploration;
 
 	EventChance = 15;
 }
@@ -55,6 +53,27 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 		InitPlayerInfo(Cast<AMPlayerController>(NewPlayer));
 		EveryoneUpdate();
 	}
+
+
+	else if (CurrentState == UGameState::Exploration)
+	{
+		if (PossessableCharacters.Num() == 0)
+		{
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+		}
+
+		for (auto possChar : PossessableCharacters)
+		{
+			APlayerCharacter* character = Cast<APlayerCharacter>(possChar);
+			if (!character->HasBeenPossesed)
+			{
+				Cast<AMPlayerController>(NewPlayer)->Possess(character);
+				character->HasBeenPossesed = true;
+				character->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0));
+				break;
+			}
+		}
+	}
 }
 
 void AMisfortunateGameMode::Logout(AController* OldPlayer)
@@ -69,9 +88,14 @@ void AMisfortunateGameMode::BeginPlay()
 	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
 	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
+
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Begin Play"));
+	
+
+	if (PossessableCharacters.Num() == 0)
+	{
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerCharacter::StaticClass(), PossessableCharacters);
+	}
 
 
 	Super::BeginPlay();
@@ -94,7 +118,7 @@ void AMisfortunateGameMode::Tick(float DeltaSeconds)
 
 #pragma region ScareEvent Functions
 
-void AMisfortunateGameMode::CheckPlayersDistance()
+float AMisfortunateGameMode::GetDistanceBetweenPlayers()
 {
 	int closestDistance = 0;
 	FVector PlayerPos_1, PlayerPos_2;
@@ -104,27 +128,56 @@ void AMisfortunateGameMode::CheckPlayersDistance()
 
 		PlayerPos_2 = ConnectedPlayers[i]->GetPawn()->GetActorLocation();
 
-		DistanceBetweenPlayers = (PlayerPos_1 - PlayerPos_2).Size();
+		return (PlayerPos_1 - PlayerPos_2).Size();
 	}
 
+	return 0.0f;
+}
 
+float AMisfortunateGameMode::GetCombinedMisfortune()
+{
+
+	float CombinedMisfortune = 0.0f;
+	for (int i = 0; i < ConnectedPlayers.Num(); i++) 
+	{
+		if (ConnectedPlayers.IsValidIndex(i))
+		{
+			CombinedMisfortune += Cast<APlayerCharacter>(ConnectedPlayers[i]->GetCharacter())->GetMisfortune();
+		}
+	}
+
+	return CombinedMisfortune;
 }
 
 void AMisfortunateGameMode::CheckEventTrigger()
 {
-	CheckPlayersDistance();
-	if (DistanceBetweenPlayers > scareManager->GetScareDistanceThreshold()) {
+
+
+	
+	bool HasValidTimeSinceLastScare = scareManager->HasValidTimeSinceLastScare();
+
+
+	if (HasValidTimeSinceLastScare) {
+
+		float DistanceBetweenPlayers = GetDistanceBetweenPlayers();
+		float CombinedMisfortune = GetCombinedMisfortune();
+
+		int MisfortuneEventChanceModifier =	FMath::GetMappedRangeValueClamped(FVector2D(0, 200), FVector2D(-7, 15), CombinedMisfortune);
+		int DistanceEventChanceModifer =	FMath::GetMappedRangeValueClamped(FVector2D(0, 400), FVector2D(-7, 15), DistanceBetweenPlayers);
+		
+		EventChance = FMath::Clamp(EventChance + MisfortuneEventChanceModifier, 0, 100);
+		EventChance = FMath::Clamp(EventChance + DistanceEventChanceModifer, 0, 100);
+
 		if(FMath::RandRange(0, 100) < EventChance){
 				
 			SelectCharacter();
 			TriggerScareEvent();
 			EventChance = 15;
-			Cast<APlayerCharacter>(selectedCharacter->GetCharacter())->Server_SetMisfortune(0.0f);
 		}
 
 		else {
 
-			EventChance += 10;
+			EventChance += 2;
 		}
 
 	}
@@ -210,11 +263,47 @@ ALoreManager* AMisfortunateGameMode::GetLoreManager() const
 	return loreManager;
 }
 
-void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class ALoreTablet* tablet)
+void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject)
 {
 	for (auto player : ConnectedPlayers)
 	{
-		Cast<AMPlayerController>(player)->Client_AddToTabletsCollected(tablet);
+		Cast<AMPlayerController>(player)->Client_AddToInteractibles(interactibleObject);
+	}
+}
+
+void AMisfortunateGameMode::ChangeCanMisfortuneIncrease_Implementation(const bool bCanMisfortuneIncrease)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+		character->bCanMisfortuneIncrease = bCanMisfortuneIncrease;
+	}
+}
+
+void AMisfortunateGameMode::SetOtherPlayersMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		if (PlayerNotToSet != character)
+		{
+			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange,0.0f, 100.0f);
+		}
+	}
+
+}
+
+void AMisfortunateGameMode::SetPlayerMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange)
+{
+	for (auto player : ConnectedPlayers)
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
+
+		if (PlayerToSet == character)
+		{
+			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange, 0.0f, 100.0f);
+		}
 	}
 }
 
@@ -227,7 +316,6 @@ void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* en
 		if (enteredChar == character)
 		{
 			character->SetCurrentZone(zone);
-
 		}
 	}
 
@@ -238,6 +326,9 @@ void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 	CurrentState = state_;
 	if (CurrentState == UGameState::Exploration)
 	{
-		GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		if (scareManager)
+		{
+			GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+		}
 	}
 }

@@ -26,11 +26,11 @@ void UWJournal::NativeConstruct()
 
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
-	if (player->GetCollectedTablets().Num() > 0 && CurrentLoreOwnerViewed.IsEmpty())
+	if (player->GetCollectedInteractibles().Num() > 0 && CurrentLoreOwnerViewed.IsEmpty())
 	{
 
 		TArray<FString> Keys;
-		player->GetCollectedTablets().GenerateKeyArray(Keys);
+		player->GetCollectedInteractibles().GenerateKeyArray(Keys);
 		CurrentLoreOwnerViewed = Keys[0];
 		UpdatePageProperties();
 	}
@@ -54,7 +54,7 @@ void UWJournal::ToPreviousPage()
 	AMisfortunateGameMode* gamemode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	
-	if (player->GetCollectedTablets().Contains(CurrentLoreOwnerViewed))
+	if (player->GetCollectedInteractibles().Contains(CurrentLoreOwnerViewed))
 	{
 		int index = gamemode->GetLoreManager()->LoreOwners.Find(CurrentLoreOwnerViewed);
 
@@ -90,7 +90,7 @@ void UWJournal::ToNextPage()
 
 	else 
 	{
-		if (player->GetCollectedTablets().Contains(CurrentLoreOwnerViewed))
+		if (player->GetCollectedInteractibles().Contains(CurrentLoreOwnerViewed))
 		{
 			int index = gamemode->GetLoreManager()->LoreOwners.Find(CurrentLoreOwnerViewed);
 
@@ -137,13 +137,13 @@ void UWJournal::UpdatePageProperties()
 	AMPlayerController* player = Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 
-	TArray<ALoreTablet*> LoreTablets = *player->GetCollectedTablets().Find(CurrentLoreOwnerViewed);
+	TArray<AInteractibleObject*> InteractibleObjects = *player->GetCollectedInteractibles().Find(CurrentLoreOwnerViewed);
 
-	for (auto tablet : LoreTablets)
+	for (auto interactible : InteractibleObjects)
 	{
 		UWLore* NewLoreLine = CreateWidget<UWLore>(this, UWLore::StaticClass());
 
-		NewLoreLine->SetLoreInfo(tablet->GetTabletText(), tablet->GetTabletTitle());
+		NewLoreLine->SetLoreInfo(interactible->GetLoreText(), interactible->GetLoreTitle());
 		LoreBox->AddChild(NewLoreLine);
 	}
 

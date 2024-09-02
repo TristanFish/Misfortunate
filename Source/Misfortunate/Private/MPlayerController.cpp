@@ -13,11 +13,14 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/GameState.h"
 
-#include "Actors/LoreTablet.h"
+#include "InteractibleObject.h"
+
 #include "MisfortunateGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+#include "PlayerCharacter.h"
+#include "EnhancedInputSubsystems.h"
 
 
 AMPlayerController::AMPlayerController()
@@ -40,6 +43,14 @@ AMPlayerController::AMPlayerController()
 	
 
 	bAlwaysRelevant = true;
+}
+
+void AMPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	
+	
 }
 
 void AMPlayerController::BeginPlay()
@@ -114,7 +125,7 @@ void AMPlayerController::ToggleJournal()
 	{
 		if (JournalWidget->IsInViewport())
 		{
-			JournalWidget->RemoveFromViewport();
+			JournalWidget->RemoveFromParent();
 			SetInputMode(FInputModeGameOnly());
 			JournalWidget->UnBindPageDelegates();
 			bShowMouseCursor = false;
@@ -130,7 +141,7 @@ void AMPlayerController::ToggleJournal()
 	}
 }
 
-void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
+void AMPlayerController::DisplayInteraction(AInteractibleObject* interactibleObject)
 {
 	if (InteractionWidgetClass != nullptr && !InteractionWidget->InteractText->IsVisible())
 	{
@@ -140,7 +151,7 @@ void AMPlayerController::DisplayTabletInteraction(ALoreTablet* tablet)
 		if (InteractionWidget)
 		{
 			InteractionWidget->AddToViewport();
-			InteractionWidget->SetLatestTablet(tablet);
+			InteractionWidget->SetLatestInteractible(interactibleObject);
 			InteractionWidget->BindDelegate();
 		}
 		
@@ -159,33 +170,19 @@ void AMPlayerController::HideInteraction()
 
 }
 
-void AMPlayerController::AddToTabletsCollected(ALoreTablet* tablet)
+void AMPlayerController::AddToTabletsCollected(AInteractibleObject* interactibleObject)
 {
-	if (tablet->sharedType == SharedType::Unshared)
-	{
-		Client_AddToTabletsCollected(tablet);
-	}
-	else
-	{
-		if (HasAuthority())
-		{
-			AddTabletsToAllPlayers(tablet);
-		}
-		else
-		{
-			Server_AddTabletsToAllPlayers(tablet);
-		}
+	Client_AddToInteractibles(interactibleObject);
 
-	}
-
+	interactibleObject->OnInteracted();
 }
-void AMPlayerController::Server_AddTabletsToAllPlayers_Implementation(ALoreTablet* tablet)
+void AMPlayerController::Server_AddTabletsToAllPlayers_Implementation(AInteractibleObject* interactibleObject)
 {
-	Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->AddLoreTabletToAllPlayers(tablet);
+	Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->AddLoreTabletToAllPlayers(interactibleObject);
 
 }
 
-bool AMPlayerController::Server_AddTabletsToAllPlayers_Validate(ALoreTablet* tablet)
+bool AMPlayerController::Server_AddTabletsToAllPlayers_Validate(AInteractibleObject* interactibleObject)
 {
 	return true;
 }
@@ -220,14 +217,14 @@ bool AMPlayerController::Server_UpdateReadyState_Validate(AMPlayerController* pl
 
 
 
-void AMPlayerController::AddTabletsToAllPlayers(ALoreTablet* tablet)
+void AMPlayerController::AddTabletsToAllPlayers(AInteractibleObject* interactibleObject)
 {
-	Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->AddLoreTabletToAllPlayers(tablet);
+	Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->AddLoreTabletToAllPlayers(interactibleObject);
 }
 
 
 
-void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet* tablet)
+void AMPlayerController::Client_AddToInteractibles_Implementation(AInteractibleObject* interactibleObject)
 {
 
 	
@@ -239,20 +236,20 @@ void AMPlayerController::Client_AddToTabletsCollected_Implementation(ALoreTablet
 	InteractionWidget->PlayInteractionAnim();
 
 	
-
-	if (CollectedTablets.Find(tablet->GetTabletOwner()))
+	
+	if (CollectedLore.Find(interactibleObject->GetLoreOwner()))
 	{
-		CollectedTablets.Find(tablet->GetTabletOwner())->Add(tablet);
+		CollectedLore.Find(interactibleObject->GetLoreOwner())->Add(interactibleObject);
 	}
 	else
 	{
-		TArray<ALoreTablet*> Tablets = { tablet };
-		CollectedTablets.Add(tablet->GetTabletOwner(), Tablets);
+		TArray<AInteractibleObject*> newLore = { interactibleObject };
+		CollectedLore.Add(interactibleObject->GetLoreOwner(), newLore);
 	}
 	
 }
 
-bool AMPlayerController::Client_AddToTabletsCollected_Validate(ALoreTablet* tablet)
+bool AMPlayerController::Client_AddToInteractibles_Validate(AInteractibleObject* tablet)
 {
 	return true;
 }
@@ -349,9 +346,9 @@ void AMPlayerController::SetViewPitchExtents(float minPitch, float maxPitch)
 
 
 
-TMap<FString,TArray<ALoreTablet*>> AMPlayerController::GetCollectedTablets()
+TMap<FString,TArray<AInteractibleObject*>> AMPlayerController::GetCollectedInteractibles()
 {
-	return CollectedTablets;
+	return CollectedLore;
 }
 
 UWLobbyMenu* AMPlayerController::GetLobbyWidget() const

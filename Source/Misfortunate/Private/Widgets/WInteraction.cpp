@@ -24,7 +24,7 @@ void UWInteraction::BindDelegate()
 
 	if (!controller->InteractClicked.IsBound())
 	{
-		controller->InteractClicked.AddDynamic(this, &UWInteraction::InteractionMessage);
+		controller->InteractClicked.AddDynamic(this, &UWInteraction::OnInteractionClicked);
 	}
 }
 
@@ -34,16 +34,16 @@ void UWInteraction::UnBindDelegate()
 
 	if (controller->InteractClicked.IsBound())
 	{
-		controller->InteractClicked.RemoveDynamic(this, &UWInteraction::InteractionMessage);
+		controller->InteractClicked.RemoveDynamic(this, &UWInteraction::OnInteractionClicked);
 	}
 
 }
 
-void UWInteraction::InteractionMessage()
+void UWInteraction::OnInteractionClicked()
 {
 
-	Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->AddToTabletsCollected(LatestTablet);
-
+	Cast<AMPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0))->AddToTabletsCollected(LatestInteractible);
+	//LatestInteractible->OnInteracted();
 	
 	PlayInteractionAnim();
 }
@@ -53,9 +53,9 @@ void UWInteraction::PlayInteractionAnim()
 	PlayAnimation(FadeOutAnim);
 }
 
-void UWInteraction::SetLatestTablet(ALoreTablet* tablet)
+void UWInteraction::SetLatestInteractible(AInteractibleObject* interactible)
 {
-	LatestTablet = tablet;
+	LatestInteractible = interactible;
 }
 
 void UWInteraction::OnFadeOutAnimationFinished()

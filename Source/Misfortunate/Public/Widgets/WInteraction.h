@@ -34,16 +34,16 @@ public:
 	void UnBindDelegate();
 
 	UFUNCTION()
-		void InteractionMessage();
+		void OnInteractionClicked();
 
 	void PlayInteractionAnim();
 
 
-	void SetLatestTablet(class ALoreTablet* tablet);
+	void SetLatestInteractible(class AInteractibleObject* interactible);
 
 protected:
 
-	class ALoreTablet* LatestTablet;
+	class AInteractibleObject* LatestInteractible;
 
 	UFUNCTION()
 		void OnFadeOutAnimationFinished();

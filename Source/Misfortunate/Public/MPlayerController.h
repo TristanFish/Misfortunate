@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MPlayerController.generated.h"
 
-class ALoreTablet;
+class AInteractibleObject;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractClicked);
@@ -77,7 +77,7 @@ protected:
 
 
 
-	TMap<FString,TArray<ALoreTablet*>> CollectedTablets;
+	TMap<FString,TArray<AInteractibleObject*>> CollectedLore;
 
 
 public:
@@ -99,6 +99,9 @@ public:
 
 	UPROPERTY()
 		FPrevPageClicked PrevPageClicked;
+
+
+	virtual void OnPossess(APawn* InPawn) override;
 	
 public:
 
@@ -128,24 +131,24 @@ public:
 
 
 
-	void AddToTabletsCollected(ALoreTablet* tablet);
+	void AddToTabletsCollected(AInteractibleObject* interactibleObject);
 
-	void AddTabletsToAllPlayers(ALoreTablet* tablet);
+	void AddTabletsToAllPlayers(AInteractibleObject* interactibleObject);
 
 	UFUNCTION(BlueprintCallable)
 		void HideInteraction();
 
 	UFUNCTION(BlueprintCallable)
-		void DisplayTabletInteraction(ALoreTablet* tablet);
+		void DisplayInteraction(AInteractibleObject* tablet);
 
 	UFUNCTION(Server, Reliable, WithValidation)
-		void Server_AddTabletsToAllPlayers(ALoreTablet* tablet);
+		void Server_AddTabletsToAllPlayers(AInteractibleObject* interactibleObject);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 		void Server_UpdateReadyState(AMPlayerController* playerController);
 	
 	UFUNCTION(Client, Reliable, WithValidation)
-		void Client_AddToTabletsCollected(ALoreTablet* tablet);
+		void Client_AddToInteractibles(AInteractibleObject* interactibleObject);
 
 	UFUNCTION(Client, Reliable, WithValidation,BlueprintCallable)
 		void Client_AddPlayersToList(const TArray<FPlayerInfo>& playersInfo);
@@ -170,7 +173,7 @@ public:
 	void SetViewPitchExtents(float minPitch, float maxPitch);
 
 public:
-	TMap<FString, TArray<ALoreTablet*>> GetCollectedTablets();
+	TMap<FString, TArray<AInteractibleObject*>> GetCollectedInteractibles();
 
 	 UWLobbyMenu* GetLobbyWidget() const;
 	
