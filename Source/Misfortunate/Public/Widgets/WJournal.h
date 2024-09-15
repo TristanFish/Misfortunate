@@ -36,11 +36,13 @@ public:
 		FString CurrentLoreOwnerViewed;
 public:
 
+
+	
 	UFUNCTION()
-		void ToPreviousPage();
+	void ToPreviousPage();
 
 	UFUNCTION()
-		void ToNextPage();
+	void ToNextPage();
 
 	void BindPageDelegates();
 

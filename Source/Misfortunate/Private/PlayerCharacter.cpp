@@ -30,7 +30,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "MisfortunateInputConfig.h"
-#include "Modifier.h"
+#include "Deprecated/Modifier.h"
 
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -162,7 +162,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	
 
 
-	
+	// This is done to check if this player pawn is locally controlled
 	if (UGameplayStatics::GetPlayerPawn(GetWorld(),0) != this)
 	{
 		playerCamera->bUsePawnControlRotation = false;

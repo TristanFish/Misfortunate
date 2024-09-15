@@ -6,17 +6,18 @@
 #include "GameFramework/GameModeBase.h"
 #include "Engine/EngineTypes.h"
 #include "MPlayerController.h"
+
+#include "Libraries/MisfortunateEnumLibrary.h"
+
 #include "MisfortunateGameMode.generated.h"
 
 
-UENUM() enum UGameState {
-
-	Lobby UMETA(DisplayName = "Lobby"),
-	Exploration UMETA(DisplayName = "Exploration"),
-	LobbyExploration UMETA(DisplayName = "LobbyExploration"),
-
-};
-
+class AScareEventManager;
+class ALoreManager;
+class AMPlayerController;
+class APlayerCharacter;
+class AInteractibleObject;
+class AEventZone;
 
 UCLASS()
 class AMisfortunateGameMode : public AGameModeBase
@@ -24,29 +25,8 @@ class AMisfortunateGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
-		TEnumAsByte<UGameState> CurrentState;
-
-	// The percent chance that a player will be scared by a event
-	UPROPERTY(VisibleAnywhere)
-		int EventChance;
-
-#pragma region Managers
-
-	//!ScareManager AScareEventManager
-	/*!Pointer to the games scare manager singleton*/
-	class AScareEventManager* scareManager;
-
-	//!LoreManager ALoreManager
-   /*!Pointer to the games lore manager singleton(Handles initialization and collected lore)*/
-	class ALoreManager* loreManager;
-
-#pragma endregion
-
-
-#pragma region Overrides
+	// Virtual Overrides 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Logout(AController* OldPlayer) override;
@@ -58,85 +38,120 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-#pragma endregion
-
-public:
-
-#pragma region Lobby
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void EveryoneUpdate();
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void InitPlayerInfo(AMPlayerController* player);
-
-	void UpdateReadyState(class AMPlayerController* changedPlayer);
-
-	void OnHostStart();
-
-#pragma endregion
+	AMisfortunateGameMode(const class FObjectInitializer& ObjectInitializer);
 
 	
-
-	
-
-	void AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-		void ChangeCanMisfortuneIncrease(const bool bCanMisfortuneIncrease);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-		void SetOtherPlayersMaxMisfortuneChange(class APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange);
-
-	UFUNCTION(Server, Reliable,BlueprintCallable)
-		void SetPlayerMaxMisfortuneChange(class APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange);
-
-#pragma region Getters/Setters
-
-		void SetPlayerZone(class AEventZone* zone, class APlayerCharacter* enteredChar);
-
-		UFUNCTION(BlueprintCallable)
-		void SetGameState(TEnumAsByte<UGameState> state_);
-
-		//!GetScareEventManager Getter
-	/*!Returns a pointer to the games scareManager*/
-		AScareEventManager* GetScareEventManager() const;
-
-		// Returns a pointer to the lore manager
-		ALoreManager* GetLoreManager() const;
-#pragma endregion
-protected:
-
-	// List of connected players
-	UPROPERTY(BlueprintReadWrite)
-		TArray<APlayerController*> ConnectedPlayers;
-
-	UPROPERTY(BlueprintReadWrite)
-		TArray<FPlayerInfo> ConnectedPlayerInfos;
-
+	// Lobby Variables 
+	UPROPERTY()
 	TArray<AActor*> PossessableCharacters;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TEnumAsByte<UGameState> CurrentState;
 
 
 
-#pragma region Scare System
+	// Gameplay Variables 
+
+	// The percent chance that a player will be scared by a event
+	UPROPERTY(VisibleAnywhere)
+	int EventChance;
+
+	//!ScareManager AScareEventManager
+	/*!Pointer to the games scare manager singleton*/
+	 AScareEventManager* scareManager;
+
+	//!LoreManager ALoreManager
+   /*!Pointer to the games lore manager singleton(Handles initialization and collected lore)*/
+	 ALoreManager* loreManager;
+
+	UPROPERTY()
 	// The Character that was selected to have a scare event triggered on
 	APlayerController* selectedCharacter;
 
-
-
+	UPROPERTY()
 	FTimerHandle CheckDistTimerHandle;
+
+	UPROPERTY()
 	FTimerHandle TriggerEventTimerHandle;
+
+
+
+	// Core Functions
+	UFUNCTION(BlueprintImplementableEvent)
+	void EveryoneUpdate();
+
+
+
+	//Lobby Functions
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitPlayerInfo(AMPlayerController* player);
+
+	UFUNCTION()
+	void UpdateReadyState(AMPlayerController* changedPlayer);
+
+	UFUNCTION()
+	void OnHostStart();
+
+	UFUNCTION(BlueprintCallable)
+	void SetGameState(TEnumAsByte<UGameState> state_);
+	
+
+	
+	//Gameplay Functions
+	UFUNCTION()
+	void AddLoreTabletToAllPlayers(AInteractibleObject* interactibleObject);
+
+	UFUNCTION()
+	void SetPlayerZone(AEventZone* zone, APlayerCharacter* enteredChar);
+
+	
+
+	// RPC Gameplay Functions
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ChangeCanMisfortuneIncrease(const bool bCanMisfortuneIncrease);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SetOtherPlayersMaxMisfortuneChange(APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SetPlayerMaxMisfortuneChange(APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange);
+
+
+
+	//Gameplay Getters
+
+	//!GetScareEventManager Getter
+	/*!Returns a pointer to the games scareManager*/
+	AScareEventManager* GetScareEventManager() const;
+
+	// Returns a pointer to the lore manager
+	ALoreManager* GetLoreManager() const;
+
+
+
+	// List of connected players
+	UPROPERTY(BlueprintReadWrite)
+	TArray<APlayerController*> ConnectedPlayers;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FMultiplayerPlayerInfo> MultiplayerPlayerInfo;
+
+private:
+
 
 	float GetDistanceBetweenPlayers();
 	float GetCombinedMisfortune();
 	// Determines if a scare event will be triggered
+
+	UFUNCTION()
 	void CheckEventTrigger();
 
+	UFUNCTION()
 	void SelectCharacter();
 
 	// Triggers a random scare event
+	UFUNCTION()
 	void TriggerScareEvent();
-#pragma endregion
 
 };
 

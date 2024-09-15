@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InteractibleObject.h"
+#include "Deprecated/InteractibleObject.h"
 
 #include "Components/ShapeComponent.h"
 #include "Components/BillboardComponent.h"

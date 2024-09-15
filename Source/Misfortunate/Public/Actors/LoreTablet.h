@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractibleObject.h"
+#include "Deprecated/InteractibleObject.h"
 
 #include "LoreTablet.generated.h"
 

@@ -4,17 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Engine/TriggerVolume.h"
+
+#include "Libraries/MisfortunateEnumLibrary.h"
+
 #include "EventZone.generated.h"
 
-UENUM()
-enum EventZoneLevel {
-	I,
-	II,
-	III,
-	IV,
-	V,
-	VI
-};
+
 
 UCLASS()
 class MISFORTUNATE_API AEventZone : public ATriggerVolume

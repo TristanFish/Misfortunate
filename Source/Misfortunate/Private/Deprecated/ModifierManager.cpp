@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ModifierManager.h"
-#include "Modifier.h"
+#include "Deprecated/ModifierManager.h"
+#include "Deprecated/Modifier.h"
 #include "PlayerCharacter.h"
 
 #include "Net/UnrealNetwork.h"

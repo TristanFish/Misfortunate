@@ -16,7 +16,7 @@
 #include "PlayerCharacter.h"
 #include "MPlayerController.h"
 #include "MisfortunateGameMode.h"
-#include "LoreManager.h"
+#include "Deprecated/LoreManager.h"
 
 #include "Actors/LoreTablet.h"
 

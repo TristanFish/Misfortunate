@@ -10,6 +10,8 @@
 #include "Actors/EventZone.h"
 #include "Actors/ScarePoint.h"
 
+#include "Libraries/MisfortunateStructLibrary.h"
+#include "Libraries/MisfortunateEnumLibrary.h"
 
 #include "ScareEventManager.generated.h"
 

@@ -9,8 +9,8 @@
 #include "PlayerCharacter.h"
 #include "LobbyPlayerCharacter.h"
 
-#include "ScareEventManager.h"
-#include "LoreManager.h"
+#include "Deprecated/ScareEventManager.h"
+#include "Deprecated/LoreManager.h"
 #include "Actors/EventZone.h"
 #include "GameFramework/PlayerState.h"
 #include "Widgets/WLobbyMenu.h"

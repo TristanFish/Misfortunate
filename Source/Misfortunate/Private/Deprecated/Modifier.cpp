@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Modifier.h"
-#include "ModifierManager.h"
+#include "Deprecated/Modifier.h"
+#include "Deprecated/ModifierManager.h"
 #include "PlayerCharacter.h"
 
 
