@@ -51,7 +51,7 @@ public:
 
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-		void AddNewPlayer(FPlayerInfo playerInfo);
+		void AddNewPlayer(FMultiplayerPlayerInfo playerInfo);
 
 	UFUNCTION(BlueprintCallable)
 		void UpdatePlayerImage(const FBPUniqueNetId& unqiueNetID, const FString& playerName);

@@ -30,10 +30,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Generic")
 		float direction;
 
-	
+	//!Old Direction float 
+	/*!Store's the direction the player was moving during the previous frame*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
 		float oldMovementDir;
 
+
+	//!Backward Direction float 
+	/*!Store the direction behind the player*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Generic")
 		float BackwardDir;
 

@@ -13,7 +13,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/GameState.h"
 
-#include "InteractibleObject.h"
+#include "Deprecated/InteractibleObject.h"
 
 #include "MisfortunateGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -255,7 +255,7 @@ bool AMPlayerController::Client_AddToInteractibles_Validate(AInteractibleObject*
 }
 
 
-void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FPlayerInfo>& playersInfo)
+void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FMultiplayerPlayerInfo>& playersInfo)
 {
 
 	if (!LobbyWidget)
@@ -269,7 +269,7 @@ void AMPlayerController::Client_AddPlayersToList_Implementation(const TArray<FPl
 	AddPlayerStatusWidget(playersInfo);
 }
 
-bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerInfo>& playersInfo)
+bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FMultiplayerPlayerInfo>& playersInfo)
 {
 	return true;
 }
@@ -277,7 +277,7 @@ bool AMPlayerController::Client_AddPlayersToList_Validate(const TArray<FPlayerIn
 
 
 
-void AMPlayerController::Client_UpdateReadyState_Implementation(const FPlayerInfo& changedPlayer)
+void AMPlayerController::Client_UpdateReadyState_Implementation(const FMultiplayerPlayerInfo& changedPlayer)
 {
 		for (auto PlayerStatus : LobbyWidget->PlayerStatusList)
 		{
@@ -289,7 +289,7 @@ void AMPlayerController::Client_UpdateReadyState_Implementation(const FPlayerInf
 		}
 }
 
-bool AMPlayerController::Client_UpdateReadyState_Validate(const FPlayerInfo& changedPlayer)
+bool AMPlayerController::Client_UpdateReadyState_Validate(const FMultiplayerPlayerInfo& changedPlayer)
 {
 	return true;
 }
