@@ -1,0 +1,8 @@
+{
+	"BuildId": "33043543",
+	"Modules": 
+	{
+		"ProceduralDungeon": "UnrealEditor-ProceduralDungeon-Win64-DebugGame.dll",
+		"ProceduralDungeonEditor": "UnrealEditor-ProceduralDungeonEditor-Win64-DebugGame.dll"
+	}
+}
