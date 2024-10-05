@@ -78,3 +78,26 @@ DerivedDataCache/*
 
 
 *.exp
+Saved/Config/Windows/Compat.ini
+Saved/Config/Windows/DeviceProfiles.ini
+Saved/Config/Windows/Editor.ini
+Saved/Config/Windows/EditorPerProjectUserSettings.ini
+Saved/Config/Windows/Engine.ini
+Saved/Config/Windows/Game.ini
+Saved/Config/Windows/GameUserSettings.ini
+Saved/Config/Windows/Hardware.ini
+Saved/Config/Windows/Input.ini
+Saved/Config/Windows/Lightmass.ini
+Saved/Config/Windows/MagicLeap.ini
+Saved/Config/Windows/MagicLeapLightEstimation.ini
+Saved/Config/Windows/MotoSynth.ini
+Saved/Config/Windows/Niagara.ini
+Saved/Config/Windows/OculusVR.ini
+Saved/Config/Windows/Paper2D.ini
+Saved/Config/Windows/PhysXVehicles.ini
+Saved/Config/Windows/PostSplashScreen.ini
+Saved/Config/Windows/RuntimeOptions.ini
+Saved/Config/Windows/Scalability.ini
+Saved/Config/Windows/Synthesis.ini
+Saved/Config/Windows/UnrealInsightsSettings.ini
+Saved/Config/Windows/VariantManagerContent.ini
