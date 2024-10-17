@@ -13,6 +13,7 @@
 
 
 class AScareEventManager;
+class AMisfortuneManager;
 class ALoreManager;
 class AMPlayerController;
 class APlayerCharacter;
@@ -58,11 +59,16 @@ public:
 
 	//!ScareManager AScareEventManager
 	/*!Pointer to the games scare manager singleton*/
-	 AScareEventManager* scareManager;
+	 AScareEventManager* ScareManager;
 
 	//!LoreManager ALoreManager
    /*!Pointer to the games lore manager singleton(Handles initialization and collected lore)*/
-	 ALoreManager* loreManager;
+	 ALoreManager* LoreManager;
+
+
+
+	AMisfortuneManager* MisfortuneManager;
+
 
 	UPROPERTY()
 	// The Character that was selected to have a scare event triggered on
@@ -106,15 +112,6 @@ public:
 
 	
 
-	// RPC Gameplay Functions
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ChangeCanMisfortuneIncrease(const bool bCanMisfortuneIncrease);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void SetOtherPlayersMaxMisfortuneChange(APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void SetPlayerMaxMisfortuneChange(APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange);
 
 
 
@@ -127,6 +124,9 @@ public:
 	// Returns a pointer to the lore manager
 	ALoreManager* GetLoreManager() const;
 
+	UFUNCTION(BlueprintCallable)
+	// Returns a pointer to the lore manager
+	AMisfortuneManager* GetMisfortuneManager() const;
 
 
 	// List of connected players
@@ -140,7 +140,6 @@ private:
 
 
 	float GetDistanceBetweenPlayers();
-	float GetCombinedMisfortune();
 	// Determines if a scare event will be triggered
 
 	UFUNCTION()
@@ -153,6 +152,9 @@ private:
 	UFUNCTION()
 	void TriggerScareEvent();
 
+
+	UFUNCTION()
+	void SetupGameplaySingletons();
 };
 
 

@@ -11,6 +11,9 @@
 
 #include "Deprecated/ScareEventManager.h"
 #include "Deprecated/LoreManager.h"
+
+#include "MisfortuneManager.h"
+
 #include "Actors/EventZone.h"
 #include "GameFramework/PlayerState.h"
 #include "Widgets/WLobbyMenu.h"
@@ -69,7 +72,7 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			{
 				Cast<AMPlayerController>(NewPlayer)->Possess(character);
 				character->HasBeenPossesed = true;
-				character->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0));
+				MisfortuneManager->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0), character->GetPlayerState<APlayerState>()->GetPlayerName());
 				break;
 			}
 		}
@@ -85,9 +88,7 @@ void AMisfortunateGameMode::Logout(AController* OldPlayer)
 void AMisfortunateGameMode::BeginPlay()
 {
 
-	scareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
-	loreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
-
+	SetupGameplaySingletons();
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbyPlayerCharacter::StaticClass(), PossessableCharacters);
 	
@@ -134,33 +135,20 @@ float AMisfortunateGameMode::GetDistanceBetweenPlayers()
 	return 0.0f;
 }
 
-float AMisfortunateGameMode::GetCombinedMisfortune()
-{
 
-	float CombinedMisfortune = 0.0f;
-	for (int i = 0; i < ConnectedPlayers.Num(); i++) 
-	{
-		if (ConnectedPlayers.IsValidIndex(i))
-		{
-			CombinedMisfortune += Cast<APlayerCharacter>(ConnectedPlayers[i]->GetCharacter())->GetMisfortune();
-		}
-	}
-
-	return CombinedMisfortune;
-}
 
 void AMisfortunateGameMode::CheckEventTrigger()
 {
 
 
 	
-	bool HasValidTimeSinceLastScare = scareManager->HasValidTimeSinceLastScare();
+	bool HasValidTimeSinceLastScare = ScareManager->HasValidTimeSinceLastScare();
 
 
 	if (HasValidTimeSinceLastScare) {
 
 		float DistanceBetweenPlayers = GetDistanceBetweenPlayers();
-		float CombinedMisfortune = GetCombinedMisfortune();
+		float CombinedMisfortune = MisfortuneManager->GetCombinedMisfortune();
 
 		int MisfortuneEventChanceModifier =	FMath::GetMappedRangeValueClamped(FVector2D(0, 200), FVector2D(-7, 15), CombinedMisfortune);
 		int DistanceEventChanceModifer =	FMath::GetMappedRangeValueClamped(FVector2D(0, 400), FVector2D(-7, 15), DistanceBetweenPlayers);
@@ -186,23 +174,11 @@ void AMisfortunateGameMode::CheckEventTrigger()
 
 void AMisfortunateGameMode::SelectCharacter()
 {
-	float HighestMisfortune;
-	APlayerCharacter* tempCharacter_1;
-	APlayerCharacter* tempCharacter_2;
-	for (int i = 0; i < ConnectedPlayers.Num(); i++)
-	{
-		tempCharacter_1 = Cast<APlayerCharacter>(ConnectedPlayers[i]->GetCharacter());
-		if (i != ConnectedPlayers.Num() - 1)
-		{
-			tempCharacter_2 = Cast<APlayerCharacter>(ConnectedPlayers[i +1]->GetCharacter());
-			HighestMisfortune = FMath::Max(tempCharacter_1->GetMisfortune(), tempCharacter_2->GetMisfortune());
-		}
-	}
+	FString PlayerName = MisfortuneManager->GetPlayerNameWithHighestMisfortune();
 
 	for (auto chars : ConnectedPlayers)
 	{
-
-		if (Cast<APlayerCharacter>(chars->GetCharacter())->GetMisfortune() == HighestMisfortune)
+		if(chars->GetPlayerState<APlayerState>()->GetPlayerName() == PlayerName)
 		{
 			selectedCharacter = chars;
 		}
@@ -216,7 +192,23 @@ void AMisfortunateGameMode::TriggerScareEvent()
 
 	if (selectedChar->GetCurrentZone() != nullptr)
 	{
-		scareManager->TriggerScareEvent(selectedChar);
+		ScareManager->TriggerScareEvent(selectedChar);
+
+	}
+}
+
+void AMisfortunateGameMode::SetupGameplaySingletons()
+{
+	ScareManager = Cast<AScareEventManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AScareEventManager::StaticClass()));
+
+
+	LoreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
+
+
+	MisfortuneManager = Cast<AMisfortuneManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
+	if (!MisfortuneManager)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString("No misfortune manager exists in the level"));
 
 	}
 }
@@ -255,12 +247,23 @@ void AMisfortunateGameMode::OnHostStart()
 
 AScareEventManager* AMisfortunateGameMode::GetScareEventManager() const
 {
-	return scareManager;
+	return ScareManager;
 }
 
 ALoreManager* AMisfortunateGameMode::GetLoreManager() const
 {
-	return loreManager;
+	return LoreManager;
+}
+
+AMisfortuneManager* AMisfortunateGameMode::GetMisfortuneManager() const
+{
+	if (MisfortuneManager)
+	{
+		return MisfortuneManager;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString("Misfortune manager was null when trying to retrieve it"));
+	return nullptr;
 }
 
 void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject* interactibleObject)
@@ -271,41 +274,6 @@ void AMisfortunateGameMode::AddLoreTabletToAllPlayers(class AInteractibleObject*
 	}
 }
 
-void AMisfortunateGameMode::ChangeCanMisfortuneIncrease_Implementation(const bool bCanMisfortuneIncrease)
-{
-	for (auto player : ConnectedPlayers)
-	{
-		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
-		character->bCanMisfortuneIncrease = bCanMisfortuneIncrease;
-	}
-}
-
-void AMisfortunateGameMode::SetOtherPlayersMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerNotToSet, const float NewMaxMisfortuneChange)
-{
-	for (auto player : ConnectedPlayers)
-	{
-		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
-
-		if (PlayerNotToSet != character)
-		{
-			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange,0.0f, 100.0f);
-		}
-	}
-
-}
-
-void AMisfortunateGameMode::SetPlayerMaxMisfortuneChange_Implementation(APlayerCharacter* PlayerToSet, const float NewMaxMisfortuneChange)
-{
-	for (auto player : ConnectedPlayers)
-	{
-		APlayerCharacter* character = Cast<APlayerCharacter>(player->GetCharacter());
-
-		if (PlayerToSet == character)
-		{
-			character->MaxMisfortuneChange = FMath::Clamp(character->MaxMisfortuneChange + NewMaxMisfortuneChange, 0.0f, 100.0f);
-		}
-	}
-}
 
 void AMisfortunateGameMode::SetPlayerZone(AEventZone* zone, APlayerCharacter* enteredChar)
 {
@@ -326,9 +294,9 @@ void AMisfortunateGameMode::SetGameState(TEnumAsByte<UGameState> state_)
 	CurrentState = state_;
 	if (CurrentState == UGameState::Exploration)
 	{
-		if (scareManager)
+		if (ScareManager)
 		{
-			GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, scareManager->GetScareTriggerDelay(), true);
+			GetWorldTimerManager().SetTimer(CheckDistTimerHandle, this, &AMisfortunateGameMode::CheckEventTrigger, ScareManager->GetScareTriggerDelay(), true);
 		}
 	}
 }

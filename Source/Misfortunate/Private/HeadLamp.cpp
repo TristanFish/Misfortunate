@@ -8,6 +8,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 
+#include "MisfortunateGameMode.h"
+#include "MisfortuneManager.h"
+
 #include "Sound/SoundBase.h"
 
 #include "PlayerCharacter.h"
@@ -106,13 +109,15 @@ void AHeadLamp::ToggleHeadLamp()
 
 }
 
-void AHeadLamp::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player)
+void AHeadLamp::OnMisfortuneChange(float NewMisfortune,const FString& PlayerName)
 {
 	float CentreLightIndensity, OutsideLightIntensity;
 
+	AMisfortunateGameMode* GameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	float MaxPlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMaxMisfortune(PlayerName);
 	if (NewMisfortune >= MisfortuneToStartDim)
 	{
-		CentreLightIndensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinCentreLightDecreaseRate, MaxCentreLightDecreaseRate), NewMisfortune);
+		CentreLightIndensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, MaxPlayerMisfortune), FVector2D(MinCentreLightDecreaseRate, MaxCentreLightDecreaseRate), NewMisfortune);
 
 		
 
@@ -120,7 +125,7 @@ void AHeadLamp::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player
 
 		if (!bAreSideLightsDisabled)
 		{
-			OutsideLightIntensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, Player->MaxMisfortune), FVector2D(MinOutsideLightDecreaseRate, MaxOutsideLightDecreaseRate), NewMisfortune);
+			OutsideLightIntensity = FMath::GetMappedRangeValueClamped(FVector2D(MisfortuneToStartDim, MaxPlayerMisfortune), FVector2D(MinOutsideLightDecreaseRate, MaxOutsideLightDecreaseRate), NewMisfortune);
 			lightLeft->SetIntensity(OutsideLightIntensity);
 			lightRight->SetIntensity(OutsideLightIntensity);
 		}

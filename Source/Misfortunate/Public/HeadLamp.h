@@ -76,7 +76,7 @@ public:
 	
 
 	UFUNCTION()
-	void OnMisfortuneChange(float NewMisfortune, class APlayerCharacter* Player);
+	void OnMisfortuneChange(float NewMisfortune, const FString& PlayerName);
 
 
 	

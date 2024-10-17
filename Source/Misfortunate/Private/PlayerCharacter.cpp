@@ -17,6 +17,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/PlayerState.h"
+
 
 #include "Math/UnrealMathUtility.h"
 #include "Actors/EventZone.h"
@@ -31,6 +33,9 @@
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
 #include "MisfortunateInputConfig.h"
 #include "Deprecated/Modifier.h"
+
+#include "MisfortuneManager.h"
+
 
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
@@ -85,11 +90,7 @@ APlayerCharacter::APlayerCharacter()
 	AvailableGlowsticks = 3;
 	
 
-	Misfortune = 0.0f;
-	MaxMisfortune = 100.0f;
-	MaxMisfortuneChange = 15.0f;
-
-	bCanMisfortuneIncrease = false;
+	LocalMisfortune = 0.0f;
 
 	CrawlState = CrawlStates::Stand;
 
@@ -133,7 +134,15 @@ void APlayerCharacter::BeginPlay()
 			}
 		}
 
-		float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxMisfortune), FVector2D(0.0, 1.0f), Misfortune);
+
+		AMisfortunateGameMode* GameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		FString PlayerName = GetPlayerState<APlayerState>()->GetPlayerName();
+		float MaxPlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMaxMisfortune(PlayerName);
+		float PlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMisfortune(PlayerName);
+
+		float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxPlayerMisfortune), FVector2D(0.0, 1.0f), PlayerMisfortune);
+
+
 
 		RadialBlurInstance->SetScalarParameterValue(FName("BlurIntensity"), NewBlur);
 	}
@@ -145,7 +154,6 @@ void APlayerCharacter::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(TickStaminaTimerHandle, this, &APlayerCharacter::TickStamina, 0.2f, true);
 
 
-	OnMisfortuneChanged.AddDynamic(HeadLamp, &AHeadLamp::OnMisfortuneChange);
 
 
 }
@@ -532,7 +540,7 @@ void APlayerCharacter::Server_ThrowGlowstick_Implementation()
 {
 	AGlowstick* spawnedGlowstick = GetWorld()->SpawnActor<AGlowstick>(Glowstick_Class,(GetActorForwardVector() * 100) + GetActorLocation(), FRotator(0.0f, 0.0f, 0.0f));
 
-	OnMisfortuneChanged.AddDynamic(spawnedGlowstick, &AGlowstick::OnMisfortuneChange);
+ 	//OnMisfortuneChanged.AddDynamic(spawnedGlowstick, &AGlowstick::OnMisfortuneChange);
 }
 
 
@@ -543,10 +551,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APlayerCharacter, Misfortune); 
-	DOREPLIFETIME(APlayerCharacter, MaxMisfortune);
-	DOREPLIFETIME(APlayerCharacter, MaxMisfortuneChange);
-	DOREPLIFETIME(APlayerCharacter, bCanMisfortuneIncrease);
 	DOREPLIFETIME_CONDITION(APlayerCharacter, ControlRotation, COND_SkipOwner);
 	DOREPLIFETIME(APlayerCharacter, HasBeenPossesed);
 
@@ -646,7 +650,7 @@ void APlayerCharacter::Local_PrintDebugMessages_Implementation()
 {
 	
 		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Player: %s Misfortune Is: %f"), *GetName(), Misfortune));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Player: %s Misfortune Is: %f"), *GetName(), LocalMisfortune));
 
 
 		float OutValue;
@@ -692,7 +696,7 @@ void APlayerCharacter::RemoveModifier(UModifier* ModifierToRemove)
 
 
 
-void APlayerCharacter::Local_OnMisfortuneChanged_Implementation(const float NewMisfortune)
+/*void APlayerCharacter::Local_OnMisfortuneChanged_Implementation(const float NewMisfortune)
 {
 	if (GetController())
 	{
@@ -707,23 +711,11 @@ void APlayerCharacter::Local_OnMisfortuneChanged_Implementation(const float NewM
 
 		}
 	}
-}
+}*/
 
-float APlayerCharacter::GetMisfortune() const
+float APlayerCharacter::GetLocalMisfortune() const
 {
-	return Misfortune;
-}
-
-void APlayerCharacter::Server_SetMisfortune_Implementation(const float Misfortune_)
-{
-	Misfortune = Misfortune_;
-
-	OnMisfortuneChanged.Broadcast(Misfortune, this);
-}
-
-bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)
-{
-	return true;
+	return LocalMisfortune;
 }
 
 
@@ -731,25 +723,7 @@ bool APlayerCharacter::Server_SetMisfortune_Validate(const float Misfortune_)
 
 
 
-void APlayerCharacter::IncreaseMisfortune(const float Misfortune_)
-{
-	if (bCanMisfortuneIncrease)
-	{
-		float ModifiedMisfortune = FMath::Clamp(Misfortune_, 0.0f, MaxMisfortuneChange);
-		Server_SetMisfortune(FMath::Clamp(Misfortune + ModifiedMisfortune, 0.0f, MaxMisfortune));
 
-		Local_OnMisfortuneChanged(Misfortune);
-	}
-}
-
-void APlayerCharacter::DecreaseMisfortune(const float Misfortune_)
-{
-	float ModifiedMisfortune = FMath::Clamp(Misfortune_, 0.0f, MaxMisfortuneChange);
-	Server_SetMisfortune(FMath::Clamp(Misfortune - ModifiedMisfortune, 0.0f, MaxMisfortune));
-
-	Local_OnMisfortuneChanged(Misfortune);
-
-}
 
 
 

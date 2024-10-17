@@ -27,7 +27,6 @@ class AGlowstick;
 class AHeadLamp;
 class UModifier;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMisfortuneChangedSignature, float, NewMisfortune, APlayerCharacter*, Player);
 
 
 UCLASS(BlueprintType)
@@ -241,43 +240,21 @@ public:
 
 	/* Misfortune Variables  */
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = Gameplay)
-	float Misfortune;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float LocalMisfortune;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
-	float MaxMisfortune;
+	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
-	float MaxMisfortuneChange;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Replicated)
-	bool bCanMisfortuneIncrease;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	FOnMisfortuneChangedSignature OnMisfortuneChanged;
+	
 
 
 
 	/* Misfortune Functions  */
 
-	UFUNCTION(BlueprintCallable)
-	void IncreaseMisfortune(const float Misfortune_);
+	
 
-	UFUNCTION(BlueprintCallable)
-	void DecreaseMisfortune(const float Misfortune_);
+	float GetLocalMisfortune() const;
 
-	float GetMisfortune() const;
-
-
-
-	/* RPC Misfortune Functions  */
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_SetMisfortune(const float Misfortune_);
-
-
-	UFUNCTION(Client, Reliable)
-	void Local_OnMisfortuneChanged(const float NewMisfortune);
 
 	
 

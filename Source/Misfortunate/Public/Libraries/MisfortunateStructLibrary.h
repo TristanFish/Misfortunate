@@ -33,3 +33,48 @@ struct FMultiplayerPlayerInfo
 };
 
 
+USTRUCT(BlueprintType)
+struct FPlayerMisfortuneData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FString PlayerName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float Misfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float MaxMisfortune;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float MaxMisfortuneChange;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bCanMisfortuneIncrease;
+
+
+	FPlayerMisfortuneData()
+	{
+		PlayerName = "NULL";
+
+		Misfortune = 0.0f;
+		MaxMisfortune = 100.0f;
+
+		MaxMisfortuneChange = 5.0f;
+		bCanMisfortuneIncrease = true;
+
+	}
+
+
+	FPlayerMisfortuneData(const FString& PlayerName_)
+	{
+		PlayerName = PlayerName_;
+
+		Misfortune = 0.0f;
+		MaxMisfortune = 100.0f;
+
+		MaxMisfortuneChange = 5.0f;
+		bCanMisfortuneIncrease = true;
+	}
+};

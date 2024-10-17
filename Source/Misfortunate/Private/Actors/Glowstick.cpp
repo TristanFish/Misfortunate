@@ -3,6 +3,13 @@
 
 #include "Actors/Glowstick.h"
 #include "Components/PointLightComponent.h"
+
+#include "Kismet/GameplayStatics.h"
+
+
+#include "MisfortunateGameMode.h"
+#include "MisfortuneManager.h"
+
 #include "PlayerCharacter.h"
 
 // Sets default values
@@ -87,11 +94,14 @@ UStaticMeshComponent* AGlowstick::GetMesh() const
 	return GlowstickMesh;
 }
 
-void AGlowstick::OnMisfortuneChange(float NewMisfortune, APlayerCharacter* Player)
+void AGlowstick::OnMisfortuneChange(float NewMisfortune, const FString& PlayerName)
 {
 	GetWorld()->GetTimerManager().ClearTimer(TickLifetimeTimerHandle);
 
-	float DecreaseSpeed = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, Player->MaxMisfortune), FVector2D(SlowestDimSpeed, FastestDimSpeed), NewMisfortune);
+	AMisfortunateGameMode* GameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	float MaxPlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMaxMisfortune(PlayerName);
+
+	float DecreaseSpeed = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, MaxPlayerMisfortune), FVector2D(SlowestDimSpeed, FastestDimSpeed), NewMisfortune);
 
 	GetWorld()->GetTimerManager().SetTimer(TickLifetimeTimerHandle, this, &AGlowstick::DecreaseBrightness, FastestDimSpeed, true);
 }
