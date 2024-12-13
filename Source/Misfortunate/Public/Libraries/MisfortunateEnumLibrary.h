@@ -36,3 +36,19 @@ enum EventZoneLevel {
 	V,
 	VI
 };
+
+UENUM(BlueprintType)
+enum WorldEventOccuranceType {
+	
+	Narrative,
+	Random,
+	Timed
+};
+
+UENUM(BlueprintType)
+enum WorldEventPlayerType {
+
+	SharedEvent,
+	Single,
+
+};

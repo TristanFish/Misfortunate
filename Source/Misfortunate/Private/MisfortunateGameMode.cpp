@@ -9,7 +9,7 @@
 #include "PlayerCharacter.h"
 #include "LobbyPlayerCharacter.h"
 
-#include "Deprecated/ScareEventManager.h"
+#include "World Event System/ScareEventManager.h"
 #include "Deprecated/LoreManager.h"
 
 #include "MisfortuneManager.h"
@@ -72,7 +72,7 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			{
 				Cast<AMPlayerController>(NewPlayer)->Possess(character);
 				character->HasBeenPossesed = true;
-				MisfortuneManager->IncreaseMisfortune(FMath::FRandRange(60.0, 85.0), character->GetPlayerState<APlayerState>()->GetPlayerName());
+				
 				break;
 			}
 		}
@@ -205,7 +205,7 @@ void AMisfortunateGameMode::SetupGameplaySingletons()
 	LoreManager = Cast<ALoreManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
 
 
-	MisfortuneManager = Cast<AMisfortuneManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALoreManager::StaticClass()));
+	MisfortuneManager = Cast<AMisfortuneManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMisfortuneManager::StaticClass()));
 	if (!MisfortuneManager)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString("No misfortune manager exists in the level"));
