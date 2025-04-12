@@ -47,7 +47,7 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			ALobbyPlayerCharacter* lobbyChar = Cast<ALobbyPlayerCharacter>(possChar);
 			if (!lobbyChar->HasBeenPossesed)
 			{
-				Cast<AMPlayerController>(NewPlayer)->Possess(lobbyChar);
+				NewPlayer->Possess(lobbyChar);
 				if (GEngine)
 					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, TEXT("Player Possesed"));
 			}
@@ -70,7 +70,7 @@ void AMisfortunateGameMode::PostLogin(APlayerController* NewPlayer)
 			APlayerCharacter* character = Cast<APlayerCharacter>(possChar);
 			if (!character->HasBeenPossesed)
 			{
-				Cast<AMPlayerController>(NewPlayer)->Possess(character);
+				NewPlayer->Possess(character);
 				character->HasBeenPossesed = true;
 				
 				break;

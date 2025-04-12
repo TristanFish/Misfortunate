@@ -69,19 +69,19 @@ public:
 
 
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetCombinedMisfortune();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetAverageMisfortune();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetPlayerMisfortune(const FString& PlayerName);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetPlayerMaxMisfortune(const FString& PlayerName);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FString GetPlayerNameWithHighestMisfortune();
 
 

@@ -136,15 +136,22 @@ void APlayerCharacter::BeginPlay()
 
 
 		AMisfortunateGameMode* GameMode = Cast<AMisfortunateGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-		FString PlayerName = GetPlayerState<APlayerState>()->GetPlayerName();
-		float MaxPlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMaxMisfortune(PlayerName);
-		float PlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMisfortune(PlayerName);
 
-		float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxPlayerMisfortune), FVector2D(0.0, 1.0f), PlayerMisfortune);
+		if(GetPlayerState<APlayerState>())
+		{
+			FString PlayerName = GetPlayerState<APlayerState>()->GetPlayerName();
+			float MaxPlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMaxMisfortune(PlayerName);
+			float PlayerMisfortune = GameMode->GetMisfortuneManager()->GetPlayerMisfortune(PlayerName);
+
+			float NewBlur = FMath::GetMappedRangeValueClamped(FVector2D(40.0f, MaxPlayerMisfortune), FVector2D(0.0, 1.0f), PlayerMisfortune);
+
+			RadialBlurInstance->SetScalarParameterValue(FName("BlurIntensity"), NewBlur);
+		}
+		
 
 
 
-		RadialBlurInstance->SetScalarParameterValue(FName("BlurIntensity"), NewBlur);
+		
 	}
 
 	OriginalMaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -415,7 +422,7 @@ void APlayerCharacter::ToggleCrawl()
 
 void APlayerCharacter::RetrieveControlRotation()
 {
-	if (HasAuthority() || IsLocallyControlled())
+	if (HasAuthority() || IsLocallyControlled() && GetController())
 	{
 		ControlRotation = GetController()->GetControlRotation();
 	}

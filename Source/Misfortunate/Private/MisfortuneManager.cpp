@@ -53,12 +53,13 @@ void AMisfortuneManager::OnRep_MisfortuneData()
 	
 	APlayerCharacter* LocalPlayerChar = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn());
 
-	FString PlayerName = LocalPlayerChar->GetPlayerState()->GetPlayerName();
 
-	LocalPlayerChar->LocalMisfortune = GetPlayerMisfortuneData(PlayerName).Misfortune;
+	if (LocalPlayerChar && LocalPlayerChar->GetPlayerState())
+	{
+		FString PlayerName = LocalPlayerChar->GetPlayerState()->GetPlayerName();
 
-
-
+		LocalPlayerChar->LocalMisfortune = GetPlayerMisfortuneData(PlayerName).Misfortune;
+	}
 }
 
 void AMisfortuneManager::PopulatePlayerMisfortuneData()
