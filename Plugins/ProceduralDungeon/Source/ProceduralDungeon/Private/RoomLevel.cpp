@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2019-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2019 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "RoomLevel.h"
 #include "Engine/World.h"
@@ -41,6 +24,10 @@
 #include "RoomVisibilityComponent.h"
 #include "RoomVisitor.h"
 
+#if WITH_EDITOR
+bool ARoomLevel::bIsDungeonEditorMode = false;
+#endif
+
 ARoomLevel::ARoomLevel(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -60,8 +47,7 @@ void ARoomLevel::Init(URoom* _Room)
 	Room = _Room;
 	bIsInit = false;
 
-	DungeonTransform.SetLocation(Room->Generator()->GetDungeonOffset());
-	DungeonTransform.SetRotation(Room->Generator()->GetDungeonRotation());
+	DungeonTransform = Room->Generator()->GetDungeonTransform();
 
 	// Update the room's bounding box for occlusion culling (also the red box drawn in debug)
 	UpdateBounds();
@@ -117,6 +103,9 @@ void ARoomLevel::BeginPlay()
 
 	SetActorsVisible(Room->IsVisible());
 
+	// Create dynamic components from the RoomCustomData
+	Room->CreateLevelComponents(this);
+
 	bIsInit = true;
 }
 
@@ -132,8 +121,16 @@ void ARoomLevel::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 #if ENABLE_DRAW_DEBUG
-	// TODO: Place the debug draw in an editor module of the plugin?
-	if (Dungeon::DrawDebug() && IsValid(Data))
+	// @TODO: Place the debug draw in an editor module of the plugin?
+
+	const bool bIsEditingRoom = GetLevel() == GetWorld()->PersistentLevel;
+	bool bShouldDrawDebug = Dungeon::DrawDebug() && (!Dungeon::DrawOnlyWhenEditingRoom() || bIsEditingRoom);
+	#if WITH_EDITOR
+	// Force debug drawing when the editor is in DungeonEditor mode
+	bShouldDrawDebug |= bIsDungeonEditorMode;
+	#endif
+
+	if (IsValid(Data) && bShouldDrawDebug)
 	{
 		const bool bIsRoomValid = (Room != nullptr);
 		const bool bIsRoomDataValid = bIsRoomValid && (Data == Room->GetRoomData());
@@ -145,28 +142,28 @@ void ARoomLevel::Tick(float DeltaTime)
 		// Cache world
 		const UWorld* World = GetWorld();
 
-		// TODO: is it still needed now?
+		// @TODO: is it still needed now?
 		// Pivot
-		if(Dungeon::ShowRoomOrigin())
-			DrawDebugSphere(World, DungeonTransform.TransformPosition(RoomTransform.GetLocation()), 100.0f, 4, FColor::Magenta);
+		if (Dungeon::ShowRoomOrigin())
+			DrawDebugSphere(World, DungeonTransform.TransformPositionNoScale(RoomTransform.GetLocation()), 100.0f, 4, FColor::Magenta);
 
 		// Room bounds
-		DrawDebugBox(World, DungeonTransform.TransformPosition(Bounds.Center), Bounds.Extent, DungeonTransform.GetRotation(), IsPlayerInside() ? FColor::Green : FColor::Red);
+		DrawDebugBox(World, GetBoundsCenter(), GetBoundsExtent(), DungeonTransform.GetRotation(), IsPlayerInside() ? FColor::Green : FColor::Red);
 
 		if (bIsRoomLocked)
 		{
 			FBox Box = Bounds.GetBox();
 			const FVector& Min = Box.Min;
 			const FVector& Max = Box.Max;
-#ifdef T
+	#ifdef T
 			static_assert(false, "T macro is already defined! Please change its name to avoid potential conflicts");
-#endif
-#define T(POINT) DungeonTransform.TransformPosition(POINT)
+	#endif
+	#define T(POINT) DungeonTransform.TransformPositionNoScale(POINT)
 			DrawDebugLine(World, T(Min), T(Max), FColor::Red);
 			DrawDebugLine(World, T(FVector(Min.X, Min.Y, Max.Z)), T(FVector(Max.X, Max.Y, Min.Z)), FColor::Red);
 			DrawDebugLine(World, T(FVector(Min.X, Max.Y, Max.Z)), T(FVector(Max.X, Min.Y, Min.Z)), FColor::Red);
 			DrawDebugLine(World, T(FVector(Min.X, Max.Y, Min.Z)), T(FVector(Max.X, Min.Y, Max.Z)), FColor::Red);
-#undef T
+	#undef T
 		}
 
 		// Doors
@@ -174,7 +171,7 @@ void ARoomLevel::Tick(float DeltaTime)
 		{
 			const bool bIsConnected = !bIsRoomValid || (bIsRoomDataValid && Room->IsConnected(i));
 			const bool bIsDoorValid = Data->IsDoorValid(i) && !Data->IsDoorDuplicate(i);
-			FDoorDef::DrawDebug(World, bIsDoorValid ? FColor::Blue : FColor::Orange, Data->Doors[i], RoomTransform * DungeonTransform, true, bIsConnected);
+			FDoorDef::DrawDebug(World, Data->Doors[i], RoomTransform * DungeonTransform, /*bIncludeOffset = */ true, bIsDoorValid && bIsConnected);
 		}
 	}
 #endif // ENABLE_DRAW_DEBUG
@@ -197,7 +194,7 @@ bool ARoomLevel::IsLocked()
 
 void ARoomLevel::Lock(bool lock)
 {
-	if(IsValid(Room))
+	if (IsValid(Room))
 		Room->Lock(lock);
 }
 
@@ -213,7 +210,7 @@ void ARoomLevel::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComp, AActor
 
 FVector ARoomLevel::GetBoundsCenter() const
 {
-	return DungeonTransform.TransformPosition(Bounds.Center);
+	return DungeonTransform.TransformPositionNoScale(Bounds.Center);
 }
 
 FVector ARoomLevel::GetBoundsExtent() const

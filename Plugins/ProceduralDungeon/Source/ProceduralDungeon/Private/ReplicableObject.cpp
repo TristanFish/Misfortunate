@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "ReplicableObject.h"
 #include "Engine/ActorChannel.h"
@@ -28,14 +11,13 @@
 #include "ProceduralDungeonLog.h"
 #include "Utils/ReplicationUtils.h"
 
-
 namespace
 {
 	const TCHAR* GetWithPredicate(const TCHAR* Str, bool bPredicate)
 	{
 		return (bPredicate) ? Str : TEXT("");
 	}
-}
+} //namespace
 
 bool UReplicableObject::ReplicateSubobject(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
 {
@@ -49,7 +31,7 @@ bool UReplicableObject::ReplicateSubobject(UActorChannel* Channel, FOutBunch* Bu
 void UReplicableObject::RegisterAsReplicable(bool bRegister, FRegisterSubObjectParams Params)
 {
 #if UE_WITH_SUBOBJECT_LIST
-	AActor* Owner = GetOwner();
+	AActor* Owner = GetTypedOuter<AActor>();
 	if (!IsValid(Owner))
 	{
 		ensureMsgf(false, TEXT("Trying to %sregister %s as replicable subobject but actor owner is invalid."), ::GetWithPredicate(TEXT("un"), !bRegister), *GetNameSafe(this));
@@ -63,11 +45,9 @@ void UReplicableObject::RegisterAsReplicable(bool bRegister, FRegisterSubObjectP
 	if (!Owner->IsUsingRegisteredSubObjectList())
 		return;
 
+	// Ignore if the object is already registered/unregistered
 	if (Owner->IsReplicatedSubObjectRegistered(this) == bRegister)
-	{
-		ensureMsgf(false, TEXT("Trying to %sregister %s as replicable subobject in actor %s but it is already %sregistered."), ::GetWithPredicate(TEXT("un"), !bRegister), *GetNameSafe(this), *GetNameSafe(Owner), ::GetWithPredicate(TEXT("un"), !bRegister));
 		return;
-	}
 
 	DungeonLog_InfoSilent("%s Replicable Subobject: %s", (bRegister) ? TEXT("Register") : TEXT("Unregister"), *GetNameSafe(this));
 
@@ -80,14 +60,14 @@ void UReplicableObject::RegisterAsReplicable(bool bRegister, FRegisterSubObjectP
 		case EUnregisterSubObjectType::Unregister:
 			Owner->RemoveReplicatedSubObject(this);
 			break;
-#if UE_VERSION_NEWER_THAN(5, 2, 0)
+	#if UE_VERSION_NEWER_THAN(5, 2, 0)
 		case EUnregisterSubObjectType::Destroy:
 			Owner->DestroyReplicatedSubObjectOnRemotePeers(this);
 			break;
 		case EUnregisterSubObjectType::TearOff:
 			Owner->TearOffReplicatedSubObjectOnRemotePeers(this);
 			break;
-#endif
+	#endif
 		default:
 			checkf(false, TEXT("Unimplemented case."));
 			break;
@@ -119,25 +99,22 @@ UWorld* UReplicableObject::GetWorld() const
 	return Outer->GetWorld();
 }
 
-AActor* UReplicableObject::GetOwner() const
+bool UReplicableObject::HasAuthority() const
 {
-	UObject* Outer = GetOuter();
-	while (Outer && !Outer->IsA<AActor>())
-		Outer = Outer->GetOuter();
-	return Cast<AActor>(Outer);
+	AActor* Owner = GetTypedOuter<AActor>();
+	if (!Owner)
+		return false;
+	return Owner->HasAuthority();
 }
 
 FString UReplicableObject::GetAuthorityName() const
 {
-	AActor* OwnerActor = Cast<AActor>(GetOuter());
-	if (!OwnerActor)
-		return TEXT("INVALID");
-	return OwnerActor->HasAuthority() ? TEXT("Server") : TEXT("Client");
+	return HasAuthority() ? TEXT("Server") : TEXT("Client");
 }
 
 void UReplicableObject::WakeUpOwnerActor()
 {
-	AActor* Owner = GetOwner();
+	AActor* Owner = GetTypedOuter<AActor>();
 	if (!IsValid(Owner))
 		return;
 

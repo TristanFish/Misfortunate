@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2019-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2019 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -41,6 +24,7 @@ enum class EGenerationState : uint8
 	NbState					UMETA(Hidden)
 };
 
+// The different directions a door can face.
 UENUM(BlueprintType, meta = (DisplayName = "Door Direction"))
 enum class EDoorDirection : uint8
 {
@@ -67,9 +51,18 @@ inline EDoorDirection PROCEDURALDUNGEON_API Opposite(const EDoorDirection& Direc
 FIntVector PROCEDURALDUNGEON_API ToIntVector(const EDoorDirection& Direction);
 FVector PROCEDURALDUNGEON_API ToVector(const EDoorDirection& Direction);
 FQuat PROCEDURALDUNGEON_API ToQuaternion(const EDoorDirection& Direction);
+float PROCEDURALDUNGEON_API ToAngle(const EDoorDirection& Direction);
 FIntVector PROCEDURALDUNGEON_API Rotate(const FIntVector& Pos, const EDoorDirection& Rot);
 FVector PROCEDURALDUNGEON_API Rotate(const FVector& Pos, const EDoorDirection& Rot);
 
+FIntVector PROCEDURALDUNGEON_API Transform(const FIntVector& Pos, const FIntVector& Translation, const EDoorDirection& Rotation);
+FIntVector PROCEDURALDUNGEON_API InverseTransform(const FIntVector& Pos, const FIntVector& Translation, const EDoorDirection& Rotation);
+
+// Those ones are just for consistent naming and centralized code
+EDoorDirection PROCEDURALDUNGEON_API Transform(const EDoorDirection& Direction, const EDoorDirection& Rotation);
+EDoorDirection PROCEDURALDUNGEON_API InverseTransform(const EDoorDirection& Direction, const EDoorDirection& Rotation);
+
+//The different types of generation algorithms.
 UENUM(BlueprintType, meta = (DisplayName = "Generation Type"))
 enum class EGenerationType : uint8
 {
@@ -78,6 +71,7 @@ enum class EGenerationType : uint8
 	NbType = 2 				UMETA(Hidden)
 };
 
+// The different types of seed update at each generation.
 UENUM(BlueprintType, meta = (DisplayName = "Seed Type"))
 enum class ESeedType : uint8
 {
@@ -98,35 +92,52 @@ enum class EVisibilityMode : uint8
 	NbMode			UMETA(Hidden)
 };
 
+// Structure that defines a door.
+// A door is defined by its position, its direction, and its type.
 USTRUCT(BlueprintType)
 struct PROCEDURALDUNGEON_API FDoorDef
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DoorDef")
+	static const FDoorDef Invalid;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorDef")
 	FIntVector Position {FIntVector::ZeroValue};
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DoorDef")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorDef")
 	EDoorDirection Direction {EDoorDirection::North};
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DoorDef", meta = (DisplayThumbnail = false))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DoorDef", meta = (DisplayThumbnail = false))
 	class UDoorType* Type {nullptr};
 
 public:
+	FDoorDef() = default;
+	FDoorDef(const FIntVector& InPosition, EDoorDirection InDirection, class UDoorType* InType = nullptr);
+
+	bool IsValid() const;
+	operator bool() const { return IsValid(); }
 	bool operator==(const FDoorDef& Other) const;
 
 	static bool AreCompatible(const FDoorDef& A, const FDoorDef& B);
 
 	FVector GetDoorSize() const;
+	float GetDoorOffset() const;
+	FColor GetDoorColor() const;
 	FString GetTypeName() const;
 	FString ToString() const;
 	FDoorDef GetOpposite() const;
 	FBoxCenterAndExtent GetBounds(bool bIncludeOffset = true) const;
 
-	static FVector GetRealDoorPosition(FIntVector DoorCell, EDoorDirection DoorRot, bool includeOffset = true);
+	static FVector GetRealDoorPosition(const FDoorDef& DoorDef, bool bIncludeOffset = true);
+	static FVector GetRealDoorPosition(FIntVector DoorCell, EDoorDirection DoorRot, float DoorOffset = 0.0f);
+	static FQuat GetRealDoorRotation(const FDoorDef& DoorDef, bool bFlipped = false);
+
+	static FDoorDef Transform(const FDoorDef& DoorDef, FIntVector Translation, EDoorDirection Rotation);
+	static FDoorDef InverseTransform(const FDoorDef& DoorDef, FIntVector Translation, EDoorDirection Rotation);
 
 #if !UE_BUILD_SHIPPING
-	static void DrawDebug(const class UWorld* World, const FColor& Color, const FDoorDef& DoorDef, const FTransform& Transform = FTransform::Identity, bool includeOffset = false, bool isConnected = true);
-	static void DrawDebug(const class UWorld* World, const FColor& Color, const FVector& DoorSize, const FIntVector& DoorCell = FIntVector::ZeroValue, const EDoorDirection& DoorRot = EDoorDirection::NbDirection, const FTransform& Transform = FTransform::Identity, bool includeOffset = false, bool isConnected = true);
+	static void DrawDebug(const class UWorld* World, const FDoorDef& DoorDef, const FTransform& Transform = FTransform::Identity, bool bIncludeOffset = false, bool bIsConnected = true);
+	static void DrawDebug(const class UWorld* World, const FColor& Color, const FVector& DoorSize, const FIntVector& DoorCell = FIntVector::ZeroValue, const EDoorDirection& DoorRot = EDoorDirection::NbDirection, const FTransform& Transform = FTransform::Identity, float DoorOffset = 0.0f, bool bIsConnected = true);
 #endif // !UE_BUILD_SHIPPING
 };
 
@@ -149,7 +160,9 @@ public:
 	bool IsInside(const FIntVector& Cell) const;
 	bool IsInside(const FBoxMinAndMax& Other) const;
 	void Rotate(const EDoorDirection& Rot);
+	void Extend(const FBoxMinAndMax& Other);
 	FString ToString() const;
+	FIntVector GetClosestPoint(const FIntVector& Point) const;
 
 	static bool Overlap(const FBoxMinAndMax& A, const FBoxMinAndMax& B);
 

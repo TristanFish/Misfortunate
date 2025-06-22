@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2019-2021 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2019 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "ProceduralDungeon.h"
 #include "Developer/Settings/Public/ISettingsModule.h"
@@ -32,15 +15,15 @@
 #define LOCTEXT_NAMESPACE "FProceduralDungeonModule"
 
 #if WITH_EDITOR && UE_VERSION_NEWER_THAN(5, 4, 0)
-#define ACTOR_REPLACEMENT_FIX_HACK 1
+	#define ACTOR_REPLACEMENT_FIX_HACK 1
 #else
-#define ACTOR_REPLACEMENT_FIX_HACK 0
+	#define ACTOR_REPLACEMENT_FIX_HACK 0
 #endif
 
 // ----- Hack to fix Room references issues of RoomLevel actors in PIE for UE 5.4
 #if ACTOR_REPLACEMENT_FIX_HACK
-#include "RoomLevel.h"
-#include "Room.h"
+	#include "RoomLevel.h"
+	#include "Room.h"
 
 FDelegateHandle ObjectReplacedHandle;
 void ObjectReplaced(const FCoreUObjectDelegates::FReplacementObjectMap& ReplacementMap)
@@ -63,7 +46,7 @@ void ObjectReplaced(const FCoreUObjectDelegates::FReplacementObjectMap& Replacem
 
 		// Fixup Room reference not properly carried over during actor replacement process
 		NewActor->Init(RoomInstance);
-		DungeonLog_InfoSilent("Fixed Room reference ('%s' -> '%s')", *GetNameSafe(OldActor), *GetNameSafe(NewActor));
+		DungeonLog_Debug("Fixed Room reference ('%s' -> '%s')", *GetNameSafe(OldActor), *GetNameSafe(NewActor));
 	}
 }
 #endif
@@ -76,7 +59,7 @@ void FProceduralDungeonModule::StartupModule()
 
 #if ACTOR_REPLACEMENT_FIX_HACK
 	ObjectReplacedHandle = FCoreUObjectDelegates::OnObjectsReinstanced.AddStatic(ObjectReplaced);
-	DungeonLog_InfoSilent("Use Actor Replacement Hack");
+	DungeonLog_Debug("Use Actor Replacement Hack");
 #endif
 }
 

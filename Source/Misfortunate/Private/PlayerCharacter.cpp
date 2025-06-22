@@ -422,9 +422,13 @@ void APlayerCharacter::ToggleCrawl()
 
 void APlayerCharacter::RetrieveControlRotation()
 {
-	if (HasAuthority() || IsLocallyControlled() && GetController())
+	if (HasAuthority() || IsLocallyControlled())
 	{
-		ControlRotation = GetController()->GetControlRotation();
+		if (GetController()->IsValidLowLevel())
+		{
+			ControlRotation = GetController()->GetControlRotation();
+
+		}
 	}
 }
 

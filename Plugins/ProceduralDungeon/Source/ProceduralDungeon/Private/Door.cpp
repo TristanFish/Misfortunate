@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2019-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2019 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "Door.h"
 #include "Room.h"
@@ -32,6 +15,7 @@
 #include "DoorType.h"
 #include "ProceduralDungeonUtils.h"
 #include "Utils/ReplicationUtils.h"
+#include "ProceduralDungeonLog.h"
 
 ADoor::ADoor()
 {
@@ -61,24 +45,47 @@ void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Update door visibility
-	// TODO: this should not work with multiplayer games, because bHidden is replicated!
-	// It works only because it is updated each frame on clients too!
-	// The behavior will change if update in an event instead!
-	// So, I should find another way to hide the actor... (avoiding if possible RootComponent::SetVisible)
-	SetActorHiddenInGame(Dungeon::OcclusionCulling()
-		&& (!bAlwaysVisible
-		&& (!IsValid(RoomA) || (!RoomA->IsVisible()))
-		&& (!IsValid(RoomB) || (!RoomB->IsVisible()))));
+	// Tells if the door actor has been spawned by the dungeon generator or not.
+	// At least one of the room is valid when spawned by the dungeon generator.
+	// Both rooms are invalid if door has been spawned by another way.
+	const bool bSpawnedByDungeon = IsValid(RoomA) || IsValid(RoomB);
+
+	// The door manages itself its own visibility only when it has been spawned by the dungeon generator.
+	// If the door is placed in a RoomLevel or spawned by the user in other means, it is the responsibility
+	// of the RoomLevel or the user to manage the door's visibility.
+	if (bSpawnedByDungeon)
+	{
+		const bool bRoomAVisible = IsValid(RoomA) && RoomA->IsVisible();
+		const bool bRoomBVisible = IsValid(RoomB) && RoomB->IsVisible();
+
+		// Update door visibility
+		// A door is hidden ONLY when ALL those conditions are met:
+		// - The Room Culling is enabled.
+		// - The door is not `Always Visible`.
+		// - Both connected rooms are not visible.
+		// @TODO: this should not work with multiplayer games, because bHidden is replicated!
+		// It works only because it is updated each frame on clients too!
+		// The behavior will change if bHidden is updated once in a wile by an event instead!
+		// So, I should find another way to hide the actor... (avoiding if possible RootComponent::SetVisible)
+		SetActorHiddenInGame(Dungeon::OcclusionCulling()
+			&& !bAlwaysVisible
+			&& !(bRoomAVisible || bRoomBVisible)
+		);
+	}
 
 	// Update door's lock state
+	// A door is locked when ALL those conditions are met:
+	// - The door is not `Always Unlocked`.
+	// - The user tells the door should be locked.
+	// - The door is spawned by the dungeon generator AND one of the connected rooms is locked or missing.
 	const bool bPrevLocked = bLocked;
-	bLocked = !bAlwaysUnlocked && (bShouldBeLocked ||
-			  ((!IsValid(RoomA) || RoomA->IsLocked())
-			|| (!IsValid(RoomB) || RoomB->IsLocked())));
+	const bool bRoomALocked = !IsValid(RoomA) || RoomA->IsLocked();
+	const bool bRoomBLocked = !IsValid(RoomB) || RoomB->IsLocked();
+	bLocked = !bAlwaysUnlocked && (bShouldBeLocked || (bSpawnedByDungeon && (bRoomALocked || bRoomBLocked)));
 
 	if (bLocked != bPrevLocked)
 	{
+		DungeonLog_Debug("Door %s locked: %d", *GetNameSafe(this), bLocked);
 		if (bLocked)
 		{
 			OnDoorLock();
@@ -96,6 +103,7 @@ void ADoor::Tick(float DeltaTime)
 	bIsOpen = bShouldBeOpen && !bLocked;
 	if (bIsOpen != bPrevIsOpen)
 	{
+		DungeonLog_Debug("Door %s open: %d", *GetNameSafe(this), bIsOpen);
 		if (bIsOpen)
 		{
 			OnDoorOpen();
@@ -115,8 +123,7 @@ void ADoor::Tick(float DeltaTime)
 		FDoorDef DoorDef;
 		DoorDef.Direction = EDoorDirection::NbDirection;
 		DoorDef.Type = Type;
-		FDoorDef::DrawDebug(GetWorld(), FColor::Blue, DoorDef);
-		//FDoorDef::DrawDebug(GetWorld(), FColor::Blue, UDoorType::GetSize(Type));
+		FDoorDef::DrawDebug(GetWorld(), DoorDef);
 	}
 #endif // ENABLE_DRAW_DEBUG
 }

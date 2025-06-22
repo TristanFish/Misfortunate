@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -37,8 +20,8 @@ struct FReplicationFlags;
 enum class EUnregisterSubObjectType : uint8
 {
 	Unregister = 0, // Simply remove from the subobject list. Subobject on remotes will be destroyed when it's garbage collected on authority.
-	Destroy, // Immediately destroy the subobject on remotes. It's the responsibility of the authority to destroy it later. Imply Unregister.
-	TearOff, // Break replication of this subobject, so it's considered as local subobject on remotes. Imply Unregister.
+	Destroy,		// Immediately destroy the subobject on remotes. It's the responsibility of the authority to destroy it later. Imply Unregister.
+	TearOff,		// Break replication of this subobject, so it's considered as local subobject on remotes. Imply Unregister.
 };
 
 struct FRegisterSubObjectParams
@@ -49,6 +32,8 @@ struct FRegisterSubObjectParams
 	EUnregisterSubObjectType UnregisterType = EUnregisterSubObjectType::Unregister;
 };
 
+// Base class for sub-objects that can be replicated.
+// This class is not blueprintable and should not be used directly in blueprints.
 UCLASS(NotBlueprintable, NotBlueprintType)
 class PROCEDURALDUNGEON_API UReplicableObject : public UObject
 {
@@ -69,8 +54,6 @@ public:
 
 	//~ End UObject Interface
 
-	AActor* GetOwner() const;
-
 	// To be called in place of Channel->ReplicateSubobject(...)
 	// Considered as "Legacy" (used when "Use Registered Subobject List" is false in the actor owner).
 	bool ReplicateSubobject(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags);
@@ -89,6 +72,9 @@ protected:
 	// Override this to register subobjects of this one as replicable.
 	// Used when "Use Registered Subobject List" is true in the actor owner.
 	virtual void RegisterReplicableSubobjects(bool bRegister) {}
+
+	// Returns true if the owning actor has authority
+	bool HasAuthority() const;
 
 	// Returns "Server" or "Client" based on HasAuthority() result.
 	FString GetAuthorityName() const;

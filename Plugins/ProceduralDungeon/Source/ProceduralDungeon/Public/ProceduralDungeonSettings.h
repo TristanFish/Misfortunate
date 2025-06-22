@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2019-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2019 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -48,7 +31,7 @@ public:
 	FVector DoorSize;
 
 	// The height of the door's base from the room's base (in percentage of the room unit Z)
-	UPROPERTY(EditAnywhere, config, Category = "General")
+	UPROPERTY(EditAnywhere, config, Category = "General", meta = (DisplayName = "Default Door Offset", ClampMin = 0, ClampMax = 1, UIMin = 0, UIMax = 1))
 	float DoorOffset;
 
 	// When true, doors will be connected as long they are at the same place.
@@ -70,6 +53,10 @@ public:
 	// The number of room placement retry on a specific door before the generator gives up and continues with the next door.
 	UPROPERTY(EditAnywhere, config, Category = "General", AdvancedDisplay, meta = (UIMin = 1, ClampMin = 1))
 	int32 MaxRoomPlacementTry;
+
+	// The number of room placement retry on a specific door before the generator gives up and continues with the next door.
+	UPROPERTY(EditAnywhere, config, Category = "General", AdvancedDisplay, meta = (UIMin = 1, ClampMin = 1))
+	int32 RoomLimit;
 
 	// The rooms visibility will be toggled off when the player is not inside it or in a room next to it.
 	UPROPERTY(EditAnywhere, config, Category = "Occlusion Culling", meta = (DisplayName = "Enable Occlusion Culling"))
@@ -93,6 +80,10 @@ public:
 	// Show room and door outlines in editor and development builds
 	UPROPERTY(EditAnywhere, config, Category = "Debug")
 	bool DrawDebug;
+
+	// Show room and door outlines in editor and development builds
+	UPROPERTY(EditAnywhere, config, Category = "Debug", meta = (EditCondition = "DrawDebug"))
+	bool bDrawOnlyWhenEditingRooms;
 
 	// Show the room origin in magenta
 	// DEPRECATED: This setting will be removed in a future release of the plugin.

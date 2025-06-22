@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -29,6 +12,9 @@
 #include "ProceduralDungeonTypes.h"
 #include "Engine/DataTable.h"
 #include "DungeonBlueprintLibrary.generated.h"
+
+class URoom;
+class URoomCustomData;
 
 UCLASS()
 class PROCEDURALDUNGEON_API UDungeonBlueprintLibrary : public UBlueprintFunctionLibrary
@@ -41,6 +27,19 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Utilities", meta = (DisplayName = "Equal (Data Table Row Handle)", CompactNodeTitle = "=="))
 	static bool CompareDataTableRows(const FDataTableRowHandle& A, const FDataTableRowHandle& B);
+
+	// Returns the room instance the actor is in.
+	// If the actor is spawned at runtime or the owning level is not a room level, returns null.
+	UFUNCTION(BlueprintPure, Category = "Utilities|Procedural Dungeon", meta = (DefaultToSelf = "Target"))
+	static URoom* GetOwningRoom(const AActor* Target);
+
+	// Returns the first RoomCustomData of the provided type in the owning room.
+	// If no owning room or no custom data of this type, returns null.
+	UFUNCTION(BlueprintCallable, Category = "Utilities|Procedural Dungeon", meta = (DefaultToSelf = "Target", ExpandBoolAsExecs = "ReturnValue", DeterminesOutputType = "CustomDataClass", DynamicOutputParam = "CustomData"))
+	static bool GetOwningRoomCustomData(const AActor* Target, TSubclassOf<URoomCustomData> CustomDataClass, URoomCustomData*& CustomData);
+
+	UFUNCTION(BlueprintPure, Category = "DoorDef", meta = (DisplayName = "Opposite", CompactNodeTitle = "Opposite"))
+	static FDoorDef DoorDef_GetOpposite(const FDoorDef& DoorDef);
 
 	// ===== DoorDirection Math Utility Functions =====
 
@@ -72,6 +71,54 @@ public:
 	// Transforms North into South and East into West (and vice versa)
 	UFUNCTION(BlueprintPure, Category = "Math|Door Direction", meta = (DisplayName = "Opposite", CompactNodeTitle = "Opposite", AutoCreateRefTerm = "A"))
 	static EDoorDirection DoorDirection_Opposite(const EDoorDirection& A) { return ~A; }
+
+	// Convert a DoorDirection enum value into a unit IntVector pointing in that direction.
+	UFUNCTION(BlueprintPure, Category = "Conversion|Door Direction", meta = (BlueprintAutocast, DisplayName = "To Int Vector", AutoCreateRefTerm = "A"))
+	static FIntVector DoorDirection_ToIntVector(const EDoorDirection& A) { return ToIntVector(A); }
+
+	// Convert a DoorDirection enum value into a unit IntVector pointing in that direction.
+	UFUNCTION(BlueprintPure, Category = "Conversion|Door Direction", meta = (BlueprintAutocast, DisplayName = "To Angle", AutoCreateRefTerm = "A"))
+	static float DoorDirection_ToAngle(const EDoorDirection& A) { return ToAngle(A); }
+
+	// ===== Dungeon Math Transform =====
+
+	// Returns the neighbor at the provided direction.
+	// Same as Vector + ToIntVector(Direction)
+	UFUNCTION(BlueprintPure, Category = "Math|Transform", meta = (DisplayName = "Next (Int Vector)"))
+	static FIntVector IntVector_Next(const FIntVector& Vector, const EDoorDirection& Direction);
+
+	UFUNCTION(BlueprintPure, Category = "Math|Transform", meta = (DisplayName = "Rotate (Int Vector)"))
+	static FIntVector IntVector_Rotate(const FIntVector& Vector, const EDoorDirection& Direction);
+
+	// Transform a cell position from local coordinates into the dungeon coordinates
+	UFUNCTION(BlueprintPure, Category = "Math|Dungeon", meta = (DisplayName = "Transform Position (Dungeon)", AutoCreateRefTerm = "Rotation"))
+	static FIntVector Dungeon_TransformPosition(const FIntVector& LocalPos, const FIntVector& Translation, const EDoorDirection& Rotation);
+
+	// Inverse transform a cell position from the dungeon coordinates into a local coordinates
+	UFUNCTION(BlueprintPure, Category = "Math|Dungeon", meta = (DisplayName = "Inverse Transform Position (Dungeon)", AutoCreateRefTerm = "Rotation"))
+	static FIntVector Dungeon_InverseTransformPosition(const FIntVector& DungeonPos, const FIntVector& Translation, const EDoorDirection& Rotation);
+
+	// Transform a DoorDef structure from local coordinates into the dungeon coordinates
+	UFUNCTION(BlueprintPure, Category = "Math|Dungeon", meta = (DisplayName = "Transform DoorDef (Dungeon)", AutoCreateRefTerm = "Rotation"))
+	static FDoorDef Dungeon_TransformDoorDef(const FDoorDef& DoorDef, const FIntVector& Translation, const EDoorDirection& Rotation);
+
+	// Inverse transform a DoorDef structure from the dungeon coordinates into a local coordinates
+	UFUNCTION(BlueprintPure, Category = "Math|Dungeon", meta = (DisplayName = "Inverse Transform DoorDef (Dungeon)", AutoCreateRefTerm = "Rotation"))
+	static FDoorDef Dungeon_InverseTransformDoorDef(const FDoorDef& DoorDef, const FIntVector& Translation, const EDoorDirection& Rotation);
+
+	// ===== Int Vector Operators =====
+
+	UFUNCTION(BlueprintPure, Category = "Utilities|Operators", meta = (DisplayName = "Add (Int Vector)", CompactNodeTitle = "+", CallableWithoutWorldContext, CommutativeAssociativeBinaryOperator))
+	static FIntVector IntVector_Add(const FIntVector& A, const FIntVector& B);
+
+	UFUNCTION(BlueprintPure, Category = "Utilities|Operators", meta = (DisplayName = "Subtract (Int Vector)", CompactNodeTitle = "-", CallableWithoutWorldContext, CommutativeAssociativeBinaryOperator))
+	static FIntVector IntVector_Subtract(const FIntVector& A, const FIntVector& B);
+
+	UFUNCTION(BlueprintPure, Category = "Utilities|Operators", meta = (DisplayName = "Equal (Int Vector)", Keywords = "==", CompactNodeTitle = "==", CallableWithoutWorldContext))
+	static bool IntVector_Equal(const FIntVector& A, const FIntVector& B);
+
+	UFUNCTION(BlueprintPure, Category = "Utilities|Operators", meta = (DisplayName = "Not Equal (Int Vector)", Keywords = "!=", CompactNodeTitle = "!=", CallableWithoutWorldContext))
+	static bool IntVector_NotEqual(const FIntVector& A, const FIntVector& B);
 
 	// ===== Plugin Settings Accessors =====
 
@@ -110,7 +157,6 @@ public:
 	// ===== Gameplay Utility Functions =====
 
 	// Set player to spectate
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Player", meta = (DefaultToSelf="Controller"))
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Player", meta = (DefaultToSelf = "Controller"))
 	static void Spectate(APlayerController* Controller, bool DestroyPawn = true);
-
 };

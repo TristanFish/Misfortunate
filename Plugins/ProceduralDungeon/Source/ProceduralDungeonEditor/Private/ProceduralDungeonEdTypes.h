@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -30,14 +13,13 @@
 #include "ProceduralDungeonEdTypes.generated.h"
 
 #if UE_VERSION_OLDER_THAN(5, 0, 0)
-#define COMPATIBILITY 1
+	#define COMPATIBILITY 1
 #else
-#define COMPATIBILITY 0
+	#define COMPATIBILITY 0
 #endif
 
-
 #if !COMPATIBILITY
-#include "UnrealWidgetFwd.h"
+	#include "UnrealWidgetFwd.h"
 #endif
 
 #if COMPATIBILITY
@@ -47,9 +29,9 @@ using WidgetMode = UE::Widget::EWidgetMode;
 #endif
 
 #if UE_VERSION_NEWER_THAN(5, 3, 0)
-#define GC_PTR(VAR_TYPE) TObjectPtr<VAR_TYPE>
+	#define GC_PTR(VAR_TYPE) TObjectPtr<VAR_TYPE>
 #else
-#define GC_PTR(VAR_TYPE) VAR_TYPE*
+	#define GC_PTR(VAR_TYPE) VAR_TYPE*
 #endif
 
 // Some utility functions for EAxisList
@@ -64,13 +46,13 @@ struct FMargin3D
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Margin", meta = (DisplayName = "X"))
-	FVector2D XAxis{0.0f, 0.0f};
+	FVector2D XAxis {0.0f, 0.0f};
 
 	UPROPERTY(EditAnywhere, Category = "Margin", meta = (DisplayName = "Y"))
-	FVector2D YAxis{0.0f, 0.0f};
+	FVector2D YAxis {0.0f, 0.0f};
 
 	UPROPERTY(EditAnywhere, Category = "Margin", meta = (DisplayName = "Z"))
-	FVector2D ZAxis{0.0f, 0.0f};
+	FVector2D ZAxis {0.0f, 0.0f};
 
 	// Create a new bounds from an existing bounds with the margin applied on it.
 	FBoxCenterAndExtent Apply(const FBoxCenterAndExtent& Bounds) const;

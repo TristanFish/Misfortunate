@@ -1,69 +1,99 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
 #include "ReplicableObject.h"
+#include "Interfaces/RoomContainer.h"
+#include "Interfaces/GeneratorProvider.h"
+#include "Interfaces/DungeonCustomSerialization.h"
+#include "Interfaces/DungeonSaveInterface.h"
 #include "Templates/SubclassOf.h"
+#include "Templates/Function.h"
+#include "ProceduralDungeonTypes.h"
+#include "VoxelBounds/VoxelBounds.h"
 #include "DungeonGraph.generated.h"
 
 class URoom;
 class URoomData;
 class URoomCustomData;
-class ADungeonGenerator;
+class URoomConnection;
+class ADungeonGeneratorBase;
 
-UENUM()
-enum class EDungeonGraphState : uint8
+// Describe a potential room to be added to the dungeon.
+// Mainly used by FilterAndSortRooms function.
+USTRUCT(BlueprintType)
+struct FRoomCandidate
 {
-	None,
-	RoomListChanged,
-	RequestGeneration,
-	NbState
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Room Candidate")
+	URoomData* Data {nullptr};
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Room Candidate")
+	int32 DoorIndex {-1};
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Room Candidate")
+	int32 Score {-1};
 };
 
 // Holds the generated dungeon.
 // You can access the rooms using many functions.
 UCLASS(BlueprintType)
-class PROCEDURALDUNGEON_API UDungeonGraph : public UReplicableObject
+class PROCEDURALDUNGEON_API UDungeonGraph : public UReplicableObject, public IRoomContainer, public IGeneratorProvider, public IDungeonCustomSerialization, public IDungeonSaveInterface
 {
 	GENERATED_BODY()
 
-	friend ADungeonGenerator;
+	friend ADungeonGeneratorBase;
+
+#if WITH_DEV_AUTOMATION_TESTS
+	friend class FDungeonGraphTest;
+#endif
 
 public:
-	UDungeonGraph();
+	//~ Begin IRoomContainer Interface
+	// Returns the room instance with the provided index.
+	// Returns null if no room exists with the provided index.
+	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
+	virtual URoom* GetRoomByIndex(int64 Index) const final;
+
+	virtual URoomConnection* GetConnectionByIndex(int32 Index) const override;
+	//~ End IRoomContainer Interface
+
+	//~ Begin IDungeonCustomSerialization Interface
+	virtual bool SerializeObject(FStructuredArchive::FRecord& Record, bool bIsLoading) override;
+	//~ End IDungeonCustomSerialization Interface
+
+	//~ Begin IDungeonSaveInterface Interface
+	virtual void PostLoadDungeon_Implementation() override;
+	//~ End IDungeonSaveInterface Interface
+
+	//~ Begin IGeneratorProvider Interface
+	virtual ADungeonGeneratorBase* GetGenerator() const override { return Generator.Get(); }
+	//~ End IGeneratorProvider Interface
+
 	void AddRoom(URoom* Room);
 	void InitRooms();
 	void Clear();
 
+	bool TryConnectDoor(URoom* Room, int32 DoorIndex);
+	bool TryConnectToExistingDoors(URoom* Room);
+
 	bool HasRooms() const { return Rooms.Num() > 0; }
-	bool IsDirty() const { return CurrentState != EDungeonGraphState::None; }
-	bool IsRequestingGeneration() const { return CurrentState == EDungeonGraphState::RequestGeneration; }
+	bool IsDirty() const { return bIsDirty; }
 
 	// Returns all rooms
 	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
 	const TArray<URoom*>& GetAllRooms() const { return Rooms; }
+
+	// Returns all room connections
+	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
+	const TArray<URoomConnection*>& GetAllConnections() const { return RoomConnections; }
 
 	// Returns all room instances of the provided room data
 	UFUNCTION(BlueprintCallable, Category = "Dungeon Graph")
@@ -132,11 +162,47 @@ public:
 
 	// Returns wether a path is valid between 2 rooms (no locked room blocking the way)
 	// Note: Could be pure, but since it can be heavy duty for large dungeons, keep it impure to avoid duplicate calls.
-	UFUNCTION(BlueprintCallable, Category = "Dungeon Graph", meta = (ReturnDisplayName = "Yes"))
-	bool HasValidPath(const URoom* From, const URoom* To, bool IgnoreLockedRooms = false);
+	UFUNCTION(BlueprintPure = false, Category = "Dungeon Graph", meta = (ReturnDisplayName = "Yes"))
+	bool HasValidPath(const URoom* From, const URoom* To, bool IgnoreLockedRooms = false) const;
 
+	// Returns the minimum number of connected rooms between A and B.
+	// Note: Could be pure, but since it can be heavy duty for large dungeons, keep it impure to avoid duplicate calls.
+	UFUNCTION(BlueprintPure = false, Category = "Dungeon Graph")
+	int32 NumberOfRoomBetween(const URoom* A, const URoom* B, bool IgnoreLockedRooms = false) const;
+
+	// Returns the minimum number of connected rooms between A and B.
+	// Note: Could be pure, but since it can be heavy duty for large dungeons, keep it impure to avoid duplicate calls.
+	UFUNCTION(BlueprintPure = false, Category = "Dungeon Graph", meta = (DisplayName = "Number Of Room Between (using ReadOnlyRoom)"))
+	int32 NumberOfRoomBetween_ReadOnly(TScriptInterface<IReadOnlyRoom> A, TScriptInterface<IReadOnlyRoom> B) const;
+
+	// Returns the path between A and B.
+	// Note: Could be pure, but since it can be heavy duty for large dungeons, keep it impure to avoid duplicate calls.
+	UFUNCTION(BlueprintPure = false, Category = "Dungeon Graph", meta = (ReturnDisplayName = "Has Path"))
+	bool GetPathBetween(const URoom* A, const URoom* B, TArray<URoom*>& ResultPath, bool IgnoreLockedRooms = false) const;
+
+	// Returns the room instance at the provided room cell (expressed in Room Units, not Unreal Units!!!).
+	// Returns null if no room located at the provided cell.
+	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
 	URoom* GetRoomAt(FIntVector RoomCell) const;
-	URoom* GetRoomByIndex(int64 Index) const;
+
+	// Returns the center of the bounding box of the dungeon.
+	// @see GetDungeonBoundsExtents
+	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
+	FVector GetDungeonBoundsCenter() const;
+
+	// Returns the extent (half size) of the bounding box of the dungeon.
+	// @see GetDungeonBoundsCenter
+	UFUNCTION(BlueprintPure, Category = "Dungeon Graph")
+	FVector GetDungeonBoundsExtent() const;
+
+	UFUNCTION(BlueprintPure = false, Category = "Dungeon Graph", meta = (ExpandBoolAsExecs = "ReturnValue", AdvancedDisplay = "CustomFilter", AutoCreateRefTerm = "CustomScore"))
+	bool FilterAndSortRooms(const TArray<URoomData*>& RoomList, const FDoorDef& FromDoor, TArray<FRoomCandidate>& SortedRooms, const FScoreCallback& CustomScore) const;
+	bool FilterAndSortRooms(const TArray<URoomData*>& RoomList, const FDoorDef& FromDoor, TArray<FRoomCandidate>& SortedRooms) const;
+
+	// Returns the computed dungeon bounds.
+	class FBoxCenterAndExtent GetDungeonBounds(const FTransform& Transform = FTransform::Identity) const;
+	struct FBoxMinAndMax GetIntBounds() const;
+	FVoxelBounds GetVoxelBounds() const { return Bounds; }
 
 	// Returns in OutRooms all the rooms in the Distance from each InRooms and optionally apply Func on each rooms.
 	// Distance is the number of room connection between 2 rooms, not the distance in any unit.
@@ -157,17 +223,36 @@ protected:
 	// Sync Rooms and ReplicatedRooms arrays
 	void SynchronizeRooms();
 
+	// Replace existing room array from the one loaded in saved data.
+	// This does nothing if there is no data loaded from a saved dungeon.
+	void RetrieveRoomsFromLoadedData();
+
+	// Create and store a new connection between two rooms in RoomConnections.
+	void Connect(URoom* RoomA, int32 DoorA, URoom* RoomB, int32 DoorB);
+
 	bool AreRoomsLoaded(int32& NbRoomLoaded) const;
 	bool AreRoomsUnloaded(int32& NbRoomUnloaded) const;
 	bool AreRoomsInitialized(int32& NbRoomInitialized) const;
 	bool AreRoomsReady() const;
 
-	void RequestGeneration();
-	void RequestUnload();
+	void SpawnAllDoors();
+	void LoadAllRooms();
+	void UnloadAllRooms();
+
+	void MarkDirty() { bIsDirty = true; }
+
+	// Extends the bounds if necessary to include the provided room.
+	void UpdateBounds(const URoom* Room);
+
+	// Recreate the bounds using the whole room list.
+	void RebuildBounds();
 
 private:
 	UPROPERTY(Transient)
 	TArray<URoom*> Rooms;
+
+	UPROPERTY(Replicated, Transient)
+	TArray<URoomConnection*> RoomConnections;
 
 	// This array is synchronized with the server
 	// We keep it separated to be able to unload previous rooms on clients
@@ -177,6 +262,24 @@ private:
 	UFUNCTION()
 	void OnRep_Rooms();
 
-	EDungeonGraphState CurrentState {EDungeonGraphState::None};
-	TWeakObjectPtr<ADungeonGenerator> Generator {nullptr};
+	bool bIsDirty {false};
+
+	// @TODO: Make something to decouple the ADungeonGenerator from the UDungeonGraph.
+	// It is currently used only to get its random stream in the `Get Random Room` function.
+	// We could instead either:
+	// - Use an interface that provides a random stream => good way to not induce breaking changes in the code.
+	// - Pass the random stream as an input to that function => will need to make some changes in existing projects.
+	TWeakObjectPtr<ADungeonGeneratorBase> Generator {nullptr};
+
+	// Transient. The computed bounds of the dungeon. Updated each time the room list changes.
+	FVoxelBounds Bounds;
+
+private:
+	struct FSaveData
+	{
+		TArray<URoom*> Rooms;
+		TArray<URoomConnection*> Connections;
+	};
+
+	TUniquePtr<FSaveData> SavedData {nullptr};
 };

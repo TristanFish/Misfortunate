@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "DungeonGraph.h"
 #include "Utils/ReplicationUtils.h"
@@ -30,13 +13,12 @@
 #include "Room.h"
 #include "RoomData.h"
 #include "RoomCustomData.h"
+#include "RoomConnection.h"
+#include "Door.h"
 #include "Engine/Level.h"
 #include "Engine/LevelStreamingDynamic.h"
-
-UDungeonGraph::UDungeonGraph()
-	: Super()
-{
-}
+#include "Utils/DungeonSaveUtils.h"
+#include "ProceduralDungeonUtils.h"
 
 void UDungeonGraph::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -44,6 +26,7 @@ void UDungeonGraph::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	FDoRepLifetimeParams Params;
 	Params.bIsPushBased = true;
 	DOREPLIFETIME_WITH_PARAMS(UDungeonGraph, ReplicatedRooms, Params);
+	DOREPLIFETIME_WITH_PARAMS(UDungeonGraph, RoomConnections, Params);
 }
 
 bool UDungeonGraph::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
@@ -54,6 +37,11 @@ bool UDungeonGraph::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch
 		check(Room);
 		bWroteSomething |= Room->ReplicateSubobject(Channel, Bunch, RepFlags);
 	}
+	for (URoomConnection* Conn : RoomConnections)
+	{
+		check(Conn);
+		bWroteSomething |= Conn->ReplicateSubobject(Channel, Bunch, RepFlags);
+	}
 	return bWroteSomething;
 }
 
@@ -63,32 +51,148 @@ void UDungeonGraph::RegisterReplicableSubobjects(bool bRegister)
 	{
 		Room->RegisterAsReplicable(bRegister);
 	}
+
+	for (URoomConnection* Conn : RoomConnections)
+	{
+		Conn->RegisterAsReplicable(bRegister);
+	}
+}
+
+URoomConnection* UDungeonGraph::GetConnectionByIndex(int32 Index) const
+{
+	if (!RoomConnections.IsValidIndex(Index))
+	{
+		DungeonLog_WarningSilent("Invalid index %d for RoomConnections.", Index);
+		return nullptr;
+	}
+	return RoomConnections[Index];
+}
+
+bool UDungeonGraph::SerializeObject(FStructuredArchive::FRecord& Record, bool bIsLoading)
+{
+	SavedData = MakeUnique<FSaveData>();
+
+	if (!bIsLoading)
+	{
+		SavedData->Rooms = TArray<URoom*>(Rooms);
+		SavedData->Connections = TArray<URoomConnection*>(RoomConnections);
+	}
+
+	SerializeUObjectArray(Record, AR_FIELD_NAME("Rooms"), SavedData->Rooms, bIsLoading, this);
+	SerializeUObjectArray(Record, AR_FIELD_NAME("Connections"), SavedData->Connections, bIsLoading, this);
+
+	return true;
+}
+
+void UDungeonGraph::PostLoadDungeon_Implementation()
+{
+	// Load has ended, we can safely reset the saved data.
+	SavedData.Reset();
 }
 
 void UDungeonGraph::AddRoom(URoom* Room)
 {
 	Rooms.Add(Room);
+	UpdateBounds(Room);
 }
 
 void UDungeonGraph::InitRooms()
 {
-	// First create custom data for all rooms
+	// We split the for loops to ensure custom data are created for all rooms before initializing them
+
+	// First create empty connections for remaining unconnected doors
+	TArray<int32> EmptyConnections;
 	for (URoom* Room : Rooms)
 	{
 		check(IsValid(Room));
-		const URoomData* Data = Room->GetRoomData();
-		check(IsValid(Data));
-		for (auto Datum : Data->CustomData)
-			Room->CreateCustomData(Datum);
+		Room->GetAllEmptyConnections(EmptyConnections);
+		for (int32 DoorIndex : EmptyConnections)
+		{
+			Connect(Room, DoorIndex, nullptr, -1);
+		}
 	}
 
-	// Then we can initialize them all
+	// Finally we can initialize them all
 	for (URoom* Room : Rooms)
 	{
 		// No need to check validity here
 		const URoomData* Data = Room->GetRoomData();
 		Data->InitializeRoom(Room, this);
 	}
+}
+
+bool UDungeonGraph::TryConnectDoor(URoom* Room, int32 DoorIndex)
+{
+	check(IsValid(Room));
+
+	// Check if already connected.
+	if (Room->IsConnected(DoorIndex))
+		return true;
+
+	// Get the room in front of the door if any.
+	EDoorDirection DoorDir = Room->GetDoorWorldOrientation(DoorIndex);
+	FIntVector AdjacentCell = Room->GetDoorWorldPosition(DoorIndex) + ToIntVector(DoorDir);
+	URoom* OtherRoom = GetRoomAt(AdjacentCell);
+	if (!IsValid(OtherRoom))
+	{
+		return false;
+	}
+
+	// Get the door index of the other room if any.
+	int OtherDoorIndex = OtherRoom->GetDoorIndexAt(AdjacentCell, ~DoorDir);
+	if (OtherDoorIndex < 0) // -1 if no door
+	{
+		return false;
+	}
+
+	// Check door compatibility.
+	const FDoorDef& ThisDoor = Room->GetRoomData()->Doors[DoorIndex];
+	const FDoorDef& OtherDoor = OtherRoom->GetRoomData()->Doors[OtherDoorIndex];
+	if (!FDoorDef::AreCompatible(ThisDoor, OtherDoor))
+	{
+		return false;
+	}
+
+	// Finally connect the doors.
+	Connect(Room, DoorIndex, OtherRoom, OtherDoorIndex);
+	return true;
+}
+
+bool UDungeonGraph::TryConnectToExistingDoors(URoom* Room)
+{
+	bool HasConnection = false;
+	for (int i = 0; i < Room->GetRoomData()->GetNbDoor(); ++i)
+	{
+		HasConnection |= TryConnectDoor(Room, i);
+	}
+	return HasConnection;
+}
+
+void UDungeonGraph::RetrieveRoomsFromLoadedData()
+{
+	if (Rooms.Num() > 0)
+	{
+		DungeonLog_Error("Trying to retrieve loaded rooms while previous ones are not unloaded!");
+		return;
+	}
+
+	if (!SavedData.IsValid())
+		return;
+
+	Rooms = TArray<URoom*>(SavedData->Rooms);
+	RoomConnections = TArray<URoomConnection*>(SavedData->Connections);
+
+	IDungeonCustomSerialization::DispatchFixupReferences(this, this);
+
+	RebuildBounds();
+}
+
+void UDungeonGraph::Connect(URoom* RoomA, int32 DoorA, URoom* RoomB, int32 DoorB)
+{
+	URoomConnection* NewConnection = URoomConnection::CreateConnection(RoomA, DoorA, RoomB, DoorB, this, RoomConnections.Num());
+	RoomConnections.Add(NewConnection);
+	DungeonLog_Debug("Connected %s (%d) to %s (%d)", *GetNameSafe(RoomA), DoorA, *GetNameSafe(RoomB), DoorB);
+	MARK_PROPERTY_DIRTY_FROM_NAME(UDungeonGraph, RoomConnections, this);
 }
 
 void UDungeonGraph::GetAllRoomsFromData(const URoomData* Data, TArray<URoom*>& OutRooms)
@@ -113,28 +217,26 @@ void UDungeonGraph::GetAllRoomsWithCustomData(const TSubclassOf<URoomCustomData>
 
 void UDungeonGraph::GetAllRoomsWithAllCustomData(const TArray<TSubclassOf<URoomCustomData>>& CustomData, TArray<URoom*>& OutRooms)
 {
-	GetRoomsByPredicate(OutRooms, [&CustomData](const URoom* Room)
+	GetRoomsByPredicate(OutRooms, [&CustomData](const URoom* Room) {
+		for (auto Datum : CustomData)
 		{
-			for (auto Datum : CustomData)
-			{
-				if (!Room->HasCustomData(Datum))
-					return false;
-			}
-			return true;
-		});
+			if (!Room->HasCustomData(Datum))
+				return false;
+		}
+		return true;
+	});
 }
 
 void UDungeonGraph::GetAllRoomsWithAnyCustomData(const TArray<TSubclassOf<URoomCustomData>>& CustomData, TArray<URoom*>& OutRooms)
 {
-	GetRoomsByPredicate(OutRooms, [&CustomData](const URoom* Room)
+	GetRoomsByPredicate(OutRooms, [&CustomData](const URoom* Room) {
+		for (auto Datum : CustomData)
 		{
-			for (auto Datum : CustomData)
-			{
-				if (Room->HasCustomData(Datum))
-					return true;
-			}
-			return false;
-		});
+			if (Room->HasCustomData(Datum))
+				return true;
+		}
+		return false;
+	});
 }
 
 URoom* UDungeonGraph::GetRandomRoom(const TArray<URoom*>& RoomList) const
@@ -196,14 +298,115 @@ int UDungeonGraph::CountTotalRoomType(const TArray<TSubclassOf<URoomData>>& Room
 	});
 }
 
-bool UDungeonGraph::HasValidPath(const URoom* From, const URoom* To, bool IgnoreLockedRooms)
+bool UDungeonGraph::HasValidPath(const URoom* From, const URoom* To, bool IgnoreLockedRooms) const
 {
 	return FindPath(From, To, nullptr, IgnoreLockedRooms);
+}
+
+int32 UDungeonGraph::NumberOfRoomBetween(const URoom* A, const URoom* B, bool IgnoreLockedRooms) const
+{
+	TArray<const URoom*> Path;
+	FindPath(A, B, &Path, IgnoreLockedRooms);
+	return Path.Num();
+}
+
+int32 UDungeonGraph::NumberOfRoomBetween_ReadOnly(TScriptInterface<IReadOnlyRoom> A, TScriptInterface<IReadOnlyRoom> B) const
+{
+	// @TODO: That's not really safe, it should be better to make a FindPath using ReadOnlyRooms too.
+	const URoom* RoomA = Cast<URoom>(A.GetObject());
+	const URoom* RoomB = Cast<URoom>(B.GetObject());
+	return NumberOfRoomBetween(RoomA, RoomB);
+}
+
+bool UDungeonGraph::GetPathBetween(const URoom* A, const URoom* B, TArray<URoom*>& ResultPath, bool IgnoreLockedRooms) const
+{
+	// @HACK: is it another alternative?
+	TArray<const URoom*>& Temp = reinterpret_cast<TArray<const URoom*>&>(ResultPath);
+	FindPath(A, B, &Temp, IgnoreLockedRooms);
+	return ResultPath.Num() > 0;
 }
 
 URoom* UDungeonGraph::GetRoomAt(FIntVector RoomCell) const
 {
 	return URoom::GetRoomAt(RoomCell, Rooms);
+}
+
+FVector UDungeonGraph::GetDungeonBoundsCenter() const
+{
+	FTransform Transform = Generator.IsValid() ? Generator->GetDungeonTransform() : FTransform::Identity;
+	return GetDungeonBounds(Transform).Center;
+}
+
+FVector UDungeonGraph::GetDungeonBoundsExtent() const
+{
+	FTransform Transform = Generator.IsValid() ? Generator->GetDungeonTransform() : FTransform::Identity;
+	return GetDungeonBounds(Transform).Extent;
+}
+
+struct FRoomCandidatePredicate
+{
+	bool operator()(const FRoomCandidate& A, const FRoomCandidate& B) const
+	{
+		return A.Score > B.Score;
+	}
+};
+
+bool UDungeonGraph::FilterAndSortRooms(const TArray<URoomData*>& RoomList, const FDoorDef& FromDoor, TArray<FRoomCandidate>& SortedRooms, const FScoreCallback& CustomScore) const
+{
+	SortedRooms.Empty();
+
+	FDoorDef TargetDoor = FromDoor.GetOpposite();
+
+	for (URoomData* RoomData : RoomList)
+	{
+		if (!IsValid(RoomData))
+			continue;
+
+		FVoxelBounds DataBounds = RoomData->GetVoxelBounds();
+
+		// Try each possible door
+		for (int i = 0; i < RoomData->GetNbDoor(); ++i)
+		{
+			FDoorDef Door = RoomData->Doors[i];
+
+			// Filter out the door candidate if not compatible with the door
+			// we want to connect from.
+			if (!FDoorDef::AreCompatible(TargetDoor, Door))
+				continue;
+
+			// Create a new bounds placed at the target door
+			EDoorDirection Direction = TargetDoor.Direction - Door.Direction;
+			FVoxelBounds NewBounds = Rotate(DataBounds, Direction);
+			NewBounds += TargetDoor.Position - Rotate(Door.Position, Direction);
+
+			FRoomCandidate Candidate;
+			Candidate.Data = RoomData;
+			Candidate.DoorIndex = i;
+
+			// Check if the room can fit
+			if (!NewBounds.GetCompatibilityScore(Bounds, Candidate.Score, CustomScore))
+				continue;
+
+			SortedRooms.HeapPush(Candidate, FRoomCandidatePredicate());
+		}
+	}
+
+	return SortedRooms.Num() > 0;
+}
+
+bool UDungeonGraph::FilterAndSortRooms(const TArray<URoomData*>& RoomList, const FDoorDef& FromDoor, TArray<FRoomCandidate>& SortedRooms) const
+{
+	return FilterAndSortRooms(RoomList, FromDoor, SortedRooms, FScoreCallback());
+}
+
+FBoxCenterAndExtent UDungeonGraph::GetDungeonBounds(const FTransform& Transform) const
+{
+	return Dungeon::ToWorld(Bounds.GetBounds(), Transform);
+}
+
+FBoxMinAndMax UDungeonGraph::GetIntBounds() const
+{
+	return Bounds.GetBounds();
 }
 
 URoom* UDungeonGraph::GetRoomByIndex(int64 Index) const
@@ -226,6 +429,10 @@ void UDungeonGraph::Clear()
 		Data->CleanupRoom(Room, this);
 	}
 	Rooms.Empty();
+
+	RoomConnections.Empty();
+
+	RebuildBounds();
 }
 
 int UDungeonGraph::CountRoomByPredicate(TFunction<bool(const URoom*)> Predicate) const
@@ -236,7 +443,7 @@ int UDungeonGraph::CountRoomByPredicate(TFunction<bool(const URoom*)> Predicate)
 		if (Predicate(Room))
 			count++;
 	}
-	return  count;
+	return count;
 }
 
 void UDungeonGraph::GetRoomsByPredicate(TArray<URoom*>& OutRooms, TFunction<bool(const URoom*)> Predicate) const
@@ -277,7 +484,7 @@ void UDungeonGraph::TraverseRooms(const TSet<URoom*>& InRooms, TSet<URoom*>* Out
 			Func(currentRoom);
 			for (int i = 0; i < currentRoom->GetConnectionCount(); ++i)
 			{
-				URoom* nextRoom = currentRoom->GetConnection(i).Get();
+				URoom* nextRoom = currentRoom->GetConnectedRoom(i).Get();
 				if (IsValid(nextRoom) && !closedList.Contains(nextRoom))
 					openList.Add(nextRoom);
 			}
@@ -301,7 +508,7 @@ bool BFS_Cycle(TQueue<const URoom*>& Queue, TSet<const URoom*>& MarkedThis, cons
 	// for each neighbor, if not locked or marked, add it to queue and mark it
 	for (int i = 0; OutCommon == nullptr && i < Current->GetConnectionCount(); ++i)
 	{
-		Next = Current->GetConnection(i).Get();
+		Next = Current->GetConnectedRoom(i).Get();
 		if (Next && (IgnoreLocked || !Next->IsLocked()) && !MarkedThis.Contains(Next))
 		{
 			ParentMap.Add(Next, Current);
@@ -403,8 +610,8 @@ void CopyRooms(TArray<URoom*>& To, TArray<URoom*>& From)
 {
 	for (URoom* Room : From)
 	{
-		if(Room->Instance)
-			DungeonLog_InfoSilent("[%s] Loaded Level: %s", *GetNameSafe(Room), *GetNameSafe(Room->Instance->GetLoadedLevel()));
+		if (Room->Instance)
+			DungeonLog_Debug("[%s] Loaded Level: %s", *GetNameSafe(Room), *GetNameSafe(Room->Instance->GetLoadedLevel()));
 	}
 
 	To = TArray<URoom*>(From);
@@ -412,7 +619,7 @@ void CopyRooms(TArray<URoom*>& To, TArray<URoom*>& From)
 
 void UDungeonGraph::SynchronizeRooms()
 {
-	AActor* Owner = GetOwner();
+	AActor* Owner = GetTypedOuter<AActor>();
 	if (!IsValid(Owner))
 		return;
 
@@ -427,9 +634,10 @@ void UDungeonGraph::SynchronizeRooms()
 	else
 	{
 		CopyRooms(Rooms, ReplicatedRooms);
+		RebuildBounds();
 	}
 
-	CurrentState = EDungeonGraphState::None;
+	bIsDirty = false;
 }
 
 bool UDungeonGraph::AreRoomsLoaded(int32& NbRoomLoaded) const
@@ -475,30 +683,82 @@ bool UDungeonGraph::AreRoomsReady() const
 	return true;
 }
 
-void UDungeonGraph::RequestGeneration()
+void UDungeonGraph::SpawnAllDoors()
 {
-	check(GetOwner()->HasAuthority());
-	CurrentState = EDungeonGraphState::RequestGeneration;
+	// Spawn doors only on server
+	// They will be replicated on the clients
+	if (!HasAuthority())
+		return;
+
+	checkf(Generator.IsValid(), TEXT("Spawning dungeon's doors is only available with a ADungeonGenerator outer."));
+
+	for (auto* RoomConnection : RoomConnections)
+	{
+		if (RoomConnection->IsDoorInstanced())
+			continue;
+		RoomConnection->InstantiateDoor(GetWorld(), Generator.Get(), Generator->UseGeneratorTransform());
+	}
 }
 
-void UDungeonGraph::RequestUnload()
+void UDungeonGraph::LoadAllRooms()
 {
-	check(GetOwner()->HasAuthority());
-	CurrentState = EDungeonGraphState::RoomListChanged;
+	// When a level is correct, load all rooms
+	for (URoom* Room : Rooms)
+	{
+		Room->Instantiate(GetWorld());
+	}
+
+	SpawnAllDoors();
+}
+
+void UDungeonGraph::UnloadAllRooms()
+{
+	if (HasAuthority())
+	{
+		for (auto* RoomConnection : RoomConnections)
+		{
+			ADoor* Door = RoomConnection->GetDoorInstance();
+			if (IsValid(Door))
+			{
+				Door->Destroy();
+			}
+		}
+	}
+
+	for (URoom* Room : Rooms)
+	{
+		check(Room);
+		Room->Destroy();
+	}
+}
+
+void UDungeonGraph::UpdateBounds(const URoom* Room)
+{
+	check(IsValid(Room));
+	Bounds += Room->GetVoxelBounds();
+}
+
+void UDungeonGraph::RebuildBounds()
+{
+	Bounds = FVoxelBounds();
+	for (const URoom* Room : Rooms)
+	{
+		UpdateBounds(Room);
+	}
 }
 
 void UDungeonGraph::OnRep_Rooms()
 {
-	DungeonLog_InfoSilent("Replicated Rooms Changed! (length: %d)", ReplicatedRooms.Num());
+	DungeonLog_Debug("Replicated Rooms Changed! (length: %d)", ReplicatedRooms.Num());
 	for (int i = 0; i < ReplicatedRooms.Num(); ++i)
 	{
 		// Trigger Room List Changed only when all received rooms are valid
 		if (!IsValid(ReplicatedRooms[i]))
 			return;
 
-		DungeonLog_InfoSilent("Replicated Room [%d]: %s", i, *GetNameSafe(ReplicatedRooms[i]));
+		DungeonLog_Debug("Replicated Room [%d]: %s", i, *GetNameSafe(ReplicatedRooms[i]));
 	}
 
-	DungeonLog_InfoSilent("Trigger Dungeon Reload!");
-	CurrentState = EDungeonGraphState::RoomListChanged;
+	DungeonLog_Debug("Trigger Dungeon Reload!");
+	MarkDirty();
 }

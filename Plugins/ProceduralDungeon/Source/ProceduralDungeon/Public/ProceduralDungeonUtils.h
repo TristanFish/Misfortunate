@@ -1,26 +1,9 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #pragma once
 
@@ -28,6 +11,7 @@
 #include "Math/IntVector.h"
 #include "Engine/EngineTypes.h"
 #include "EngineUtils.h"
+#include "Utils/CompatUtils.h"
 
 namespace IntVector
 {
@@ -39,7 +23,10 @@ namespace IntVector
 
 	// Returns the component-wise minimum and maximum of A and B
 	void PROCEDURALDUNGEON_API MinMax(const FIntVector& A, const FIntVector& B, FIntVector& OutMin, FIntVector& OutMax);
-}
+} //namespace IntVector
+
+class FBoxCenterAndExtent;
+struct FBoxMinAndMax;
 
 namespace Dungeon
 {
@@ -48,6 +35,12 @@ namespace Dungeon
 
 	// Returns the real world vector (no offset) of a vector in room units
 	FVector PROCEDURALDUNGEON_API ToWorldVector(FIntVector RoomVector);
+
+	// Convertthe Box from dungeon coordinate to world coordinate, applying an optional transform on it.
+	FBoxCenterAndExtent PROCEDURALDUNGEON_API ToWorld(const FBoxMinAndMax& Box, const FTransform& Transform = FTransform::Identity);
+
+	// Convertthe Box from dungeon coordinate to world coordinate, applying an optional transform on it.
+	FBoxCenterAndExtent PROCEDURALDUNGEON_API ToWorld(const FBoxCenterAndExtent& Box, const FTransform& Transform = FTransform::Identity);
 
 	// Returns the location in room units from a point in real world
 	FIntVector PROCEDURALDUNGEON_API ToRoomLocation(FVector WorldPoint);
@@ -89,12 +82,14 @@ namespace Dungeon
 
 	FVector PROCEDURALDUNGEON_API RoomUnit();
 	FVector PROCEDURALDUNGEON_API DefaultDoorSize();
+	FColor PROCEDURALDUNGEON_API DefaultDoorColor();
 	float PROCEDURALDUNGEON_API DoorOffset();
 	bool PROCEDURALDUNGEON_API OcclusionCulling();
 	bool PROCEDURALDUNGEON_API UseLegacyOcclusion();
 	uint32 PROCEDURALDUNGEON_API OcclusionDistance();
 	bool PROCEDURALDUNGEON_API OccludeDynamicActors();
 	bool PROCEDURALDUNGEON_API DrawDebug();
+	bool PROCEDURALDUNGEON_API DrawOnlyWhenEditingRoom();
 	bool PROCEDURALDUNGEON_API ShowRoomOrigin();
 	bool PROCEDURALDUNGEON_API FlipDoorArrow();
 	float PROCEDURALDUNGEON_API DoorArrowLength();
@@ -103,15 +98,21 @@ namespace Dungeon
 	ECollisionChannel PROCEDURALDUNGEON_API RoomObjectType();
 	uint32 PROCEDURALDUNGEON_API MaxGenerationTryBeforeGivingUp();
 	uint32 PROCEDURALDUNGEON_API MaxRoomPlacementTryBeforeGivingUp();
+	int32 PROCEDURALDUNGEON_API RoomLimit();
 
 	void PROCEDURALDUNGEON_API EnableOcclusionCulling(bool Enable);
 	void PROCEDURALDUNGEON_API SetOcclusionDistance(int32 Distance);
+} //namespace Dungeon
+
+namespace Random
+{
+	uint32 PROCEDURALDUNGEON_API Guid2Seed(FGuid Guid, int64 Salt);
 }
 
-namespace World
+namespace WorldUtils
 {
-	template<class T>
-	static void FindAllActors(UWorld* InWorld, TArray<T*>& OutActors)
+	template<class T UE_REQUIRES(TIsDerivedFrom<T, AActor>::Value)>
+	void FindAllActors(UWorld* InWorld, TArray<T*>& OutActors)
 	{
 		OutActors.Empty();
 		for (TActorIterator<T> It(InWorld); It; ++It)
@@ -121,8 +122,8 @@ namespace World
 		}
 	}
 
-	template<class T>
-	static void FindAllActorsByPredicate(UWorld* InWorld, TArray<T*>& OutActors, TFunction<bool(const T*)> Predicate)
+	template<class T UE_REQUIRES(TIsDerivedFrom<T, AActor>::Value)>
+	void FindAllActorsByPredicate(UWorld* InWorld, TArray<T*>& OutActors, TFunction<bool(const T*)> Predicate)
 	{
 		OutActors.Empty();
 		for (TActorIterator<T> It(InWorld); It; ++It)
@@ -134,4 +135,20 @@ namespace World
 			}
 		}
 	}
+
+	template<typename U, class T UE_REQUIRES(TIsDerivedFrom<T, AActor>::Value)>
+	void MapActors(UWorld* InWorld, TMap<U, T*>& OutActorMap, TFunction<U(const T*)> MapFunction)
+	{
+		OutActorMap.Empty();
+		for (TActorIterator<T> It(InWorld); It; ++It)
+		{
+			T* Actor = *It;
+			OutActorMap.Add(MapFunction(Actor), Actor);
+		}
+	}
+} //namespace WorldUtils
+
+namespace ObjectUtils
+{
+	void PROCEDURALDUNGEON_API DispatchToObjectAndSubobjects(UObject* Obj, TFunction<void(UObject*)> Func, int32 Depth = 0);
 }

@@ -1,35 +1,19 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023-2024 Benoit Pelletier
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Copyright Benoit Pelletier 2023 - 2025 All Rights Reserved.
+//
+// This software is available under different licenses depending on the source from which it was obtained:
+// - The Fab EULA (https://fab.com/eula) applies when obtained from the Fab marketplace.
+// - The CeCILL-C license (https://cecill.info/licences/Licence_CeCILL-C_V1-en.html) applies when obtained from any other source.
+// Please refer to the accompanying LICENSE file for further details.
 
 #include "CoreTypes.h"
 #include "Containers/UnrealString.h"
 #include "Misc/AutomationTest.h"
 #include "ProceduralDungeonTypes.h"
+#include "TestUtils.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBoxMinAndMaxTest, "ProceduralDungeon.Types.BoxMinAndMax", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::SmokeFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FBoxMinAndMaxTest, "ProceduralDungeon.Types.BoxMinAndMax", FLAG_APPLICATION_CONTEXT | EAutomationTestFlags::SmokeFilter)
 
 bool FBoxMinAndMaxTest::RunTest(const FString& Parameters)
 {
@@ -128,6 +112,28 @@ bool FBoxMinAndMaxTest::RunTest(const FString& Parameters)
 		TestEqual(TEXT("Rotate(Box((-1,0,-1), (3,1,1)), S).Max == (2,1,1)"), RotBox1S.Max, FIntVector(2, 1, 1));
 		TestEqual(TEXT("Rotate(Box((-1,0,-1), (3,1,1)), W).Min == (0,-2,-1)"), RotBox1W.Min, FIntVector(0, -2, -1));
 		TestEqual(TEXT("Rotate(Box((-1,0,-1), (3,1,1)), W).Max == (1,2,1)"), RotBox1W.Max, FIntVector(1, 2, 1));
+	}
+
+	// Extend Test
+	{
+		FBoxMinAndMax BoxToExtend;
+		FBoxMinAndMax Box0({0, 0, 0}, {1, 1, 1});
+		FBoxMinAndMax Box1 = Box0 + FIntVector(1, 2, 3); // offseted box
+		FBoxMinAndMax Box2({-1, -2, -3}, {4, 5, 6});
+
+		BoxToExtend.Extend(Box0);
+		TestEqual(TEXT("Extend Box Step 1"), BoxToExtend, Box0);
+
+		// Extend the box to contain the provided box
+		BoxToExtend.Extend(Box1);
+		TestEqual(TEXT("Extend Box Step 2"), BoxToExtend, FBoxMinAndMax({0, 0, 0}, {2, 3, 4}));
+
+		BoxToExtend.Extend(Box2);
+		TestEqual(TEXT("Extend Box Step 3"), BoxToExtend, Box2);
+
+		// The extended box should not change when using a box entirely contained in it.
+		BoxToExtend.Extend(Box0);
+		TestEqual(TEXT("Extend Box Step 4"), BoxToExtend, Box2);
 	}
 
 	// IsInside(FBoxMinAndMax) Test
